@@ -44,6 +44,4 @@ https://still-standing-still-here.netlify.app/
 
 The project explores the idea that strength is often found not in never falling, but in choosing to rise again. Every section is designed to communicate persistence, courage, and hope through thoughtful interaction and visual storytelling.
 
-## 📜 License
 
-This project is created for educational and portfolio purposes.
