@@ -1,0 +1,243 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background-color: #faf6f0;
+  color: #1a1410;
+  overflow-x: hidden;
+}
+
+/* Grain texture overlay */
+.grain-overlay::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  opacity: 0.03;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* Scroll reveal animations */
+.reveal {
+  opacity: 0;
+  transform: translateY(40px);
+  transition: all 0.9s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.reveal.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+.reveal-delay-1 {
+  transition-delay: 0.15s;
+}
+.reveal-delay-2 {
+  transition-delay: 0.3s;
+}
+.reveal-delay-3 {
+  transition-delay: 0.45s;
+}
+.reveal-delay-4 {
+  transition-delay: 0.6s;
+}
+.reveal-delay-5 {
+  transition-delay: 0.75s;
+}
+.reveal-delay-6 {
+  transition-delay: 0.9s;
+}
+
+/* Floating particles */
+@keyframes float {
+  0%,
+  100% {
+    transform: translateY(0) rotate(0deg);
+    opacity: 0.4;
+  }
+  50% {
+    transform: translateY(-30px) rotate(180deg);
+    opacity: 0.8;
+  }
+}
+.particle {
+  position: absolute;
+  width: 4px;
+  height: 4px;
+  background: #c9a84c;
+  border-radius: 50%;
+  animation: float 6s ease-in-out infinite;
+}
+
+/* Horizontal divider with gold accent */
+.gold-divider {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+.gold-divider::before,
+.gold-divider::after {
+  content: "";
+  flex: 1;
+  height: 1px;
+  background: linear-gradient(to right, transparent, #c9a84c, transparent);
+}
+
+/* Chapter card hover */
+.chapter-card {
+  position: relative;
+  overflow: hidden;
+  transition: all 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.chapter-card::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 3px;
+  height: 0;
+  background: linear-gradient(to bottom, #c9a84c, #a67c3d);
+  transition: height 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.chapter-card:hover::before {
+  height: 100%;
+}
+.chapter-card:hover {
+  transform: translateX(8px);
+  background-color: rgba(201, 168, 76, 0.04);
+}
+
+/* Quote decoration */
+.pull-quote {
+  position: relative;
+}
+.pull-quote::before {
+  content: "\201C";
+  position: absolute;
+  top: -30px;
+  left: -10px;
+  font-size: 6rem;
+  font-family: "Playfair Display", serif;
+  color: #c9a84c;
+  opacity: 0.2;
+  line-height: 1;
+}
+
+/* Theme pill */
+.theme-pill {
+  transition: all 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.theme-pill:hover {
+  transform: scale(1.05);
+  box-shadow: 0 8px 30px rgba(201, 168, 76, 0.2);
+}
+
+/* Parallax hero text */
+@keyframes subtlePulse {
+  0%,
+  100% {
+    opacity: 0.6;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+.pulse-gold {
+  animation: subtlePulse 3s ease-in-out infinite;
+}
+
+/* Scroll indicator */
+@keyframes scrollDown {
+  0% {
+    transform: translateY(0);
+    opacity: 1;
+  }
+  60% {
+    transform: translateY(12px);
+    opacity: 0.3;
+  }
+  100% {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+.scroll-indicator {
+  animation: scrollDown 2s ease-in-out infinite;
+}
+
+/* Book spine shadow */
+.book-shadow {
+  box-shadow:
+    -8px 0 20px rgba(0, 0, 0, 0.1),
+    -4px 0 8px rgba(0, 0, 0, 0.06),
+    0 20px 60px rgba(0, 0, 0, 0.15);
+}
+
+/* Testimonial cards */
+.testimonial-glow {
+  position: relative;
+}
+.testimonial-glow::after {
+  content: "";
+  position: absolute;
+  inset: -1px;
+  border-radius: inherit;
+  background: linear-gradient(
+    135deg,
+    rgba(201, 168, 76, 0.3),
+    transparent,
+    rgba(201, 168, 76, 0.1)
+  );
+  z-index: -1;
+  opacity: 0;
+  transition: opacity 0.4s ease;
+}
+.testimonial-glow:hover::after {
+  opacity: 1;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+::-webkit-scrollbar-track {
+  background: #faf6f0;
+}
+::-webkit-scrollbar-thumb {
+  background: #c9a84c;
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #a67c3d;
+}
+
+/* Mobile adjustments */
+@media (max-width: 768px) {
+  .pull-quote::before {
+    font-size: 4rem;
+    top: -20px;
+    left: -5px;
+  }
+  .chapter-card:hover {
+    transform: translateX(4px);
+  }
+}
+
+/* Ink reveal hint animation */
+@keyframes hintPulse {
+  0%, 100% { opacity: 0.4; }
+  50% { opacity: 0.8; }
+}
+.ink-hint {
+  animation: hintPulse 2.5s ease-in-out infinite;
+}
