@@ -1,35 +1,35 @@
 # Still Standing, Still Here
 
-A web experience dedicated to resilience, hope, and the quiet strength of continuing forward.
+A cinematic landing page for my book *Still Standing, Still Here* — a scroll-driven, animated site that introduces the book's themes of resilience and hope before a reader opens the first page.
 
-## 🌟 About
+## About
 
 **Still Standing, Still Here** is an immersive website that combines modern web design with meaningful storytelling. The project focuses on creating an engaging visual experience through smooth animations, interactive elements, and a clean, minimalist interface.
 
-## ✨ Features
+## Features
 
-* Responsive design
-* Smooth scrolling experience
-* Interactive visual effects
-* Modern typography and layout
-* Lightweight and fast loading
-* Mobile-friendly interface
+- Responsive design
+- Smooth scrolling experience
+- Interactive visual effects
+- Modern typography and layout
+- Lightweight and fast loading
+- Mobile-friendly interface
 
-## 🛠️ Built With
+## Built With
 
-* HTML5
-* CSS3
-* JavaScript
-* TypeScript Components
-* Tailwind CSS
+- HTML5
+- CSS3
+- JavaScript
+- TypeScript components
+- Tailwind CSS
 
-## 🚀 Live Website
+## Live Website
 
 https://still-standing-still-here.netlify.app/
 
-## 📂 Project Structure
+## Project Structure
 
-```text
+```
 ├── index.html
 ├── style.css
 ├── globals.css
@@ -40,8 +40,6 @@ https://still-standing-still-here.netlify.app/
 └── assets/
 ```
 
-## 💡 Inspiration
+## Inspiration
 
 The project explores the idea that strength is often found not in never falling, but in choosing to rise again. Every section is designed to communicate persistence, courage, and hope through thoughtful interaction and visual storytelling.
-
-
