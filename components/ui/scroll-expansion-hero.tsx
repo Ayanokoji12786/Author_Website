@@ -1,8 +1,7 @@
 'use client';
 
-import { useEffect, useRef, useState, ReactNode, useCallback } from 'react';
-import Image from 'next/image';
-import { motion } from 'framer-motion';
+import { ReactNode, useEffect, useRef, useState } from 'react';
+import { ChevronDown } from 'lucide-react';
 
 /* ═══════════════════════════════════════════════════════════════ */
 /* TYPES                                                           */
@@ -21,6 +20,9 @@ interface ScrollExpansionHeroProps {
   textBlend?: boolean;
   children?: ReactNode;
 }
+
+const easeOutCubic = (t: number) => 1 - Math.pow(1 - t, 3);
+const lerp = (a: number, b: number, t: number) => a + (b - a) * t;
 
 /* ═══════════════════════════════════════════════════════════════ */
 /* COMPONENT                                                       */
@@ -196,10 +198,145 @@ export default function ScrollExpansionHero({
     };
   }, []);
 
-  /* ─── Phase 2: Post-expansion scroll tracking ──── */
+  /* ─── Phase 2: Post-expansion scroll tracking ──────
+     Once the media fills the viewport and page scroll resumes normally,
+     track how far the section has scrolled past the top of the viewport
+     (0 → 1 over one section-height) so the overlay content can cross-fade
+     into whatever follows instead of cutting away abruptly. ─── */
   useEffect(() => {
     if (!expanded) return;
 
     const onScroll = () => {
       if (!sectionRef.current) return;
       const rect = sectionRef.current.getBoundingClientRect();
+      const total = rect.height || window.innerHeight;
+      const p = Math.min(Math.max(-rect.top / total, 0), 1);
+      setPostProgress(p);
+    };
+
+    onScroll();
+    window.addEventListener('scroll', onScroll, { passive: true });
+    return () => window.removeEventListener('scroll', onScroll);
+  }, [expanded]);
+
+  /* ─── Derived, interpolated values ─────────────── */
+  const eased = easeOutCubic(scrollProgress);
+
+  const mediaWidthVw = lerp(isMobile ? 78 : 34, 100, eased);
+  const mediaHeightVh = lerp(isMobile ? 44 : 58, 100, eased);
+  const mediaRadius = lerp(20, 0, eased);
+  const bgDim = lerp(0.6, 0.28, eased);
+  const bgBlur = lerp(16, 0, eased);
+  const titlePush = lerp(0, isMobile ? 60 : 140, eased);
+  const titleOpacity = 1 - Math.min(eased / 0.65, 1);
+  const hintOpacity = 1 - Math.min(eased / 0.2, 1);
+
+  const words = title.trim().split(/\s+/).filter(Boolean);
+  const mid = Math.max(Math.ceil(words.length / 2), 1);
+  const leftTitle = words.slice(0, mid).join(' ');
+  const rightTitle = words.slice(mid).join(' ');
+
+  return (
+    <section
+      ref={sectionRef}
+      className="relative h-screen w-full overflow-hidden bg-ink"
+      style={{
+        position: expanded ? 'relative' : 'fixed',
+        inset: expanded ? undefined : 0,
+        zIndex: expanded ? 10 : 40,
+      }}
+    >
+      {/* Atmospheric backdrop */}
+      <div className="absolute inset-0">
+        <img
+          src={bgImageSrc}
+          alt=""
+          aria-hidden="true"
+          className="h-full w-full object-cover"
+          style={{ filter: `blur(${bgBlur}px)`, transform: 'scale(1.08)' }}
+        />
+        <div className="absolute inset-0 bg-ink" style={{ opacity: bgDim, transition: 'opacity 0.4s ease' }} />
+        <div className="absolute inset-0 bg-gradient-to-b from-ink/40 via-transparent to-ink/70" />
+      </div>
+
+      {/* Expanding media frame */}
+      <div className="relative flex h-full w-full items-center justify-center">
+        <div
+          className="book-shadow relative overflow-hidden"
+          style={{
+            width: `${mediaWidthVw}vw`,
+            height: `${mediaHeightVh}vh`,
+            borderRadius: mediaRadius,
+          }}
+        >
+          {mediaType === 'video' ? (
+            <video
+              className="h-full w-full object-cover"
+              src={mediaSrc}
+              poster={posterSrc}
+              autoPlay
+              muted
+              loop
+              playsInline
+            />
+          ) : (
+            <img src={mediaSrc} alt={title || 'Featured media'} className="h-full w-full object-cover" />
+          )}
+          {textBlend && <div className="absolute inset-0 bg-gradient-to-t from-ink/70 via-ink/10 to-transparent" />}
+        </div>
+
+        {/* Split title — collapses away as the media expands */}
+        {!showContent && words.length > 0 && (
+          <div className="pointer-events-none absolute inset-0 flex items-center justify-center px-6" style={{ opacity: titleOpacity }}>
+            <h1
+              className="pr-4 text-right font-display text-3xl font-bold text-parchment sm:text-4xl md:pr-8 md:text-6xl"
+              style={{ transform: `translateX(-${titlePush}px)` }}
+            >
+              {leftTitle}
+            </h1>
+            <h1
+              className="pl-4 text-left font-display text-3xl font-bold text-gold sm:text-4xl md:pl-8 md:text-6xl"
+              style={{ transform: `translateX(${titlePush}px)` }}
+            >
+              {rightTitle}
+            </h1>
+          </div>
+        )}
+
+        {/* Scroll hint */}
+        {!expanded && scrollToExpand && (
+          <div
+            className="absolute bottom-10 left-1/2 flex -translate-x-1/2 flex-col items-center gap-2 text-parchment/70"
+            style={{ opacity: hintOpacity }}
+          >
+            <span className="font-body text-xs uppercase tracking-[0.3em]">{scrollToExpand}</span>
+            <ChevronDown className="h-5 w-5 animate-bounce" />
+          </div>
+        )}
+      </div>
+
+      {/* Post-expansion overlay content */}
+      {showContent && (
+        <div
+          ref={contentRef}
+          className="pointer-events-none absolute inset-0 flex flex-col items-center justify-center px-6 text-center"
+          style={{
+            opacity: 1 - postProgress,
+            transform: `translateY(${postProgress * 30}px)`,
+            transition: 'opacity 0.3s ease, transform 0.3s ease',
+          }}
+        >
+          {label && <span className="mb-4 font-body text-xs uppercase tracking-[0.3em] text-gold/80">{label}</span>}
+          {title && (
+            <h2 className="font-display text-4xl font-bold leading-tight text-parchment sm:text-5xl md:text-7xl">
+              {title}
+            </h2>
+          )}
+          {date && <p className="mt-6 font-body text-sm uppercase tracking-[0.25em] text-parchment/60">{date}</p>}
+          {subtitle && <div className="mt-4 max-w-xl font-literary text-lg italic text-parchment/70">{subtitle}</div>}
+          {children && <div className="pointer-events-auto mt-8">{children}</div>}
+        </div>
+      )}
+    </section>
+  );
+}

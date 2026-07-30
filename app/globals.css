@@ -13,9 +13,15 @@ html {
 }
 
 body {
-  background-color: #faf6f0;
-  color: #1a1410;
+  background-color: #0f0c0a;
+  color: #f6f3ee;
   overflow-x: hidden;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
 }
 
 /* Grain texture overlay */
@@ -240,4 +246,70 @@ body {
 }
 .ink-hint {
   animation: hintPulse 2.5s ease-in-out infinite;
+}
+
+/* Loading screen intro */
+@keyframes beatPulse {
+  0% { transform: translate(-50%, -50%) scale(1); opacity: 0.82; }
+  14% { transform: translate(-50%, -50%) scale(1.32); opacity: 1; }
+  32% { transform: translate(-50%, -50%) scale(1.04); opacity: 0.92; }
+  100% { transform: translate(-50%, -50%) scale(1); opacity: 0.82; }
+}
+@keyframes beatRing {
+  0% { transform: translate(-50%, -50%) scale(0.55); opacity: 0; }
+  10% { opacity: 0.32; }
+  60% { opacity: 0.06; }
+  100% { transform: translate(-50%, -50%) scale(2.5); opacity: 0; }
+}
+@keyframes ecgFlash {
+  0% { opacity: 0; }
+  8% { opacity: 0.55; }
+  22% { opacity: 0; }
+  100% { opacity: 0; }
+}
+@keyframes breathe {
+  0% { opacity: 0.55; transform: translate(-50%, -50%) scale(1); }
+  100% { opacity: 0.85; transform: translate(-50%, -50%) scale(1.06); }
+}
+@keyframes grainFlicker {
+  0% { opacity: 0.035; }
+  50% { opacity: 0.055; }
+  100% { opacity: 0.035; }
+}
+@keyframes driftA { 0% { transform: translate(0, 0); } 100% { transform: translate(6px, -10px); } }
+@keyframes driftB { 0% { transform: translate(0, 0); } 100% { transform: translate(-8px, -6px); } }
+@keyframes driftC { 0% { transform: translate(0, 0); } 100% { transform: translate(5px, 8px); } }
+
+.animate-breathe {
+  animation: breathe 6s ease-in-out infinite alternate;
+}
+.animate-grain-flicker {
+  animation: grainFlicker 5s ease-in-out infinite;
+}
+
+/* Hero — sunrise fog drift + light ray breathing */
+@keyframes fogDriftA {
+  0% { transform: translate3d(-4%, 0, 0); }
+  50% { transform: translate3d(3%, -1.5%, 0); }
+  100% { transform: translate3d(-4%, 0, 0); }
+}
+@keyframes fogDriftB {
+  0% { transform: translate3d(3%, 0, 0); }
+  50% { transform: translate3d(-5%, 1%, 0); }
+  100% { transform: translate3d(3%, 0, 0); }
+}
+@keyframes rayBreathe {
+  0%, 100% { opacity: var(--ray-base, .5); }
+  50% { opacity: calc(var(--ray-base, .5) * 1.5); }
+}
+.animate-fog-a {
+  animation: fogDriftA 28s ease-in-out infinite;
+  will-change: transform;
+}
+.animate-fog-b {
+  animation: fogDriftB 34s ease-in-out infinite;
+  will-change: transform;
+}
+.animate-ray-breathe {
+  animation: rayBreathe 7s ease-in-out infinite;
 }

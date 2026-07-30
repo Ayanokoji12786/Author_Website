@@ -1,14 +1,14 @@
 /**
  * Cinematic World — Atmospheric overlay for "Still Standing, Still Here"
  *
- * Renders an evolving particle/fragment system behind the page content.
- * Uses mix-blend-mode: screen so bright elements add light to the
- * existing design without obscuring it.
+ * Renders an evolving starfield behind the page content. Uses
+ * mix-blend-mode: screen so bright elements add light to the existing
+ * design without obscuring it.
  *
  * Emotional arc (driven by scroll progress):
- *   0–30 %  Darkness · broken floating fragments · cool blue dust
- *   30–65 % Fragments reassemble · light rays appear · organized particles
- *   65–100 % Complete structure · warm golden glow · stars/fireflies · sunrise
+ *   0–30 %  Darkness · faint dust
+ *   30–65 % Light rays appear · organized particles
+ *   65–100 % Complete structure · white glow · stars/fireflies · sunrise
  */
 (function () {
   "use strict";
@@ -28,13 +28,11 @@
   var time = 0;
   var lastTime = performance.now();
   var particles = [];
-  var fragments = [];
   var waves = [];
 
   // Adaptive quality
   var isMobile = window.innerWidth < 768;
   var P_COUNT = isMobile ? 250 : 700;
-  var F_COUNT = isMobile ? 8 : 22;
 
   /* ─── Resize ─── */
   function resize() {
@@ -47,7 +45,7 @@
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
   }
 
-  /* ─── Create particles ─── */
+  /* ─── Create particles (stars) ─── */
   function createParticles() {
     particles = [];
     for (var i = 0; i < P_COUNT; i++) {
@@ -63,27 +61,6 @@
         bright: Math.random() * 0.5 + 0.25,
         dx: (Math.random() - 0.5) * 0.0004,
         dy: (Math.random() - 0.5) * 0.0004,
-      });
-    }
-  }
-
-  /* ─── Create fragments ─── */
-  function createFragments() {
-    fragments = [];
-    for (var i = 0; i < F_COUNT; i++) {
-      var a = (i / F_COUNT) * Math.PI * 2 + Math.random() * 0.4;
-      var d = Math.random() * 0.22 + 0.14;
-      fragments.push({
-        x: 0.5 + Math.cos(a) * d,
-        y: 0.5 + Math.sin(a) * d,
-        tx: 0.5 + Math.cos(a) * d * 0.35,
-        ty: 0.5 + Math.sin(a) * d * 0.35,
-        rot: Math.random() * Math.PI * 2,
-        rv: (Math.random() - 0.5) * 0.004,
-        sz: Math.random() * 45 + 12,
-        sides: Math.floor(Math.random() * 3) + 3,
-        op: Math.random() * 0.18 + 0.04,
-        heal: 0,
       });
     }
   }
@@ -123,83 +100,7 @@
     });
   }
 
-  /* ─── Draw fragments ─── */
-  function drawFragments(p) {
-    for (var i = 0; i < fragments.length; i++) {
-      var f = fragments[i];
-
-      // Heal progress
-      if (p > 0.25) f.heal = Math.min((p - 0.25) / 0.45, 1);
-      var h = f.heal;
-
-      // Interpolate position
-      var cx = f.x + (f.tx - f.x) * h;
-      var cy = f.y + (f.ty - f.y) * h;
-
-      // Parallax
-      var px = (smX - 0.5) * 28 * (1 - h * 0.4);
-      var py = (smY - 0.5) * 18 * (1 - h * 0.4);
-
-      var sx = cx * W + px;
-      var sy = cy * H + py;
-
-      f.rot += f.rv * (1 - h * 0.85);
-
-      ctx.save();
-      ctx.translate(sx, sy);
-      ctx.rotate(f.rot);
-
-      var sz = f.sz * (0.75 + h * 0.45);
-      var al = f.op + h * 0.12;
-
-      // Draw shape
-      ctx.beginPath();
-      for (var j = 0; j < f.sides; j++) {
-        var a = (j / f.sides) * Math.PI * 2;
-        var w =
-          0.8 +
-          (1 - h) * Math.sin(a * 3 + time * 0.8) * 0.18 +
-          h * 0.05;
-        var ppx = Math.cos(a) * sz * w;
-        var ppy = Math.sin(a) * sz * w * 0.65;
-        j === 0 ? ctx.moveTo(ppx, ppy) : ctx.lineTo(ppx, ppy);
-      }
-      ctx.closePath();
-
-      ctx.fillStyle = "rgba(201,168,76," + al * 0.25 + ")";
-      ctx.fill();
-      ctx.strokeStyle = "rgba(201,168,76," + al + ")";
-      ctx.lineWidth = 0.8;
-      ctx.stroke();
-
-      // Cracks (fade when healed)
-      if (h < 1) {
-        ctx.strokeStyle = "rgba(201,168,76," + 0.25 * (1 - h) + ")";
-        ctx.lineWidth = 0.5;
-        ctx.beginPath();
-        ctx.moveTo(-sz * 0.3, -sz * 0.15);
-        ctx.lineTo(sz * 0.05, sz * 0.1);
-        ctx.lineTo(sz * 0.25, sz * 0.25);
-        ctx.stroke();
-      }
-
-      // Healed glow
-      if (h > 0.4) {
-        var ga = (h - 0.4) * 0.35;
-        var g = ctx.createRadialGradient(0, 0, 0, 0, 0, sz * 1.4);
-        g.addColorStop(0, "rgba(201,168,76," + ga + ")");
-        g.addColorStop(1, "rgba(201,168,76,0)");
-        ctx.fillStyle = g;
-        ctx.beginPath();
-        ctx.arc(0, 0, sz * 1.4, 0, Math.PI * 2);
-        ctx.fill();
-      }
-
-      ctx.restore();
-    }
-  }
-
-  /* ─── Draw particles ─── */
+  /* ─── Draw particles (stars) ─── */
   function drawParticles(p) {
     for (var i = 0; i < particles.length; i++) {
       var pt = particles[i];
@@ -227,12 +128,14 @@
       // Evolution based on scroll
       var sz, al, glow;
       if (p < 0.35) {
-        // Dust phase — cool, small
-        sz = pt.size * 0.7;
-        al = pt.bright * 0.2;
-        glow = 0;
+        // Starfield — clearly visible from the very top of the page
+        sz = pt.size * 0.95;
+        al = pt.bright * 0.55;
+        glow = 1.2;
+        var twinkle = Math.sin(time * 1.4 + pt.phase) * 0.25 + 0.75;
+        al *= twinkle;
       } else if (p < 0.65) {
-        // Organising — slightly bigger, warmer
+        // Organising — slightly bigger, brighter
         var t = (p - 0.35) / 0.3;
         sz = pt.size * (0.7 + t * 0.5);
         al = pt.bright * (0.2 + t * 0.35);
@@ -248,29 +151,17 @@
         al *= pulse;
       }
 
-      // Color shifts: cool blue → warm gold
-      var cr, cg, cb;
-      if (p < 0.4) {
-        cr = Math.floor(100 + p * 250);
-        cg = Math.floor(110 + p * 150);
-        cb = Math.floor(160 - p * 200);
-      } else {
-        cr = 201;
-        cg = 168;
-        cb = 76;
-      }
-
       // Draw dot
       ctx.beginPath();
       ctx.arc(sx, sy, Math.max(0.3, sz), 0, Math.PI * 2);
-      ctx.fillStyle = "rgba(" + cr + "," + cg + "," + cb + "," + al + ")";
+      ctx.fillStyle = "rgba(255,255,255," + al + ")";
       ctx.fill();
 
       // Glow
       if (glow > 0) {
         var g = ctx.createRadialGradient(sx, sy, 0, sx, sy, glow + sz);
-        g.addColorStop(0, "rgba(201,168,76," + al * 0.25 + ")");
-        g.addColorStop(1, "rgba(201,168,76,0)");
+        g.addColorStop(0, "rgba(255,255,255," + al * 0.25 + ")");
+        g.addColorStop(1, "rgba(255,255,255,0)");
         ctx.fillStyle = g;
         ctx.beginPath();
         ctx.arc(sx, sy, glow + sz, 0, Math.PI * 2);
@@ -297,9 +188,9 @@
       ctx.rotate(a);
 
       var g = ctx.createLinearGradient(0, 0, 0, len);
-      g.addColorStop(0, "rgba(201,168,76," + al * 0.14 + ")");
-      g.addColorStop(0.5, "rgba(201,168,76," + al * 0.04 + ")");
-      g.addColorStop(1, "rgba(201,168,76,0)");
+      g.addColorStop(0, "rgba(255,255,255," + al * 0.14 + ")");
+      g.addColorStop(0.5, "rgba(255,255,255," + al * 0.04 + ")");
+      g.addColorStop(1, "rgba(255,255,255,0)");
 
       ctx.fillStyle = g;
       ctx.beginPath();
@@ -317,19 +208,19 @@
   function drawHorizonGlow(p) {
     var ga = (p - 0.65) / 0.35;
 
-    // Bottom warm glow
+    // Bottom glow
     var hg = ctx.createLinearGradient(0, H, 0, H * 0.45);
-    hg.addColorStop(0, "rgba(232,213,158," + ga * 0.22 + ")");
-    hg.addColorStop(0.5, "rgba(201,168,76," + ga * 0.06 + ")");
-    hg.addColorStop(1, "rgba(201,168,76,0)");
+    hg.addColorStop(0, "rgba(255,255,255," + ga * 0.22 + ")");
+    hg.addColorStop(0.5, "rgba(255,255,255," + ga * 0.06 + ")");
+    hg.addColorStop(1, "rgba(255,255,255,0)");
     ctx.fillStyle = hg;
     ctx.fillRect(0, H * 0.45, W, H * 0.55);
 
     // Sunrise radial
     var sg = ctx.createRadialGradient(W * 0.5, H * 1.15, 0, W * 0.5, H * 1.15, W * 0.65);
-    sg.addColorStop(0, "rgba(232,213,158," + ga * 0.35 + ")");
-    sg.addColorStop(0.4, "rgba(201,168,76," + ga * 0.12 + ")");
-    sg.addColorStop(1, "rgba(201,168,76,0)");
+    sg.addColorStop(0, "rgba(255,255,255," + ga * 0.35 + ")");
+    sg.addColorStop(0.4, "rgba(255,255,255," + ga * 0.12 + ")");
+    sg.addColorStop(1, "rgba(255,255,255,0)");
     ctx.fillStyle = sg;
     ctx.fillRect(0, 0, W, H);
 
@@ -341,7 +232,7 @@
       var rR = rAge * W * 0.4;
       ctx.beginPath();
       ctx.arc(W * 0.5, H * 0.85, Math.max(1, rR), 0, Math.PI * 2);
-      ctx.strokeStyle = "rgba(201,168,76," + rAl + ")";
+      ctx.strokeStyle = "rgba(255,255,255," + rAl + ")";
       ctx.lineWidth = 1.5;
       ctx.stroke();
     }
@@ -362,7 +253,7 @@
 
       ctx.beginPath();
       ctx.arc(w.x * W, w.y * H, Math.max(1, r), 0, Math.PI * 2);
-      ctx.strokeStyle = "rgba(201,168,76," + al + ")";
+      ctx.strokeStyle = "rgba(255,255,255," + al + ")";
       ctx.lineWidth = 1.5;
       ctx.stroke();
 
@@ -370,7 +261,7 @@
       if (prog < 0.6) {
         ctx.beginPath();
         ctx.arc(w.x * W, w.y * H, Math.max(1, r * 0.5), 0, Math.PI * 2);
-        ctx.strokeStyle = "rgba(232,213,158," + al * 0.5 + ")";
+        ctx.strokeStyle = "rgba(255,255,255," + al * 0.5 + ")";
         ctx.lineWidth = 1;
         ctx.stroke();
       }
@@ -411,19 +302,18 @@
     // Subtle atmospheric gradient following cursor
     var bgA = 0.025 + p * 0.04;
     var bg = ctx.createRadialGradient(W * smX, H * smY, 0, W * smX, H * smY, W * 0.75);
-    bg.addColorStop(0, "rgba(201,168,76," + bgA + ")");
-    bg.addColorStop(1, "rgba(201,168,76,0)");
+    bg.addColorStop(0, "rgba(255,255,255," + bgA + ")");
+    bg.addColorStop(1, "rgba(255,255,255,0)");
     ctx.fillStyle = bg;
     ctx.fillRect(0, 0, W, H);
 
     // Fog at beginning
     if (p < 0.4) {
       var fogA = 0.04 * (1 - p / 0.4);
-      ctx.fillStyle = "rgba(28,26,46," + fogA + ")";
+      ctx.fillStyle = "rgba(10,10,10," + fogA + ")";
       ctx.fillRect(0, 0, W, H);
     }
 
-    drawFragments(p);
     drawParticles(p);
 
     if (p > 0.25) drawLightRays(p);
@@ -436,7 +326,6 @@
   /* ─── Init ─── */
   resize();
   createParticles();
-  createFragments();
   bindEvents();
   requestAnimationFrame(animate);
 })();
