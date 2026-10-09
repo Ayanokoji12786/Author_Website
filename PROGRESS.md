@@ -131,17 +131,22 @@ The user explicitly authorized committing and pushing verified changes to the
 existing GitHub repository. Original HEAD and remote main at inspection:
 `bd0357b7010447227c1c1f93afb3f65215c9b360`.
 
-Commit/push is the next action after the final production test run passes.
-Target: `origin`, `HEAD:main`, ordinary push only. Never force-push. If the remote
-has advanced, inspect and integrate its changes without discarding user work.
-Record the actual push result here after the operation, including any access denial.
+Implementation commit `f102109ede36e5937f9a764243deb74c52ebb355` was successfully
+pushed to `origin` as `HEAD:main`. A subsequent read-only `git ls-remote` confirmed
+that remote main exactly matched the implementation commit. This documentation
+update records the verified outcome. Use `git log -1` for the latest handoff commit.
+
+Future updates must use ordinary pushes, never force-push. If remote main advances,
+inspect and integrate its changes without discarding user work. No manual Netlify
+deployment or live-site verification was performed; a configured Git deployment
+may run as a normal consequence of the authorized push.
 
 ## Exact next steps for resumption
 
 1. Read this file and `docs/REDESIGN_BRIEF.md`; inspect `git status` and `git log -1`.
-2. Confirm final production browser test result and Git push status; finish those
-   only if still outstanding. Use the commands in README; no new implementation
-   is needed for the already verified features.
+2. Production browser validation and the implementation push are complete. Compare
+   local HEAD with remote main before making new changes; inspect any divergence.
+   Use the commands in README. Do not redo or replace already verified features.
 3. Retry live website/cover access only after a meaningful network configuration
    change, or use genuinely supplied local source assets and manuscript text.
 4. Complete the content replacements above when real materials become available;
