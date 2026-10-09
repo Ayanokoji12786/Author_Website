@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://still-standing-still-here.netlify.app/sitemap.xml
