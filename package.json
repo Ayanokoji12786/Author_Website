@@ -4,27 +4,33 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "next build",
-    "build:site-css": "tailwindcss -c tailwind.site.config.cjs -i site-tailwind.input.css -o site-tailwind.css --minify",
+    "build": "npm run build:static && next build",
     "start": "next start",
-    "lint": "next lint"
+    "build:static": "node scripts/export-static.cjs",
+    "typecheck": "tsc --noEmit",
+    "test:e2e": "npm run build:static && playwright test"
   },
   "dependencies": {
     "clsx": "^2.1.1",
     "framer-motion": "^11.11.17",
     "lucide-react": "^0.454.0",
-    "next": "^14.2.35",
+    "next": "^16.4.0",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "tailwind-merge": "^3.6.0"
   },
   "devDependencies": {
+    "@axe-core/playwright": "^4.13.0",
+    "@playwright/test": "^1.64.0",
     "@types/node": "^20.16.11",
     "@types/react": "^18.3.11",
     "@types/react-dom": "^18.3.1",
     "autoprefixer": "^10.4.20",
-    "postcss": "^8.4.47",
-    "tailwindcss": "^3.4.13",
+    "postcss": "^8.5.29",
+    "tailwindcss": "^4.3.3",
     "typescript": "^5.6.3"
+  },
+  "engines": {
+    "node": ">=20.9.0"
   }
 }

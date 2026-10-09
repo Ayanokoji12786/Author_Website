@@ -3,3 +3,7 @@ node_modules
 next-env.d.ts
 .DS_Store
 tsconfig.tsbuildinfo
+
+# Browser validation artifacts
+playwright-report/
+test-results/

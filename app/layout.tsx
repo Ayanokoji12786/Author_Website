@@ -1,41 +1,55 @@
 import type { Metadata } from "next";
-import { Playfair_Display, Inter, Cormorant_Garamond } from "next/font/google";
+import { book } from "../lib/book-content";
 import "./globals.css";
 
-const playfair = Playfair_Display({
-  subsets: ["latin"],
-  variable: "--font-display",
-  display: "swap",
-});
-
-const inter = Inter({
-  subsets: ["latin"],
-  variable: "--font-body",
-  display: "swap",
-});
-
-const cormorant = Cormorant_Garamond({
-  subsets: ["latin"],
-  variable: "--font-literary",
-  weight: ["400", "500", "600"],
-  style: ["normal", "italic"],
-  display: "swap",
-});
+const title = "Still Standing, Still Here — Dhruva Nerella & Tattva Nerella";
+const description =
+  "A literary companion for the climb. Discover Still Standing, Still Here by Dhruva Nerella and Tattva Nerella: its themes, chapter guide, reader voices, and where to buy the book.";
 
 export const metadata: Metadata = {
-  title: "Still Standing, Still Here — co-authored by Dhruva Nerella & Tattva Nerella",
-  description:
-    "A literary companion for anyone who has ever been broken and refused to stay broken.",
+  metadataBase: new URL("https://still-standing-still-here.netlify.app"),
+  title,
+  description,
+  alternates: { canonical: "/" },
+  icons: { icon: "/favicon.png" },
+  openGraph: {
+    type: "website",
+    title,
+    description,
+    url: "/",
+    siteName: book.title,
+    images: [{ url: book.cover, alt: `Cover of ${book.title}` }],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title,
+    description,
+    images: [book.cover],
+  },
 };
 
 export default function RootLayout({
   children,
-}: Readonly<{
-  children: React.ReactNode;
-}>) {
+}: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="en" className={`${playfair.variable} ${inter.variable} ${cormorant.variable}`}>
-      <body className="font-body antialiased">{children}</body>
+    <html lang="en">
+      <body>
+        {children}
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              "@context": "https://schema.org",
+              "@type": "Book",
+              name: book.title,
+              author: book.authors.map((name) => ({ "@type": "Person", name })),
+              isbn: book.isbn,
+              image: book.cover,
+              url: "https://still-standing-still-here.netlify.app/",
+            }).replace(/</g, "\\u003c"),
+          }}
+        />
+      </body>
     </html>
   );
 }
