@@ -65,8 +65,20 @@ next section. Implementation and feature validation are complete; do not restart
 
 Static regeneration is byte-for-byte repeatable (SHA-256
 `3de4a643dda1aadd08ae6d4c68d0b8883230b915e0dc7b08bb881445a457cb70`).
-Exact remaining actions: commit/push verified changes, check the resulting live
-deployment and record the Git handoff.
+Implementation commit `99dadb63d9bc220c287679b1ad6cca6742a01045` was pushed to
+`origin main`; an independent `git ls-remote` matched it exactly. The checkout was
+clean afterward. The first post-push probe returned the old deployment; a subsequent
+probe confirmed the new deployment. Live homepage, journey JS, interaction JS,
+CSS and original JPEG each returned HTTP 200 and matched the verified local files
+byte-for-byte. The new experience is live at the existing Netlify URL.
+The live Chromium smoke check initially could not navigate in the default
+sandbox (`net::ERR_CERT_AUTHORITY_INVALID`), while system Python/curl validated
+TLS. Checked the platform's existing CA and certificate store, then ran the tests
+in the supported elevated context with its matching trust configuration. **All
+10 live desktop/mobile checks passed**: genuine-cover loader, flat flight/heading
+depth/reversal, all seven readable pages and controls, metadata/links, local assets,
+runtime exceptions and overflow. Certificate verification stayed enabled. The
+initial failures stopped at navigation and were an environment trust mismatch.
 Previous verified redesign work below remains intact. No recurring scheduler exists.
 
 ## Completed work
@@ -202,10 +214,12 @@ records that completed handoff; use `git log -1` for the latest commit.
    approved genuine excerpts; never invent page text or claim these are book pages.
 3. **Authors:** no portraits or approved biographies were supplied. Editorial
    monograms and existing factual introduction are used. Add genuine assets only.
-4. **Live verification:** Netlify access now succeeds. The deployed page was
-   retrieved before this increment's push and matched the previous implementation.
-   Verify the new deployment after pushing before claiming it is live. No retailer
-   availability check or exhaustive deployed audit is claimed. The original screenshot's Git LFS
+4. **Live verification:** the book-journey deployment is confirmed. Homepage,
+   both shared scripts, CSS and actual cover match the verified local files exactly.
+   All 10 live desktop/mobile smoke checks passed in the context with matching
+   platform certificate trust. Use that supported context for future live checks;
+   retain HTTPS verification.
+   No retailer availability check or exhaustive deployed audit is claimed. The original screenshot's Git LFS
    object returns 404 from its server and is not used.
 5. React 18 remains supported by Next.js 16 but emits a deprecation notice for a
    future Next.js 17 migration. It has no reported audit advisory here; React 19
@@ -220,6 +234,15 @@ Package-manager presets remain unchanged. Draft saving does not itself apply run
 network changes or publish the environment. No secrets are required. The current
 runtime can now retrieve the publisher cover and the live website; the original
 access blocker has been resolved.
+
+For the current book-journey increment, read the existing draft and saved an updated
+`start_skill` with the current local-cover implementation, continuation docs, test
+scope and trusted live-browser context. Preserved installation instructions,
+repositories, unrestricted network policy and all other settings. The tool
+confirmed `status: saved` and `requires_publish: true`. Review and save the draft
+in environment settings, then publish the environment to activate these instructions
+for future tasks. Draft persistence is confirmed; a new environment restoration is
+not claimed. Current-instance development and deployed-site validation are complete.
 
 ## Scheduling / credit limits / overlap
 
@@ -253,21 +276,26 @@ committing. Verified implementation commit
 read-only remote verification matched it exactly. No force push was used. The
 current documentation followup preserves these results for future sessions.
 
+Latest book-journey increment: verified implementation commit
+`99dadb63d9bc220c287679b1ad6cca6742a01045` was pushed to `origin main` and checked
+independently with `git ls-remote`. The user's README link and all earlier work
+were preserved. No force push or manual Netlify deployment was used.
+
 Future updates must use ordinary pushes, never force-push. If remote main advances,
-inspect and integrate its changes without discarding user work. No manual Netlify
-deployment or live-site verification was performed; a configured Git deployment
-may run as a normal consequence of the authorized push.
+inspect and integrate its changes without discarding user work. A configured Git
+deployment may run as a normal consequence of the authorized push; always verify
+the actual served version before claiming a change is live.
 
 ## Exact next steps for resumption
 
 1. Read this file and `docs/REDESIGN_BRIEF.md`; inspect `git status` and `git log -1`.
-2. The latest 3-D implementation, validation and push are complete. Compare local
+2. The latest book-journey implementation, validation and push are complete. Compare local
    HEAD with remote main and inspect any divergence before new edits. Continue a
    new user request or the genuinely blocked content items below; do not redo or
    replace verified features. Commands are in `docs/DEVELOPMENT.md`.
-3. The publisher cover is now verified and bundled locally. Preserve it; do not
-   redo the cover acquisition. Check the current deployment before claiming it
-   contains any newly pushed implementation.
+3. The publisher cover is verified and bundled locally; preserve it. The existing
+   Netlify site serves this implementation and passed 10 live smoke checks. Check
+   served assets after future pushes rather than assuming a Git push deployed them.
 4. Complete the content replacements above when real materials become available;
    run `npm run build:static`, `npm run build`, `npm run typecheck`, then affected
    Playwright checks against static and production entry points.
