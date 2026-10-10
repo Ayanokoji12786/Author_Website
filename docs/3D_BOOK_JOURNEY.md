@@ -29,6 +29,10 @@ book transforms and physical paper coordinates. They are not fullscreen sections
 replacing the book. Original nodes move into the scene, retaining their event
 listeners, and marker comments restore them to their original document parents.
 Inactive and transitional cards are inert. Content is interactive at reading stops.
+A half-pixel entry tolerance reconciles fractional layout coordinates with native
+scroll rounding, so the initialized scene is visible at an exact section anchor.
+Presentation smoothing never delays scene visibility after native scrolling
+crosses the hero boundary, or keeps the scene over the hero on return.
 
 ## Coordinates and choreography
 
@@ -87,12 +91,15 @@ The renderer runs on invalidation, rather than a perpetual frame loop. A bounded
 time-independent presentation filter smooths small wheel/touch steps, settles
 within 450 ms and then stops. Anchor commands and large jumps snap to the intended
 chapter. Settled poses remain exactly reproducible in either direction. Resize
-preserves entrance/travel/exit progress; page disclosure changes do not reset an
+preserves entrance/travel/exit progress unless newer navigation has superseded
+the previous presentation; page disclosure changes do not reset an
 unchanged drawing buffer. Only the current chapter updates its geometry/DOM;
 dormant cards are deactivated once. Camera paths retain velocity across stops.
 
 The genuine cover is decoded before allocating the scene. Texture upload and
-shader warmup complete before `data-world-status="ready"`; loader progress includes
+shader warmup and the first GPU draws complete before `data-world-status="ready"`.
+A bounded WebGL2 fence checks completion without blocking the JavaScript thread;
+failed or stalled graphics still fall back to the document. Loader progress includes
 that readiness where Book view is enabled. An eight-second initialization limit
 preserves the normal document if resources stall. Failures release partially
 constructed renderers as well as complete worlds. A lost context restores Reading

@@ -33,7 +33,10 @@ python3 -m http.server 4173
 ```
 
 Do not run development and production builds against the same build directory at
-the same time. Stop the development server before building and starting production.
+the same time. Stop the actual Next server before rebuilding. In cloud tools,
+ending an npm wrapper session can leave its child alive: inspect the listening
+port/process, stop only the server you started, and confirm the port is empty.
+Start the freshly built server again before production verification.
 
 ## Where to edit
 
@@ -189,7 +192,7 @@ closed cloud session or after a credit reset.
 
 The refinement suite adds first-paint/delayed-script checks, a fail-open deadline,
 actual purchase pixel snapshots, direct hash/reload/history navigation, late scene
-initialization, logical resize preservation and real Web Audio lifecycle checks.
+initialization, logical resize preservation, fractional entry boundaries and real Web Audio lifecycle checks.
 `node scripts/measure-book.cjs` provides repeatable scroll/render diagnostics; see
 `3D_BOOK_JOURNEY.md` for measured software-GPU results and limits. Retailer navigation
 checks verify the browser opens the original Amazon destination; availability of

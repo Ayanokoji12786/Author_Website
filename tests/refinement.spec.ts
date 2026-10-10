@@ -150,6 +150,30 @@ test("resizing preserves the chapter, camera progress and functioning purchase c
   }
 });
 
+test("a resize delivered after new scrolling cannot restore the previous chapter", async ({
+  page,
+}) => {
+  await page.goto("/#buy");
+  await ready(page);
+  await buyVisible(page);
+  const requested = await page.evaluate(() => {
+    const section = document.getElementById("inside")!;
+    const target =
+      section.getBoundingClientRect().top +
+      scrollY +
+      Number(section.dataset.readerEntrance) * 0.58;
+    scrollTo({ top: target, behavior: "instant" });
+    // Deliver resize before the scroll presentation frame, as browsers may
+    // do while the viewport and a rapid reverse navigation change together.
+    dispatchEvent(new Event("resize"));
+    return Math.round(target);
+  });
+  await expect(page.locator("#inside")).toHaveClass(/is-current/);
+  await expect(root(page)).toHaveAttribute("data-reader-settled", "true");
+  expect(await page.evaluate(() => scrollY)).toBeCloseTo(requested, 0);
+  await expect(root(page)).toHaveAttribute("data-book-rotation", "90.00000");
+});
+
 test("original heartbeat and wind start with consent, reuse one context, mute and clean up", async ({
   page,
 }) => {
@@ -225,4 +249,33 @@ test("a delayed original cover cannot create a blank ready book or lose purchase
   await ready(page);
   await buyVisible(page);
   expect(errors).toEqual([]);
+});
+
+test("fractional layout boundaries cannot hide the initialized book at first entry", async ({
+  page,
+}) => {
+  await page.goto("/");
+  await ready(page);
+  for (const fraction of [0.2, 0.4, 0.8]) {
+    await page.evaluate((fraction) => {
+      (document.querySelector("#hero") as HTMLElement).style.height =
+        innerHeight + fraction + "px";
+      dispatchEvent(new Event("resize"));
+    }, fraction);
+    await page.evaluate(
+      () =>
+        new Promise<void>((resolve) =>
+          requestAnimationFrame(() => requestAnimationFrame(() => resolve())),
+        ),
+    );
+    await page.locator("#inside").evaluate((element) => {
+      scrollTo({
+        top: element.getBoundingClientRect().top + scrollY,
+        behavior: "instant",
+      });
+    });
+    await expect(page.locator("#inside")).toHaveClass(/is-current/);
+    await expect(page.locator("[data-reader-stage]")).toBeVisible();
+    await expect(root(page)).toHaveAttribute("data-book-rotation", "0.00000");
+  }
 });

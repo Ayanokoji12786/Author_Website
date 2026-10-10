@@ -10,7 +10,7 @@ from scratch. The original full requirements are preserved in
 and the standalone Netlify page. Remaining limitations are listed below; genuine
 manuscript content and unavailable photography have not been fabricated.
 
-## Current increment: reliability and cinematic polish (in progress)
+## Current increment: reliability and cinematic polish (deployed; final entry/resize corrections in verification)
 
 The user supplied `docs/REFINEMENT_BRIEF.md`; it refines the deployed experience,
 not a rebuild. Preserve all existing content, hero, genuine cover, mountain and
@@ -64,8 +64,45 @@ recurring task exists. Resume from this file and the current Git diff.
 - Existing cloud installation/start instructions remain applicable; no environment
   configuration fields changed during this refinement.
 
-Exact next steps: commit and push this verified refinement, compare served Netlify
-files, then run live browser smoke checks and record the served version.
+- Implementation commit `31e014db69ea12fb8ec2c780ef4d85e59f6817dd` was pushed
+  to `origin main`; independent `git ls-remote` matches it exactly. Netlify's
+  homepage and seven checked implementation assets each return HTTP 200 and
+  match the verified local files byte-for-byte (including original JPEG and
+  generated renderer/controller chunks). The code is deployed.
+- A default sandbox Chromium HTTPS probe failed at certificate trust, while
+  Python verified TLS and served files. The supported elevated browser context
+  returned HTTP 200 using the existing certificate store; certificate
+  verification remains enabled. Live smoke run: 17 passed, one initial-entry
+  check failed; its focused rerun passed. Investigating that entry uncovered a
+  separate, reproducible fractional-boundary bug: a section at 1000.390625 px
+  and a native rounded scroll position of 1000 px hid the initialized book.
+  Added a half-pixel boundary tolerance and three fractional-layout regression
+  cases. All eight affected static desktop/mobile boundary/rotation/resize
+  checks pass. Stopped an orphaned npm/Next server child that survived the first
+  shutdown command, rebuilt with port 4175 confirmed empty, and started a fresh
+  direct Next process. Its full 80-case run passed 75 / skipped 3 / failed 2
+  desktop initial-scroll checks; the fractional regression itself passed. These
+  remaining intermittent cold-entry failures are still under investigation.
+  CPU render submission was being treated as readiness before queued GPU draws
+  completed. Added a bounded WebGL2 completion fence before world readiness;
+  readiness now awaits that fence. Presentation smoothing also clamps at the
+  hero/book boundary, so it cannot expose an empty spacer before the book appears.
+- Repeated targeted standalone run after the readiness fixes: 18 book-entry,
+  retraction and rapid-resize checks passed; six purchase-resize checks exposed
+  native scroll anchoring being mistaken for new navigation. Refined preservation
+  to compare chapter-relative coordinates, which accounts for hero height changes
+  while rejecting stale navigation. All six affected desktop/mobile checks now
+  pass, including a deterministic late-resize regression. Initial entry,
+  retraction and rapid scrolling each passed three times on both platforms.
+- The final production rebuild, typecheck and whitespace checks pass. The fresh
+  full production run of **82 cases passed 79 checks with 3 intentional platform
+  skips and no failures**. Browser failure attachments now include requested
+  versus actual native scroll and chapter coordinates for reproducible diagnosis.
+
+Exact next steps: push the verified correction, compare Netlify files and rerun
+the complete live smoke subset. Full production evidence is in
+`/tmp/refinement-production-final2.log` and `/tmp/refinement-production-final2`.
+Preserve the current implementation.
 The promised reference screenshot has not been supplied; use real browser renders
 until it arrives. Desktop/mobile device hardware FPS is not a measured guarantee.
 

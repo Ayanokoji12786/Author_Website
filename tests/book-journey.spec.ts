@@ -39,7 +39,7 @@ async function travel(
     | "turn",
   station = 0,
 ) {
-  await page.locator("#" + id).evaluate(
+  const requested = await page.locator("#" + id).evaluate(
     (el, args) => {
       const node = el as HTMLElement;
       const e = +node.dataset.readerEntrance!,
@@ -54,14 +54,37 @@ async function travel(
           : args.phase === "read"
             ? e + h * (count > 1 ? args.station / (count - 1) : 0.2) + 1
             : e + h + x * exit[args.phase as keyof typeof exit];
+      const target = el.getBoundingClientRect().top + scrollY + d;
       scrollTo({
-        top: el.getBoundingClientRect().top + scrollY + d,
+        top: target,
         behavior: "instant",
       });
+      return { target, nativeY: scrollY };
     },
     { phase, station },
   );
-  await expect(page.locator("#" + id)).toHaveClass(/is-current/);
+  try {
+    await expect(page.locator("#" + id)).toHaveClass(/is-current/);
+  } catch (error) {
+    const state = await page.evaluate(() => ({
+      nativeY: scrollY,
+      viewport: [innerWidth, innerHeight],
+      root: { ...document.getElementById("literary-experience")!.dataset },
+      chapters: [
+        ...document.querySelectorAll<HTMLElement>(".reader-scene"),
+      ].map((chapter) => ({
+        id: chapter.id,
+        classes: chapter.className,
+        top: chapter.getBoundingClientRect().top + scrollY,
+        ...chapter.dataset,
+      })),
+    }));
+    await test.info().attach("scroll-state", {
+      body: JSON.stringify({ id, phase, station, requested, state }, null, 2),
+      contentType: "application/json",
+    });
+    throw error;
+  }
   // The current chapter may already match. Wait for the scroll-triggered render,
   // rather than inspecting the previous camera pose before its animation frame.
   await page.evaluate(
