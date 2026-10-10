@@ -85,8 +85,10 @@ README. No source implementation changed during integration.
 Implementation and validation for the 3-D increment are complete. Static export
 was regenerated with the same SHA-256 before and after the final checks, confirming
 repeatability. No runtime/hydration exceptions or missing local assets were found.
-The verified changes are ready for the authorized ordinary push to `main`; the
-Git handoff below will be updated after remote verification.
+Implementation commit `254e1d93dc13106fc5f9efc954aff4d4a00144d3` was pushed
+to `origin main` with an ordinary push, and a separate `git ls-remote` confirmed
+remote main exactly matched that commit. The following documentation commit
+records that completed handoff; use `git log -1` for the latest commit.
 
 ## Validation evidence (original redesign baseline)
 
@@ -186,6 +188,12 @@ pushed to `origin` as `HEAD:main`. A subsequent read-only `git ls-remote` confir
 that remote main exactly matched the implementation commit. This documentation
 update records the verified outcome. Use `git log -1` for the latest handoff commit.
 
+Latest 3-D increment: integrated the user's remote README commit `89715d7` before
+committing. Verified implementation commit
+`254e1d93dc13106fc5f9efc954aff4d4a00144d3` was pushed successfully to `origin main`;
+read-only remote verification matched it exactly. No force push was used. The
+current documentation followup preserves these results for future sessions.
+
 Future updates must use ordinary pushes, never force-push. If remote main advances,
 inspect and integrate its changes without discarding user work. No manual Netlify
 deployment or live-site verification was performed; a configured Git deployment
@@ -194,11 +202,10 @@ may run as a normal consequence of the authorized push.
 ## Exact next steps for resumption
 
 1. Read this file and `docs/REDESIGN_BRIEF.md`; inspect `git status` and `git log -1`.
-2. The latest 3-D implementation and validation are complete. If its Git handoff
-   still says the push is pending, compare HEAD with remote main, inspect any
-   divergence and push verified changes with `git push origin HEAD:main`. Otherwise
-   continue only a new user request or the genuinely blocked content items below;
-   do not redo or replace verified features. Commands are in `docs/DEVELOPMENT.md`.
+2. The latest 3-D implementation, validation and push are complete. Compare local
+   HEAD with remote main and inspect any divergence before new edits. Continue a
+   new user request or the genuinely blocked content items below; do not redo or
+   replace verified features. Commands are in `docs/DEVELOPMENT.md`.
 3. Retry live website/cover access only after a meaningful network configuration
    change, or use genuinely supplied local source assets and manuscript text.
 4. Complete the content replacements above when real materials become available;
