@@ -10,7 +10,7 @@ from scratch. The original full requirements are preserved in
 and the standalone Netlify page. Remaining limitations are listed below; genuine
 manuscript content and unavailable photography have not been fabricated.
 
-## Current increment: genuine Three.js book world (implementation verified)
+## Current increment: genuine Three.js book world (verified and deployed)
 
 The latest user specification supersedes the previous CSS journey. The user
 confirmed: use the connected book site and preserve its content. The hero and
@@ -42,7 +42,9 @@ actual-cover loader are preserved. Do not restart this implementation.
   complete desktop/mobile rerun passed (25.0/34.8 seconds) after increasing only
   that multi-step test budget to 60 seconds. All static features have passing
   coverage. The full final production suite passed **57 checks with 3 intentional platform
-  skips**. Commit/push and live verification remain pending. Do not report these as completed yet.
+  skips**. Implementation commit `c3abc5d778821f4d9fa56ce237825fe15e765f6f` was pushed
+  to `origin main`; independent `git ls-remote` matched it exactly. The same
+  implementation is verified live at the existing Netlify URL.
 - Fixed a real final-chapter bug: max scroll ended before the return/turn.
   A trailing viewport now allows the full final cycle before the footer. Camera
   movement preserves a clear view of the first 45-degree rotation. The same book
@@ -62,6 +64,24 @@ actual-cover loader are preserved. Do not restart this implementation.
   succeeded (60 packages). The final production build/prerender and typecheck
   passed again. All six generated artifacts matched the prior recorded SHA-256
   hashes exactly after rebuilding, including HTML and split browser chunks.
+- Final generated HTML and browser bundles are byte-for-byte repeatable after
+  the short-screen adaptation as well. Current `index.html` SHA-256:
+  `e5223ca993623602a597b9c1a94566c86eafcf489ee4270f52b081451d1c7cf4`.
+- Netlify verification: homepage, journey entry, controller, shared chunk, renderer
+  chunk, CSS, interaction script and genuine cover each returned HTTP 200 and
+  matched the verified local files exactly. The first root probe saw the previous
+  deployment; the complete followup confirmed all eight current assets.
+- **All 14 live desktop/mobile smoke checks passed**: actual WebGL rotation,
+  independent camera descent/travel, content retraction, flat retreat, upright
+  curved page turn and reverse poses, all 17 content stops, genuine-cover loader,
+  working tabs/reflections/reviews/retailer links, metadata and runtime/asset/
+  overflow checks. Browser checks used the supported context with platform
+  certificate trust; HTTPS verification remained enabled.
+- All requested available-content implementation work is complete. No claim is
+  made that body text consists of individually extruded WebGL letters: accessible
+  CSS3D content sits on solid backing geometry; chapter/station text is extruded
+  geometry. Physical-device FPS and an exhaustive manual accessibility audit are
+  not measured guarantees. Missing manuscript/portrait materials remain unchanged.
 - Cloud setup instructions were updated and saved for this real geometry workflow,
   preserving install script, repositories, network and all unrelated settings.
   The tool confirmed `status: saved` and `requires_publish: true`; future setup
@@ -273,13 +293,11 @@ records that completed handoff; use `git log -1` for the latest commit.
    approved genuine excerpts; never invent page text or claim these are book pages.
 3. **Authors:** no portraits or approved biographies were supplied. Editorial
    monograms and existing factual introduction are used. Add genuine assets only.
-4. **Live verification:** the book-journey deployment is confirmed. Homepage,
-   both shared scripts, CSS and actual cover match the verified local files exactly.
-   All 10 live desktop/mobile smoke checks passed in the context with matching
-   platform certificate trust. Use that supported context for future live checks;
-   retain HTTPS verification.
-   No retailer availability check or exhaustive deployed audit is claimed. The original screenshot's Git LFS
-   object returns 404 from its server and is not used.
+4. **Live verification: resolved for the latest real 3D world.** All eight key
+   served implementation assets match local files exactly; all 14 live
+   desktop/mobile smoke checks pass. No retailer service availability check,
+   exhaustive deployed audit or physical-device FPS guarantee is claimed.
+   The original screenshot's Git LFS object remains unavailable and is unused.
 5. React 18 remains supported by Next.js 16 but emits a deprecation notice for a
    future Next.js 17 migration. It has no reported audit advisory here; React 19
    migration is optional future maintenance, not required for this verified site.
@@ -340,6 +358,12 @@ Latest book-journey increment: verified implementation commit
 independently with `git ls-remote`. The user's README link and all earlier work
 were preserved. No force push or manual Netlify deployment was used.
 
+Latest genuine Three.js increment: verified implementation commit
+`c3abc5d778821f4d9fa56ce237825fe15e765f6f` was pushed to `origin main` and checked
+independently with `git ls-remote`. Netlify serves the matching homepage and seven
+key assets, and all 14 live desktop/mobile smoke checks pass. A documentation
+followup records this handoff; use `git log -1` for the latest commit.
+
 Future updates must use ordinary pushes, never force-push. If remote main advances,
 inspect and integrate its changes without discarding user work. A configured Git
 deployment may run as a normal consequence of the authorized push; always verify
@@ -348,15 +372,20 @@ the actual served version before claiming a change is live.
 ## Exact next steps for resumption
 
 1. Read this file, `docs/3D_BOOK_JOURNEY.md`, `docs/DEVELOPMENT.md` and the original
-   brief. Inspect Git state; continue the genuine Three.js modules without redoing
-   the preserved hero or introducing fictional content.
-2. Implementation and responsive feature coverage pass in static and production.
-   Production build, typecheck, frozen install, audit and generated artifact
-   repeatability pass; do not repeat verified work without a new reason.
-3. Record actual results, verify static generation is repeatable, commit and use
-   an ordinary `HEAD:main` push only after inspecting current remote state.
-4. Verify served Netlify assets and browser behavior; document the result and
-   remaining genuine-content limitations. Preserve HTTPS certificate validation.
-5. No recurring task exists. Future resumption must inspect this file and remote
-   state. Configure scheduler concurrency only if an official scheduler becomes
-   available; do not create misleading local timers or bypass usage limits.
+   brief. Inspect `git status`, `git log -1` and remote main before new edits.
+2. The genuine Three.js implementation is complete, tested, pushed and verified
+   live. Preserve the existing hero, actual-cover loader and real content. Do not
+   restart or replace verified work. Continue only new user requests, identified
+   bugs or authentic content additions when supplied.
+3. Keep book geometry, camera, curved sheet, content anchors and scroll sampler
+   separate. Both entry points use generated browser modules; edit source and
+   regenerate with `npm run build:static`. Do not regenerate during browser runs.
+4. For future changes, run the relevant checks described in development docs.
+   Use an ordinary push and verify actual served assets; never assume deployment
+   from a successful push. No currently failing checks remain.
+5. Setup draft persistence is confirmed, but activation for future environments
+   requires Review, Save and Publish in environment settings. No fresh-environment
+   restoration or hourly execution is claimed.
+6. No recurring task exists. Resume manually from this state until an official
+   scheduler is available. Configure concurrency one/a durable shared lock if
+   scheduling becomes supported; never bypass credits or create misleading timers.
