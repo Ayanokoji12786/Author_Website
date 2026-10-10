@@ -250,6 +250,8 @@
         break;
       }
     }
+    if (root.classList.contains("is-immersive"))
+      header.dataset.tone = root.dataset.readerTone || "dark";
     if (!reduced.matches) {
       activeScenes.forEach(function (scene) {
         var bounds = scene.getBoundingClientRect();
@@ -281,7 +283,12 @@
         );
       });
       var bookBounds = bookSection.getBoundingClientRect();
-      if (!narrow.matches && bookBounds.top < height && bookBounds.bottom > 0) {
+      if (
+        !root.classList.contains("is-immersive") &&
+        !narrow.matches &&
+        bookBounds.top < height &&
+        bookBounds.bottom > 0
+      ) {
         var progress = Math.max(
           0,
           Math.min(
@@ -363,10 +370,31 @@
     try {
       returning = sessionStorage.getItem("ssh-intro-seen") === "true";
     } catch (_) {}
-    var minimum = reduced.matches ? 0 : returning ? 1400 : 2600;
+    var minimum = reduced.matches ? 0 : returning ? 1800 : 2200;
     var started = performance.now();
     var timers = [];
     var completed = 0;
+    var coverVisibleAt = 0;
+    var released = false;
+    function release() {
+      if (released) return;
+      released = true;
+      timers.forEach(clearTimeout);
+      var hadFocus = intro.contains(document.activeElement);
+      intro.hidden = true;
+      document.documentElement.classList.remove("intro-active");
+      blocked.forEach(function (el, i) {
+        el.inert = priorInert[i];
+      });
+      if (hadFocus) {
+        var target =
+          previousFocus && previousFocus !== document.body
+            ? previousFocus
+            : root.querySelector(".brand");
+        target.focus({ preventScroll: true });
+      }
+      requestUpdate();
+    }
     var tasks = [
       document.fonts ? document.fonts.ready : Promise.resolve(),
       new Promise(function (resolve) {
@@ -377,33 +405,47 @@
           image.addEventListener("error", resolve, { once: true });
         }
       }),
+      new Promise(function (resolve) {
+        var image = intro.querySelector("[data-intro-cover]");
+        var display = image.parentElement;
+        function ready() {
+          if (image.naturalWidth === 0) {
+            display.classList.add("is-missing");
+            resolve();
+            return;
+          }
+          var decoded = image.decode ? image.decode() : Promise.resolve();
+          decoded
+            .catch(function () {})
+            .then(function () {
+              if (!introFinished) {
+                coverVisibleAt = performance.now();
+                display.classList.add("is-ready");
+              }
+              resolve();
+            });
+        }
+        if (image.complete) ready();
+        else {
+          image.addEventListener("load", ready, { once: true });
+          image.addEventListener("error", ready, { once: true });
+        }
+      }),
     ];
     function finish(immediate) {
-      if (introFinished) return;
+      if (introFinished) {
+        if (immediate) release();
+        return;
+      }
       introFinished = true;
       timers.forEach(clearTimeout);
       try {
         sessionStorage.setItem("ssh-intro-seen", "true");
       } catch (_) {}
-      function release() {
-        intro.hidden = true;
-        document.documentElement.classList.remove("intro-active");
-        blocked.forEach(function (el, i) {
-          el.inert = priorInert[i];
-        });
-        if (intro.contains(document.activeElement)) {
-          var target =
-            previousFocus && previousFocus !== document.body
-              ? previousFocus
-              : root.querySelector(".brand");
-          target.focus({ preventScroll: true });
-        }
-        requestUpdate();
-      }
       if (immediate || reduced.matches) release();
       else {
         intro.classList.add("is-leaving");
-        timers.push(setTimeout(release, 650));
+        timers.push(setTimeout(release, 900));
       }
     }
     intro.hidden = false;
@@ -442,7 +484,13 @@
                 function () {
                   finish(false);
                 },
-                Math.max(0, minimum - (performance.now() - started)),
+                Math.max(
+                  0,
+                  minimum - (performance.now() - started),
+                  reduced.matches || !coverVisibleAt
+                    ? 0
+                    : coverVisibleAt + 1400 - performance.now(),
+                ),
               ),
             );
           }

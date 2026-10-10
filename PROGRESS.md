@@ -1,6 +1,6 @@
 # Still Standing, Still Here — persistent progress
 
-Last updated: 10 October 2026 (Asia/Kolkata).
+Last updated: 10 October 2026 (UTC).
 
 ## Current state
 
@@ -9,6 +9,65 @@ from scratch. The original full requirements are preserved in
 `docs/REDESIGN_BRIEF.md`. Shared content and components drive both the Next.js app
 and the standalone Netlify page. Remaining limitations are listed below; genuine
 manuscript content and unavailable photography have not been fabricated.
+
+## Current increment: original-cover loader and continuous book journey
+
+The user asked to smooth the loader and show only their actual book. They then
+specified a continuous experience after the hero: the book opens, tilts flat,
+the camera flies into each website page, returns, turns a leaf, and enters the
+next section. Implementation and feature validation are complete; do not restart.
+
+- Publisher and live-site access now succeed. Retrieved and visually verified
+  the original 529×800 JPEG (75,435 bytes), showing the yellow cover, climber and
+  both authors. Copied it unchanged to `public/media/still-standing-still-here-cover.jpg`.
+  SHA-256 `0e51d7eb4160436aef4c185e428c984c45744096cc9346c6faac41848d1e8f96`
+  matches the download exactly. `book.cover` retains the publisher source URL;
+  `book.coverAsset` supplies the same-origin file for all displayed books.
+- Loading uses this artwork after decoding; removed the invented miniature.
+  Small pose changes, one gentle cover reveal, a 900 ms dissolve, and a minimum
+  display period that lets the reveal finish. Skip/Escape can interrupt the dissolve.
+  Cover failure hides the loader book, never substitutes fictional cover art.
+- Seven `JourneyPage` sections follow the unchanged hero. Shared `book-journey.js`
+  drives a persistent 3-D book, hinged actual cover, paper planes, flat camera
+  flight, page entry, content elevation, return and a 175-degree page turn.
+  Normal scroll controls the timeline in both directions; touch works too.
+- Reading view preserves document content and controls; reduced motion and no JS
+  retain the ordinary layout. Height-aware page scrolling accommodates long
+  sections, changing fonts, chapter content and expanded reader responses.
+- Added browser checks for original artwork, camera phases/reversal, all seven
+  pages, interactive contents, mode/position preservation and accessibility.
+  Original interaction checks exercise Reading view.
+- Fixed two issues found in the first browser run: the final section's inherited
+  flex layout collapsed its paper width, and Reading view's header scroll padding
+  caused the current page to be lost when switching back to Book view.
+- Fixed a contrast issue found in the full run: interpolating the fixed header's
+  text and background through opposite tones briefly made navigation unreadable.
+  Book view now changes both colors together; its shadow can still transition.
+  Both affected desktop/mobile accessibility checks pass after the correction.
+- Headings, monograms and chapter/theme numerals rise off the paper during flight
+  and settle at zero depth for reading. Browser checks measure the heading's
+  actual 3-D transform at both phases.
+- Final production build/prerender and TypeScript validation passed. Full
+  standalone suite: **49 passed, 3 intentional platform skips**. After the final
+  depth adjustment, all **14 affected immersive checks passed** on standalone.
+  Full production suite: **48 passed, 3 platform skips, 1 test timing failure**.
+  The failure sent Escape before Next.js initialized the loader after reload,
+  then sampled the book state while the overlay was still up. Added explicit
+  initialization, loader exit and font readiness waits without weakening the
+  toggle assertions; **6 production checks passed** (3 repeats per platform) and
+  both affected standalone checks passed.
+  All implemented features now have passing static and production coverage.
+- Visually inspected the original-cover loader, flat-flight/near-page stages and
+  readable sections on desktop and mobile; no runtime or horizontal-overflow
+  errors in the responsive flight checks at 320, 768 and 1024 pixels. Reading
+  view also retains the earlier document layout coverage. Automated WCAG AA
+  checks pass on selected immersed pages and the reduced-motion document.
+
+Static regeneration is byte-for-byte repeatable (SHA-256
+`3de4a643dda1aadd08ae6d4c68d0b8883230b915e0dc7b08bb881445a457cb70`).
+Exact remaining actions: commit/push verified changes, check the resulting live
+deployment and record the Git handoff.
+Previous verified redesign work below remains intact. No recurring scheduler exists.
 
 ## Completed work
 
@@ -42,7 +101,7 @@ manuscript content and unavailable photography have not been fabricated.
   with Autoprefixer; old Tailwind/animation files are retained as inactive references.
 - Repeatable npm scripts, `.node-version`, README and Playwright/axe test suite.
 
-## 3-D enhancement requested in the latest session
+## Previous 3-D enhancement (verified baseline)
 
 The user explicitly asked for stronger 3-D scroll animation and retention/enhancement
 of the loading screen. This increment is implemented in the shared markup/CSS/JS,
@@ -135,19 +194,18 @@ records that completed handoff; use `git log -1` for the latest commit.
 
 ## Outstanding content, asset, and deployment limitations
 
-1. **Original cover:** the actual cover URL is preserved and used whenever it
-   loads. The environment denies direct access to `blueroseone.com`, so its artwork
-   could not be visually checked or cached. Supply a local original front cover,
-   replace `book.cover` with its supported public path, regenerate the standalone
-   HTML and verify both entry points. Do not generate counterfeit cover artwork.
+1. **Original cover: resolved in the latest increment.** Publisher access now
+   succeeds; the genuine image is verified and bundled unchanged. Preserve its
+   provenance and the publisher source URL; do not replace it with generated art.
 2. **Genuine book preview:** no manuscript or verified sample was supplied. The
    preview explicitly presents original website reflections. Replace only with
    approved genuine excerpts; never invent page text or claim these are book pages.
 3. **Authors:** no portraits or approved biographies were supplied. Editorial
    monograms and existing factual introduction are used. Add genuine assets only.
-4. **Live verification:** direct access to the Netlify website is also denied by
-   the cloud policy. No deployed browser audit, retailer availability check, or
-   confirmed Netlify deployment is claimed. The original screenshot's Git LFS
+4. **Live verification:** Netlify access now succeeds. The deployed page was
+   retrieved before this increment's push and matched the previous implementation.
+   Verify the new deployment after pushing before claiming it is live. No retailer
+   availability check or exhaustive deployed audit is claimed. The original screenshot's Git LFS
    object returns 404 from its server and is not used.
 5. React 18 remains supported by Next.js 16 but emits a deprecation notice for a
    future Next.js 17 migration. It has no reported audit advisory here; React 19
@@ -158,9 +216,10 @@ records that completed handoff; use `git log -1` for the latest commit.
 Saved install/start instructions for the updated workflow, with fonts now local.
 Saved custom domains retain `fonts.googleapis.com` and `fonts.gstatic.com` and
 add `blueroseone.com` and `still-standing-still-here.netlify.app` for content checks.
-Package-manager presets remain unchanged. Draft saving does not apply runtime
-network changes or publish the environment; review, save and publish in environment
-settings before retrying those blocked destinations. No secrets are required.
+Package-manager presets remain unchanged. Draft saving does not itself apply runtime
+network changes or publish the environment. No secrets are required. The current
+runtime can now retrieve the publisher cover and the live website; the original
+access blocker has been resolved.
 
 ## Scheduling / credit limits / overlap
 
@@ -206,8 +265,9 @@ may run as a normal consequence of the authorized push.
    HEAD with remote main and inspect any divergence before new edits. Continue a
    new user request or the genuinely blocked content items below; do not redo or
    replace verified features. Commands are in `docs/DEVELOPMENT.md`.
-3. Retry live website/cover access only after a meaningful network configuration
-   change, or use genuinely supplied local source assets and manuscript text.
+3. The publisher cover is now verified and bundled locally. Preserve it; do not
+   redo the cover acquisition. Check the current deployment before claiming it
+   contains any newly pushed implementation.
 4. Complete the content replacements above when real materials become available;
    run `npm run build:static`, `npm run build`, `npm run typecheck`, then affected
    Playwright checks against static and production entry points.

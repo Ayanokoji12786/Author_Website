@@ -127,6 +127,35 @@ function PurchaseLinks({ dark = false }: { dark?: boolean }) {
   );
 }
 
+function JourneyPage({
+  className,
+  id,
+  tone,
+  labelledBy,
+  children,
+}: {
+  className: string;
+  id: string;
+  tone: string;
+  labelledBy: string;
+  children: React.ReactNode;
+}) {
+  return (
+    <section
+      className={`${className} reader-scene`}
+      id={id}
+      data-tone={tone}
+      aria-labelledby={labelledBy}
+    >
+      <div className="reader-viewport">
+        <div className="reader-paper">
+          <div className="reader-content">{children}</div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
 export default function LiteraryExperience({
   assetBase = "",
 }: {
@@ -156,11 +185,17 @@ export default function LiteraryExperience({
             <path d="M300 48L330 12L353 40L336 33L323 47L315 39L300 48" />
           </svg>
           <div className="intro-book">
-            <span>
-              Still Standing,
-              <br />
-              <em>Still Here.</em>
-            </span>
+            <img
+              className="intro-cover-art"
+              data-intro-cover
+              src={`${assetBase}${book.coverAsset}`}
+              width="529"
+              height="800"
+              alt=""
+              loading="eager"
+              decoding="async"
+              {...{ fetchpriority: "high" }}
+            />
           </div>
         </div>
         <div className="intro-copy">
@@ -193,6 +228,83 @@ export default function LiteraryExperience({
           Skip introduction <Arrow />
         </button>
       </div>
+      <div className="reader-stage" data-reader-stage aria-hidden="true" hidden>
+        <div className="reader-atmosphere" />
+        <div className="reader-floor-shadow" />
+        <div className="reader-world">
+          <div className="reader-back" />
+          <div className="reader-spine" />
+          <div className="reader-page-block" />
+          <div className="reader-left-page">
+            <span className="reader-imprint">
+              Still Standing,
+              <br />
+              <em>Still Here.</em>
+            </span>
+          </div>
+          <div className="reader-right-page">
+            <span className="reader-page-mark" data-reader-page-mark>
+              01
+            </span>
+          </div>
+          <div className="reader-turning-page">
+            <span />
+          </div>
+          <div className="reader-front-cover">
+            <img
+              src={`${assetBase}${book.coverAsset}`}
+              width="529"
+              height="800"
+              alt=""
+              decoding="async"
+            />
+          </div>
+        </div>
+      </div>
+      <nav
+        className="reader-interface"
+        aria-label="Book journey"
+        data-reader-interface
+        hidden
+      >
+        <div className="reader-page-navigation">
+          <button
+            type="button"
+            className="icon-button"
+            data-reader-prev
+            aria-label="Previous book page"
+          >
+            <Arrow direction="left" />
+          </button>
+          <div>
+            <span
+              className="reader-position"
+              data-reader-position
+              aria-live="polite"
+            >
+              Page 01 / 07
+            </span>
+            <span className="reader-instruction" data-reader-instruction>
+              Scroll to open the book
+            </span>
+          </div>
+          <button
+            type="button"
+            className="icon-button"
+            data-reader-next
+            aria-label="Next book page"
+          >
+            <Arrow />
+          </button>
+        </div>
+        <button
+          type="button"
+          className="reader-mode text-link"
+          data-reader-mode
+        >
+          Reading view
+        </button>
+      </nav>
       <a className="skip-link" href="#main">
         Skip to content
       </a>
@@ -268,11 +380,11 @@ export default function LiteraryExperience({
           <span className="scene-caption">01 / BEFORE THE LIGHT</span>
         </section>
 
-        <section
+        <JourneyPage
           className="book-section paper"
           id="inside"
-          data-tone="light"
-          aria-labelledby="book-heading"
+          tone="light"
+          labelledBy="book-heading"
         >
           <div className="book-layout container">
             <div className="book-stage" data-book-stage>
@@ -323,7 +435,7 @@ export default function LiteraryExperience({
                       </span>
                     </div>
                     <img
-                      src={book.cover}
+                      src={`${assetBase}${book.coverAsset}`}
                       alt=""
                       width="600"
                       height="900"
@@ -385,13 +497,13 @@ export default function LiteraryExperience({
               </a>
             </div>
           </div>
-        </section>
+        </JourneyPage>
 
-        <section
+        <JourneyPage
           className="meaning-section"
           id="themes"
-          data-tone="dark"
-          aria-labelledby="meaning-heading"
+          tone="dark"
+          labelledBy="meaning-heading"
         >
           <div className="container meaning-heading" data-reveal>
             <p className="eyebrow section-index">
@@ -426,13 +538,13 @@ export default function LiteraryExperience({
           <p className="meaning-footnote container">
             Theme descriptions preserved from the original website.
           </p>
-        </section>
+        </JourneyPage>
 
-        <section
+        <JourneyPage
           className="pages-section paper"
           id="pages"
-          data-tone="light"
-          aria-labelledby="pages-heading"
+          tone="light"
+          labelledBy="pages-heading"
         >
           <div className="container pages-layout">
             <div className="pages-intro" data-reveal>
@@ -503,13 +615,13 @@ export default function LiteraryExperience({
               </div>
             </div>
           </div>
-        </section>
+        </JourneyPage>
 
-        <section
+        <JourneyPage
           className="chapter-section"
           id="chapters"
-          data-tone="dark"
-          aria-labelledby="chapters-heading"
+          tone="dark"
+          labelledBy="chapters-heading"
         >
           <div className="container">
             <div className="chapter-header" data-reveal>
@@ -580,13 +692,13 @@ export default function LiteraryExperience({
               </a>
             </div>
           </div>
-        </section>
+        </JourneyPage>
 
-        <section
+        <JourneyPage
           className="authors-section paper"
           id="authors"
-          data-tone="light"
-          aria-labelledby="authors-heading"
+          tone="light"
+          labelledBy="authors-heading"
         >
           <div className="container authors-layout">
             <div className="author-monogram" aria-hidden="true">
@@ -618,13 +730,13 @@ export default function LiteraryExperience({
               </blockquote>
             </div>
           </div>
-        </section>
+        </JourneyPage>
 
-        <section
+        <JourneyPage
           className="reviews-section paper"
           id="voices"
-          data-tone="light"
-          aria-labelledby="reviews-heading"
+          tone="light"
+          labelledBy="reviews-heading"
         >
           <div className="container">
             <div className="reviews-header" data-reveal>
@@ -667,13 +779,13 @@ export default function LiteraryExperience({
               ))}
             </div>
           </div>
-        </section>
+        </JourneyPage>
 
-        <section
+        <JourneyPage
           className="final-section cinematic-scene"
           id="buy"
-          data-tone="dark"
-          aria-labelledby="final-heading"
+          tone="dark"
+          labelledBy="final-heading"
         >
           <Landscape assetBase={assetBase} final />
           <div className="final-content container" data-reveal>
@@ -696,7 +808,7 @@ export default function LiteraryExperience({
               Hardcover <span aria-hidden="true">·</span> ISBN {book.isbn}
             </p>
           </div>
-        </section>
+        </JourneyPage>
       </main>
       <footer className="site-footer" data-tone="dark">
         <div className="container footer-top">

@@ -6,6 +6,7 @@ export default function HomePage() {
     <>
       <LiteraryExperience />
       <Script src="/experience.js" strategy="afterInteractive" />
+      <Script src="/book-journey.js" strategy="afterInteractive" />
     </>
   );
 }

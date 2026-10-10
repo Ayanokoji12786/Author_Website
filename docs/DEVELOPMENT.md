@@ -42,7 +42,10 @@ the same time. Stop the development server before building and starting producti
   website reflections, and existing reader reviews.
 - `public/experience.css`: shared palette, locally hosted typography, responsive
   layouts, perspective hardcover, lighting and reduced-motion behavior.
-- `public/experience.js`: progressive enhancement, book hinge/cursor/scroll response,
+- `public/book-journey.js`: the seven-page book camera, entry/exit/turn timeline,
+  height-aware reading, page navigation and Reading view.
+- `public/experience.js`: progressive enhancement, loader readiness and controls,
+  book hinge/cursor/scroll response,
   preview paging, keyboard chapter tabs, tone-aware navigation, and reveal observers.
 - `public/media/`: optimized, generated mountain scene at desktop/mobile resolutions.
 - `public/fonts/`: Latin variable WOFF2 fonts and their redistribution licenses.
@@ -56,25 +59,34 @@ The obsolete `next lint` and old generated-site CSS commands have been removed.
 
 ## Interactions and accessibility
 
-The opening retains a cinematic loading screen: a heartbeat draws into a mountain
-ridge, a dimensional miniature book appears, and the title emerges. Its progress
-tracks the local hero image and fonts. Skip or Escape exits immediately; it exits
-automatically after about 3.25 seconds on a first visit with ready assets, is
-shorter on return visits in the same session, and has a maximum 4.5-second wait
-plus a 650 ms dissolve. Reduced motion removes the choreography and minimum wait.
-Focus stays inside the introduction while background content is inert. A failed
-asset or unavailable session storage cannot trap a visitor. With JavaScript off,
-the overlay is hidden and the entire website remains accessible.
+The loader reveals the verified original cover after its JPEG has decoded, with a
+small tilt and a calm 1.4-second reveal. The heartbeat and mountain ridge stay in
+the background. The title fades in together rather than jumping between phases.
+Asset progress tracks fonts, the mountain photo and the original cover. Its first
+visit minimum is 2.2 seconds; return visits use 1.8 seconds, and the cover reveal
+is allowed to finish before the 900 ms dissolve. A hard 4.5-second readiness cap
+prevents stalled assets from trapping visitors. Skip/Escape also works during the
+dissolve. Reduced motion removes the choreography and minimum wait. Focus remains
+inside while background content is inert, then returns to the site. With no JS,
+the loader is hidden. A missing cover never gets an invented loading-screen book.
 
-The photographic mountain scene now uses CSS perspective with near/far planes,
-floating mist, a scroll-driven camera dolly and rotation, and fine-pointer camera
-movement. Phones use shallower scroll depth. The desktop book is pinned through a
-230-viewport-height section: scrolling rotates and lifts it, opens its cover, and
-turns three individual leaves before exposing a labeled website reflection.
-Scrolling backward reverses the sequence. The visible phase track follows this
-progress; manual opening/closing takes precedence until the page is reloaded.
-Phones retain touch/keyboard controls and the dimensional page fan. Reading
-reflections turn into view and chapter content unfolds with perspective.
+The hero retains its photographic mountain, depth planes, mist and pointer camera.
+After the hero, **Book view is the default on desktop and mobile**. The seven
+remaining website sections are pages in a continuous book journey: the actual
+cover opens, the book tilts nearly flat, the view flies into the page, content
+rises toward the viewer, and scrolling explores the section. More scrolling pulls
+back, tilts the book again, turns a leaf and enters the next section. Scrolling
+backward reverses the choreography. Paper height and inner reading distance adapt
+to actual section content, fonts and expanded reviews. This is a presentation of
+website sections, not a claim that they are manuscript pages.
+
+The page controls can navigate forward/backward. Reading view switches back to
+the ordinary document at the current section and remembers that preference for
+the session; Book view resumes at the same section. Reduced motion automatically
+uses the ordinary layout. No-JavaScript markup uses display-contents wrappers to
+preserve that layout too. In Reading view, the original desktop perspective book
+and manual touch/keyboard opening are retained. No wheel or touch gestures are
+intercepted; the camera follows ordinary browser scroll events.
 
 Reading controls retain a consistent height. Chapter tabs support Left/Right,
 Home/End, focus management, and a scrollable mobile strip. The mobile navigation
@@ -100,11 +112,13 @@ than pretending they are genuine manuscript pages. Approved excerpts can replace
 these entries in `lib/book-content.ts` when available. Only the six chapter titles
 actually present in the original guide are displayed.
 
-The original front-cover URL is preserved. If it cannot load, a typographic
-placeholder appears inside the hardcover. During cloud validation the image host
-was blocked by the environment's network policy, so the actual artwork could not
-be visually verified or cached locally. A locally supplied original cover image
-would remove this external dependency. Do not generate replacement cover artwork.
+The original cover is now bundled locally, unchanged, at
+`public/media/still-standing-still-here-cover.jpg` (529×800, about 75 KB). Publisher
+access succeeded in the latest session and the actual yellow cover was visually
+verified. The source URL is preserved in `book.cover`; `book.coverAsset` points at
+the same-origin copy displayed by the loader, cinematic book and ordinary book.
+`public/media/README.md` records provenance and the exact SHA-256. Failed artwork
+is hidden in the loader, and the ordinary book retains its typographic fallback.
 
 No author portraits or approved biographies were available; the authors receive
 an editorial monogram treatment with the existing factual book introduction.
@@ -131,9 +145,11 @@ paging, all six chapter tabs, keyboard navigation, full reviews, responsive
 widths, reduced motion, no JavaScript, failed cover handling, local assets,
 runtime exceptions, loader readiness/timeout/focus/storage failure, reversible
 cover and leaf choreography, full spread/attribution bounds on phones and tablets,
-and automated WCAG 2.1 AA checks on the introduction and content. External cover requests are
-intentionally aborted in these deterministic tests; this does not verify the
-remote retailer or cover services.
+and automated WCAG 2.1 AA checks on the introduction and content. The local-cover failure tests deliberately abort its request; other checks load
+the real bundled image and verify its dimensions and source. The immersive suite
+checks camera phases, reverse scrolling, all seven pages and their controls, view
+switching, bounds, runtime errors, actual heading depth and accessibility. Retailer service availability
+is not verified by these local checks.
 
 Run the same suite against a running Next.js production server:
 

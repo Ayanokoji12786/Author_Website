@@ -3,8 +3,12 @@ import AxeBuilder from "@axe-core/playwright";
 import { book, chapters } from "../lib/book-content";
 
 test.beforeEach(async ({ page }) => {
-  // Deterministic external-asset failure path; the actual cover URL is preserved.
-  await page.route("https://blueroseone.com/**", (route) => route.abort());
+  // The existing document interactions remain available in Reading view.
+  await page.addInitScript(() => {
+    try {
+      sessionStorage.setItem("ssh-reader-mode", "reading");
+    } catch (_) {}
+  });
   await page.goto("/");
   await expect(page.locator("#literary-experience")).toHaveClass(/is-enhanced/);
   await page.evaluate(() => document.fonts.ready);
@@ -56,6 +60,18 @@ test("renders all eight sections, local assets, real links and metadata", async 
 test("book can open and close with mouse/touch and keyboard after image failure", async ({
   page,
 }) => {
+  await page.route("**/media/still-standing-still-here-cover.jpg", (route) =>
+    route.abort(),
+  );
+  await page.reload();
+  await expect(page.locator("#literary-experience")).toHaveClass(/is-enhanced/);
+  await expect(page.locator("#literary-experience")).toHaveAttribute(
+    "data-journey-initialized",
+    "true",
+  );
+  await page.keyboard.press("Escape");
+  await expect(page.locator("#cinematic-intro")).toBeHidden();
+  await page.evaluate(() => document.fonts.ready);
   const button = page.locator(".book-open-control");
   await button.scrollIntoViewIfNeeded();
   // Desktop scrolling can already open the book; the manual control must
@@ -382,7 +398,7 @@ test("loader has a bounded exit when a local image never responds", async ({
   await expect(page.locator("#cinematic-intro")).toBeVisible();
   await expect(page.getByRole("progressbar")).toHaveAttribute(
     "aria-valuenow",
-    "50",
+    "67",
   );
   await expect(page.locator("#cinematic-intro")).toBeHidden({ timeout: 7000 });
   expect(

@@ -7,6 +7,7 @@ export const book = {
   isbn: "9789378253126",
   cover:
     "https://blueroseone.com/store/public/uploads/all/I0V9EtdysEBI4tlk8hO7vaEWix1hKaS46HsqSpW2.jpg",
+  coverAsset: "/media/still-standing-still-here-cover.jpg",
   amazon: "https://www.amazon.in/dp/9378253121",
   flipkart:
     "https://www.flipkart.com/still-standing-here/p/itmb78596950d5b0?pid=9789378253126&lid=LSTBOK9789378253126W6VPVT&marketplace=FLIPKART&q=stillstanding+still+here+book&store=bks&srno=s_1_11&otracker=search&otracker1=search&fm=organic&iid=2be016a1-3800-412e-aeb6-76f29a6ae48b.9789378253126.SEARCH&ppt=hp&ppn=homepage&ssid=t38hk5bzjk0000001782481448399&qH=75afcde4c1e665ae&ov_redirect=true&ov_redirect=true",

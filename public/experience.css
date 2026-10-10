@@ -2244,7 +2244,7 @@ h2 em {
   }
 }
 
-/* Cinematic introduction: the original heartbeat becomes a mountain ridge. */
+/* A calm cover reveal using the original artwork, decoded before it appears. */
 html.intro-active {
   overflow: hidden;
 }
@@ -2261,107 +2261,116 @@ html.intro-active {
   background: #111718;
   overflow: hidden;
   isolation: isolate;
-  transition:
-    opacity 0.65s ease,
-    visibility 0.65s;
+  transition: opacity 0.9s cubic-bezier(0.4, 0, 0.2, 1);
 }
 .cinematic-intro[hidden] {
   display: none;
 }
 .cinematic-intro.is-leaving {
   opacity: 0;
-  visibility: hidden;
-  pointer-events: none;
 }
 .intro-atmosphere {
   position: absolute;
-  inset: -10%;
+  inset: 0;
   z-index: -1;
   background:
-    radial-gradient(ellipse at 50% 55%, #b49b5c20, transparent 55%),
-    radial-gradient(ellipse at 50% 100%, #32434266, transparent 65%);
-  animation: intro-breathe 3.2s ease-in-out both;
+    radial-gradient(ellipse at 50% 42%, #c7ab5524, transparent 48%),
+    radial-gradient(ellipse at 50% 100%, #32434255, transparent 65%);
 }
 .intro-kicker {
   position: absolute;
-  top: 9%;
+  top: 8%;
   color: #c3b797;
   font-size: 9px;
   text-align: center;
 }
 .intro-visual {
   width: min(600px, 85vw);
-  height: 180px;
+  height: clamp(225px, 34vh, 340px);
   position: relative;
-  perspective: 900px;
+  perspective: 1200px;
+  flex-shrink: 0;
 }
 .intro-pulse,
 .intro-ridge {
   position: absolute;
-  inset: 0;
   width: 100%;
-  height: 100%;
+  height: 90px;
+  left: 0;
+  bottom: 12px;
   overflow: visible;
+  pointer-events: none;
+}
+.intro-pulse {
+  opacity: 0.28;
 }
 .intro-pulse path {
   stroke: #cfb975;
-  stroke-width: 1.2;
+  stroke-width: 1;
   stroke-dasharray: 650;
   stroke-dashoffset: 650;
-  animation: intro-heartbeat 1.4s ease-out both;
+  animation: intro-heartbeat 1.8s ease-in-out both;
+}
+.intro-ridge {
+  opacity: 0.32;
 }
 .intro-ridge path {
   stroke: #c3b797;
   stroke-width: 1;
   stroke-dasharray: 850;
   stroke-dashoffset: 850;
-  animation: intro-ridge 1.4s 0.75s ease-out both;
+  animation: intro-ridge 2s 0.15s cubic-bezier(0.4, 0, 0.2, 1) both;
 }
 .intro-book {
   position: absolute;
-  left: calc(50% - 37px);
-  top: 32px;
-  width: 74px;
-  height: 108px;
-  display: grid;
-  place-items: center;
-  background: linear-gradient(115deg, #666345, #272e28);
-  border: 1px solid #baa77955;
+  left: 50%;
+  top: 50%;
+  width: clamp(140px, 22vh, 194px);
+  aspect-ratio: 529 / 800;
+  opacity: 0;
+  transform-style: preserve-3d;
+  transform: translate(-50%, -50%) rotateY(-8deg) rotateX(2deg);
   box-shadow:
-    9px 8px 0 -1px #2c2b21,
-    10px 9px 0 #a4936b;
-  transform: translateZ(50px) rotateY(-28deg) rotateX(8deg);
-  font-family: var(--serif);
-  font-size: 12px;
-  text-align: center;
-  line-height: 1.2;
-  padding: 8px;
-  animation: intro-book 2.4s 0.45s var(--ease) both;
+    4px 1px 0 #574823,
+    7px 2px 0 #cebb79,
+    12px 18px 45px #0007;
+}
+.intro-book.is-ready {
+  animation: intro-cover-arrives 1.4s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+.intro-book.is-missing {
+  visibility: hidden;
+}
+.intro-cover-art {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  border-radius: 1px;
 }
 .intro-copy {
   text-align: center;
-  margin-top: 10px;
+  margin-top: 14px;
+  animation: intro-line 1.2s ease-out both;
 }
 .intro-copy > p:first-child {
   color: #c4bcaa;
-  font-size: 12px;
+  font-size: 11px;
   letter-spacing: 0.06em;
-  margin-bottom: 20px;
-  animation: intro-line 0.9s 0.2s both;
+  margin-bottom: 14px;
 }
 #intro-title {
   font-family: var(--serif);
-  font-size: clamp(42px, 6vw, 72px);
-  line-height: 0.96;
+  font-size: clamp(36px, 5vw, 58px);
+  line-height: 0.98;
   font-weight: 400;
-  animation: intro-line 1s 1s both;
 }
 #intro-title em {
   color: #d1bc85;
 }
 .intro-readiness {
   width: min(240px, 65vw);
-  margin-top: 35px;
+  margin-top: 25px;
 }
 .intro-progress {
   height: 1px;
@@ -2373,7 +2382,7 @@ html.intro-active {
   background: #d1bc85;
   transform-origin: left;
   transform: scaleX(var(--intro-progress, 0));
-  transition: transform 0.4s;
+  transition: transform 0.8s cubic-bezier(0.4, 0, 0.2, 1);
 }
 .intro-readiness p {
   display: flex;
@@ -2385,7 +2394,7 @@ html.intro-active {
 }
 .intro-skip {
   position: absolute;
-  bottom: 8%;
+  bottom: 7%;
   color: #f7f2e8;
   border-color: #f7f2e850;
   font-size: 11px;
@@ -2401,12 +2410,12 @@ html.intro-active {
   0% {
     opacity: 0;
   }
-  15% {
-    opacity: 1;
+  25% {
+    opacity: 0.8;
   }
-  70% {
+  75% {
     stroke-dashoffset: 0;
-    opacity: 1;
+    opacity: 0.8;
   }
   100% {
     stroke-dashoffset: 0;
@@ -2418,37 +2427,24 @@ html.intro-active {
     stroke-dashoffset: 0;
   }
 }
-@keyframes intro-book {
+@keyframes intro-cover-arrives {
   from {
     opacity: 0;
-    transform: translateY(25px) translateZ(-140px) rotateY(-85deg);
-  }
-  45% {
-    opacity: 1;
+    transform: translate(-50%, calc(-50% + 12px)) rotateY(-14deg) rotateX(2deg);
   }
   to {
     opacity: 1;
-    transform: translateZ(50px) rotateY(-28deg) rotateX(8deg);
+    transform: translate(-50%, -50%) rotateY(-8deg) rotateX(2deg);
   }
 }
 @keyframes intro-line {
   from {
-    opacity: 0;
-    transform: translateY(12px);
+    opacity: 0.2;
+    transform: translateY(6px);
   }
   to {
     opacity: 1;
     transform: none;
-  }
-}
-@keyframes intro-breathe {
-  from {
-    opacity: 0.2;
-    transform: scale(0.95);
-  }
-  to {
-    opacity: 1;
-    transform: scale(1.05);
   }
 }
 
@@ -2658,7 +2654,7 @@ html.intro-active {
     transition-duration: 0.8s;
   }
   .intro-visual {
-    height: 140px;
+    height: 250px;
   }
   .intro-copy > p:first-child {
     font-size: 10px;
@@ -2679,8 +2675,8 @@ html.intro-active {
   .book-journey {
     display: none;
   }
-  .intro-book,
-  .intro-copy p {
+  .intro-book.is-ready,
+  .intro-copy {
     opacity: 1;
   }
   .intro-pulse {
@@ -2768,42 +2764,460 @@ html.intro-active {
     margin-top: 12px;
   }
 }
-/* The introduction also fits phones held sideways. */
-@media (max-height: 600px) {
+/* A shorter portrait and a horizontal composition for sideways phones. */
+@media (max-height: 740px) and (min-height: 521px) {
+  .intro-visual {
+    height: 210px;
+  }
+  .intro-book {
+    width: 128px;
+  }
+  .intro-copy {
+    margin-top: 8px;
+  }
+  #intro-title {
+    font-size: 36px;
+  }
+  .intro-readiness {
+    margin-top: 18px;
+  }
+}
+@media (max-height: 520px) {
   .cinematic-intro {
-    padding-block: 45px 75px;
+    display: grid;
+    grid-template-columns: 145px minmax(220px, 300px);
+    grid-template-rows: auto auto;
+    align-content: center;
+    justify-content: center;
+    column-gap: 35px;
+    row-gap: 20px;
+    padding: 45px 24px 65px;
   }
   .intro-kicker {
     top: 6%;
     font-size: 8px;
+    left: 0;
+    width: 100%;
   }
   .intro-visual {
-    width: min(320px, 70vw);
-    height: 90px;
+    width: 145px;
+    height: 205px;
+    grid-row: 1 / 3;
   }
   .intro-book {
-    width: 38px;
-    height: 56px;
-    left: calc(50% - 19px);
-    top: 5px;
-    padding: 4px;
-    font-size: 7px;
+    width: 118px;
+  }
+  .intro-pulse,
+  .intro-ridge {
+    width: 190px;
+    left: -22px;
+    bottom: 0;
+    height: 55px;
   }
   .intro-copy {
-    margin-top: 2px;
+    margin-top: 0;
+    align-self: end;
   }
   .intro-copy > p:first-child {
     font-size: 10px;
     margin-bottom: 10px;
   }
   #intro-title {
-    font-size: clamp(30px, 5vw, 44px);
+    font-size: 38px;
   }
   .intro-readiness {
-    margin-top: 18px;
+    margin-top: 0;
+    width: 220px;
+    justify-self: center;
+    align-self: start;
   }
   .intro-skip {
-    bottom: 5%;
+    bottom: 4%;
     font-size: 10px;
   }
+}
+@media (max-height: 520px) and (max-width: 480px) {
+  .cinematic-intro {
+    grid-template-columns: 90px minmax(175px, 220px);
+    column-gap: 18px;
+    padding-inline: 15px;
+  }
+  .intro-visual {
+    width: 90px;
+    height: 165px;
+  }
+  .intro-book {
+    width: 85px;
+  }
+  #intro-title {
+    font-size: 30px;
+  }
+  .intro-copy > p:first-child {
+    max-width: 170px;
+    margin-inline: auto;
+  }
+  .intro-readiness {
+    width: 165px;
+  }
+}
+
+/* Normal document fallback; the book camera is a progressive enhancement. */
+.reader-viewport,
+.reader-paper,
+.reader-content {
+  display: contents;
+}
+.reader-stage[hidden],
+.reader-interface[hidden] {
+  display: none;
+}
+.reader-interface {
+  position: fixed;
+  z-index: 35;
+  bottom: 18px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: min(660px, calc(100% - 36px));
+  padding: 10px 15px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 15px;
+  background: #151a19ed;
+  color: #f7f2e8;
+  border: 1px solid #ddcba32b;
+  border-radius: 4px;
+  box-shadow: 0 8px 30px #0002;
+}
+.reader-page-navigation {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+.reader-page-navigation > div {
+  min-width: 155px;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+.reader-position {
+  font-family: var(--serif);
+  font-size: 17px;
+}
+.reader-instruction {
+  color: #c9c0ac;
+  font-size: 9px;
+  letter-spacing: 0.02em;
+}
+.reader-interface .icon-button {
+  color: #f7f2e8;
+  width: 38px;
+  height: 38px;
+  min-width: 38px;
+  border-color: #c9c0ac66;
+}
+.reader-interface .reader-mode {
+  font-size: 10px;
+  color: #f7f2e8;
+}
+.reader-mode:disabled {
+  opacity: 0.6;
+  cursor: default;
+}
+.reader-stage {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+  perspective: 1500px;
+  pointer-events: none;
+  background: #141a19;
+}
+.reader-atmosphere {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(ellipse at 50% 42%, #9c835332, transparent 57%),
+    radial-gradient(ellipse at 50% 100%, #43514860, transparent 60%);
+}
+.reader-world {
+  position: absolute;
+  width: var(--reader-width, 350px);
+  aspect-ratio: 529 / 800;
+  top: 50%;
+  left: 50%;
+  transform-style: preserve-3d;
+  transform: translate3d(calc(-50% + var(--reader-shift, 0px)), -50%, 0)
+    rotateX(var(--reader-pitch, 0deg)) rotateY(var(--reader-yaw, -12deg))
+    scale(var(--reader-zoom, 1));
+  opacity: var(--reader-frame-opacity, 1);
+}
+.reader-back,
+.reader-right-page,
+.reader-front-cover,
+.reader-turning-page,
+.reader-left-page {
+  position: absolute;
+  inset: 0;
+  border-radius: 1px 4px 4px 1px;
+}
+.reader-back {
+  background: #5a4a2b;
+  transform: translateZ(-18px);
+  box-shadow: 1px 1px 0 #917a4a;
+}
+.reader-spine {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 20px;
+  height: 100%;
+  background: linear-gradient(90deg, #604b24, #c7ad64, #6b572b);
+  transform-origin: left;
+  transform: rotateY(90deg);
+}
+.reader-page-block {
+  position: absolute;
+  right: 0;
+  top: 3px;
+  width: 17px;
+  height: calc(100% - 6px);
+  background: repeating-linear-gradient(90deg, #b4a48a 0 1px, #f0e9d8 1px 3px);
+  transform-origin: right;
+  transform: rotateY(90deg);
+}
+.reader-left-page {
+  background: linear-gradient(90deg, #e3d8be, #f3ecdc 87%, #b7a991);
+  transform: translateX(-100%) translateZ(-2px);
+  opacity: var(--reader-open, 0);
+}
+.reader-imprint {
+  position: absolute;
+  top: 42%;
+  width: 100%;
+  text-align: center;
+  color: #74664c;
+  font-family: var(--serif);
+  font-size: clamp(16px, 2vw, 26px);
+  line-height: 1.2;
+}
+.reader-right-page {
+  inset: 3px;
+  transform: translateZ(-1px);
+  background: linear-gradient(90deg, #c0b197, #f7f2e8 9%, #eee4d1);
+  box-shadow: inset 0 0 0 1px #c9bea6;
+}
+.reader-page-mark {
+  position: absolute;
+  bottom: 8%;
+  left: 0;
+  width: 100%;
+  text-align: center;
+  font-size: 9px;
+  color: #7a705c;
+}
+.reader-front-cover {
+  transform-origin: left;
+  transform-style: preserve-3d;
+  transform: translateZ(2px) rotateY(var(--reader-hinge, 0deg));
+  background: #82702d;
+}
+.reader-front-cover img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  backface-visibility: hidden;
+}
+.reader-front-cover::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  transform: rotateY(180deg);
+  backface-visibility: hidden;
+  background: linear-gradient(110deg, #665431, #433b29);
+  border: 8px solid #58472b;
+}
+.reader-turning-page {
+  inset: 3px;
+  transform-origin: left;
+  transform: translateZ(1px) rotateY(var(--reader-turn, 0deg));
+  background: linear-gradient(90deg, #c6baa3, #f7f0e2 12%, #ede3ce);
+  opacity: var(--reader-turn-opacity, 0);
+  box-shadow: inset -1px 0 #bdad91;
+}
+.reader-turning-page span {
+  position: absolute;
+  inset: 15%;
+  opacity: 0.3;
+  background: repeating-linear-gradient(
+    transparent 0 14px,
+    #b1a58d 14px 15px,
+    transparent 15px 21px
+  );
+}
+.reader-floor-shadow {
+  position: absolute;
+  width: min(650px, 85vw);
+  height: 80px;
+  left: 50%;
+  top: 80%;
+  transform: translateX(-50%);
+  background: radial-gradient(ellipse, #0008, transparent 65%);
+  opacity: var(--reader-frame-opacity, 1);
+}
+.is-immersive #main {
+  position: relative;
+  z-index: 1;
+}
+.is-immersive .site-header {
+  /* Switch text and surface together as the camera crosses paper tones. */
+  transition: box-shadow 0.4s;
+}
+.is-immersive .reader-scene {
+  position: relative;
+  padding: 0;
+  min-height: var(--reader-length, 455svh);
+  background: transparent;
+  overflow: visible;
+  isolation: auto;
+}
+.is-immersive .reader-viewport {
+  display: block;
+  position: sticky;
+  top: 0;
+  height: 100svh;
+  overflow: clip;
+  perspective: 1500px;
+  pointer-events: none;
+}
+.is-immersive .reader-paper {
+  display: block;
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 50%;
+  height: var(--page-height, 100svh);
+  overflow: hidden;
+  transform-style: preserve-3d;
+  transform-origin: 50% 50%;
+  background: var(--ivory);
+  transform: translate3d(var(--page-shift, 0px), -50%, 0)
+    rotateX(var(--page-pitch, 0deg)) rotateY(var(--page-yaw, 0deg))
+    scale(var(--page-scale, 0.2));
+  opacity: var(--page-opacity, 0);
+  box-shadow:
+    inset 18px 0 40px #71634c18,
+    0 30px 100px #0003;
+}
+.is-immersive .reader-content {
+  display: block;
+  position: relative;
+  min-height: 100svh;
+  padding: 130px 0 125px;
+  isolation: isolate;
+  transform: translateY(var(--page-scroll, 0px));
+}
+.is-immersive .reader-scene:not(.is-current) .reader-paper {
+  opacity: 0;
+}
+.is-immersive .reader-scene.is-reading .reader-paper {
+  pointer-events: auto;
+}
+.is-immersive .reader-scene[data-tone="dark"] .reader-paper {
+  background: #171d1c;
+  color: #f7f2e8;
+}
+.is-immersive .reader-scene [data-reveal] {
+  opacity: 1 !important;
+  transform: none !important;
+  transition: none;
+}
+.is-immersive .reader-scene h2 {
+  transform: perspective(1200px)
+    translate3d(0, var(--page-rise, 0px), var(--page-elevation, 0px))
+    rotateX(calc(var(--page-pitch, 0deg) * -0.12));
+  transform-origin: 50% 100%;
+}
+.is-immersive #inside .book-stage {
+  display: none;
+}
+.is-immersive #inside .book-layout {
+  position: relative;
+  top: auto;
+  display: block;
+  min-height: 0;
+  max-width: 900px;
+  padding-block: 0;
+}
+.is-immersive #inside .book-introduction {
+  max-width: 780px;
+  margin-inline: auto;
+}
+.is-immersive #themes .meaning-footnote {
+  margin-top: 40px;
+}
+.is-immersive #buy .reader-content {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+.is-immersive #buy .final-content {
+  padding-block: 0;
+  position: relative;
+}
+.is-immersive .site-footer {
+  position: relative;
+  z-index: 2;
+}
+@media (max-width: 760px) {
+  .reader-interface {
+    bottom: 10px;
+    padding: 7px 9px;
+    gap: 9px;
+    width: calc(100% - 20px);
+  }
+  .reader-page-navigation {
+    gap: 9px;
+  }
+  .reader-page-navigation > div {
+    min-width: 110px;
+  }
+  .reader-position {
+    font-size: 15px;
+  }
+  .reader-instruction {
+    font-size: 8px;
+  }
+  .reader-interface .reader-mode {
+    font-size: 9px;
+  }
+  .reader-interface .icon-button {
+    width: 34px;
+    min-width: 34px;
+    height: 38px;
+  }
+  .is-immersive .reader-content {
+    padding: 110px 0 115px;
+  }
+  .is-immersive #inside .book-introduction {
+    max-width: 480px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .reader-stage {
+    display: none;
+  }
+}
+
+.is-immersive .reader-content .author-monogram,
+.is-immersive .reader-content .chapter-numeral,
+.is-immersive .reader-content .theme-number {
+  transform: perspective(1200px) translateZ(var(--page-elevation, 0px))
+    rotateY(calc(var(--page-yaw, 0deg) * -0.25));
+}
+.is-immersive .reader-scene {
+  display: block;
+}
+.is-immersive .reader-viewport {
+  width: 100%;
 }

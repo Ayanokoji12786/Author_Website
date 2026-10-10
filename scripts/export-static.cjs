@@ -65,6 +65,7 @@ const html = `<!DOCTYPE html>
 <meta name="twitter:card" content="summary_large_image" /><meta name="twitter:image" content="${escape(book.cover)}" />
 <script type="application/ld+json">${schema}</script>
 <script src="public/experience.js" defer></script>
+<script src="public/book-journey.js" defer></script>
 </head><body>${renderToStaticMarkup(React.createElement(Experience, { assetBase: "public" }))}</body></html>
 `;
 fs.writeFileSync(path.join(root, "index.html"), html);
