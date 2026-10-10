@@ -63,16 +63,24 @@ The obsolete `next lint` and old generated-site CSS commands have been removed.
 
 ## Interactions and accessibility
 
-The loader reveals the verified original cover after its JPEG has decoded, with a
-small tilt and a calm 1.4-second reveal. The heartbeat and mountain ridge stay in
-the background. The title fades in together rather than jumping between phases.
-Asset progress tracks fonts, the mountain photo and the original cover. Its first
-visit minimum is 2.2 seconds; return visits use 1.8 seconds, and the cover reveal
-is allowed to finish before the 900 ms dissolve. A hard 4.5-second readiness cap
-prevents stalled assets from trapping visitors. Skip/Escape also works during the
-dissolve. Reduced motion removes the choreography and minimum wait. Focus remains
-inside while background content is inert, then returns to the site. With no JS,
-the loader is hidden. A missing cover never gets an invented loading-screen book.
+The shared head bootstrap displays the loader before enhancement loads, and
+hides the document until the loader takes control. Early Skip/Escape works before
+the main script loads; a seven-second fail-open deadline also handles completely
+failed enhancement. Without JavaScript the normal document remains available.
+The verified original cover sits to the right of the unobstructed mountain ridge,
+with a calm 1.4-second reveal after JPEG decode. Asset progress tracks fonts, the
+mountain photo, genuine cover and (where enabled) initialized 3D resources. The
+first-visit minimum is 2.2 seconds; return visits use 1.8 seconds. A hard 4.5-second
+asset cap prevents stalls; the 900 ms dissolve remains skippable. Reduced motion
+removes choreography and the minimum wait. Background content is inert, and
+Skip/Sound share a keyboard focus loop until focus returns to the site.
+
+**Enable sound** restores the original synthesized heartbeat (58/46 Hz) and
+filtered brown wind from project history. It creates/resumes Web Audio only
+through a deliberate gesture. Mute/re-enable reuses one context; leaving the
+loader fades the ambience, clears the beat interval, stops the wind and closes
+the context. The original sound was generated audio, not a missing MP3 asset,
+and ended when the introduction finished. The same scope is preserved.
 
 The hero retains its photographic mountain, depth planes, mist and pointer camera.
 After the hero, **Book view is the default on desktop and mobile**. The seven
@@ -178,3 +186,12 @@ validation results, project state, asset limitations, and precise continuation s
 There is no configured recurring Codex task: this session did not provide an
 officially supported scheduler. Local timers cannot guarantee continuation in a
 closed cloud session or after a credit reset.
+
+The refinement suite adds first-paint/delayed-script checks, a fail-open deadline,
+actual purchase pixel snapshots, direct hash/reload/history navigation, late scene
+initialization, logical resize preservation and real Web Audio lifecycle checks.
+`node scripts/measure-book.cjs` provides repeatable scroll/render diagnostics; see
+`3D_BOOK_JOURNEY.md` for measured software-GPU results and limits. Retailer navigation
+checks verify the browser opens the original Amazon destination; availability of
+an external retailer is controlled by that service (the cloud HEAD probe returned
+HTTP 503). No unrelated purchase destination was substituted.

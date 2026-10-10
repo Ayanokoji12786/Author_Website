@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { book } from "../lib/book-content";
+import { introBootstrap } from "../lib/intro-bootstrap";
 import "./globals.css";
 
 const title = "Still Standing, Still Here — Dhruva Nerella & Tattva Nerella";
@@ -32,7 +33,10 @@ export default function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
+      <head>
+        <script dangerouslySetInnerHTML={{ __html: introBootstrap }} />
+      </head>
       <body>
         {children}
         <script

@@ -355,6 +355,10 @@ test("cinematic loader preserves the heartbeat, real progress, focus and immedia
   ).toBe(true);
   await page.keyboard.press("Tab");
   await expect(
+    page.getByRole("button", { name: "Enable sound" }),
+  ).toBeFocused();
+  await page.keyboard.press("Tab");
+  await expect(
     page.getByRole("button", { name: "Skip introduction" }),
   ).toBeFocused();
   const audit = await new AxeBuilder({ page })

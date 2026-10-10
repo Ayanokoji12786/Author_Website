@@ -2245,8 +2245,15 @@ h2 em {
 }
 
 /* A calm cover reveal using the original artwork, decoded before it appears. */
-html.intro-active {
+html.intro-active,
+html.intro-pending {
   overflow: hidden;
+}
+html.intro-pending .cinematic-intro[hidden] {
+  display: block !important;
+}
+html.intro-pending #literary-experience > :not(.cinematic-intro) {
+  visibility: hidden;
 }
 .cinematic-intro {
   position: fixed;
@@ -2401,6 +2408,14 @@ html.intro-active {
 }
 .intro-skip:focus-visible {
   outline-color: #d1bc85;
+}
+.intro-sound {
+  position: absolute;
+  right: 8%;
+  bottom: 7%;
+  color: #f7f2e8;
+  font-size: 11px;
+  min-height: 44px;
 }
 .intro-active .hero h1 span,
 .intro-active .landscape-night .mountain-photo {
@@ -2861,6 +2876,159 @@ html.intro-active {
   }
 }
 
+/* Keep the original ridge and heartbeat unobstructed, beside the real cover. */
+.cinematic-intro {
+  display: block;
+}
+.intro-kicker {
+  left: 8%;
+  top: 8%;
+  width: auto;
+  text-align: left;
+}
+.intro-visual {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+.intro-book {
+  left: 75%;
+  top: 38%;
+  width: clamp(128px, 21vh, 194px);
+}
+.intro-pulse,
+.intro-ridge {
+  left: 7%;
+  width: 51%;
+  bottom: 37%;
+}
+.intro-ridge {
+  height: clamp(140px, 25vh, 240px);
+  opacity: 0.65;
+}
+.intro-pulse {
+  bottom: 43%;
+  height: 100px;
+}
+.intro-copy {
+  position: absolute;
+  left: 75%;
+  top: 62%;
+  width: 38%;
+  margin: 0;
+  transform: translateX(-50%);
+}
+.intro-copy {
+  animation: none;
+}
+.intro-readiness {
+  position: absolute;
+  left: 8%;
+  bottom: 19%;
+  margin: 0;
+}
+.intro-skip {
+  left: 8%;
+  bottom: 7%;
+  min-height: 44px;
+}
+@media (max-width: 760px) and (min-height: 521px) {
+  .intro-kicker {
+    left: 7%;
+    font-size: 8px;
+  }
+  .intro-book {
+    left: 76%;
+    top: 34%;
+    width: clamp(102px, 16vh, 132px);
+  }
+  .intro-ridge {
+    left: 4%;
+    width: 60%;
+    bottom: 44%;
+    height: 150px;
+  }
+  .intro-pulse {
+    left: 4%;
+    width: 56%;
+    bottom: 47%;
+  }
+  .intro-copy {
+    left: 7%;
+    top: 59%;
+    width: 86%;
+    transform: none;
+    text-align: left;
+  }
+  #intro-title {
+    font-size: clamp(34px, 8vw, 46px);
+  }
+  .intro-copy > p:first-child {
+    font-size: 10px;
+    margin-bottom: 12px;
+  }
+  .intro-readiness {
+    left: 7%;
+    bottom: 16%;
+    width: 65%;
+  }
+  .intro-skip {
+    left: 7%;
+    bottom: 5%;
+  }
+  .intro-sound {
+    right: 7%;
+    bottom: 5%;
+  }
+}
+@media (max-height: 520px) {
+  .intro-kicker {
+    top: 6%;
+  }
+  .intro-book {
+    left: 79%;
+    top: 43%;
+    width: clamp(80px, 29vh, 130px);
+  }
+  .intro-ridge {
+    left: 5%;
+    width: 50%;
+    bottom: 32%;
+    height: 125px;
+  }
+  .intro-pulse {
+    left: 5%;
+    width: 50%;
+    bottom: 35%;
+    height: 60px;
+  }
+  .intro-copy {
+    left: 8%;
+    top: 23%;
+    width: 45%;
+    transform: none;
+    text-align: left;
+  }
+  #intro-title {
+    font-size: clamp(28px, 6vw, 38px);
+  }
+  .intro-copy > p:first-child {
+    font-size: 9px;
+    max-width: none;
+    margin: 0 0 10px;
+  }
+  .intro-readiness {
+    left: 8%;
+    bottom: 22%;
+    width: min(220px, 50vw);
+  }
+  .intro-skip,
+  .intro-sound {
+    bottom: 4%;
+  }
+}
+
 /* Normal document fallback; the book camera is a progressive enhancement. */
 .reader-viewport,
 .reader-paper,
@@ -2952,8 +3120,12 @@ html.intro-active {
 }
 .book-webgl {
   pointer-events: none;
+  z-index: 1;
 }
 .book-spatial-content {
+  /* CSS3D camera matrices have negative projected Z. Isolate their stacking
+     context from the sibling canvas or its backing meshes obscure real copy. */
+  z-index: 2;
   pointer-events: none;
   overflow: hidden;
 }
@@ -2996,13 +3168,9 @@ html.intro-active {
   pointer-events: auto;
 }
 .is-immersive .journey-card::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background: #c9baa0;
-  transform: translateZ(-5px);
-  pointer-events: none;
-  border-radius: 2px;
+  /* Physical thickness belongs to the WebGL backing. A CSS back face can
+     flatten over the copy in Chromium's projected 3D stacking context. */
+  content: none;
 }
 .is-immersive .journey-card-copy {
   transform-style: preserve-3d;

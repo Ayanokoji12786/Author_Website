@@ -227,6 +227,13 @@ export default function LiteraryExperience({
         <button className="intro-skip text-link" type="button">
           Skip introduction <Arrow />
         </button>
+        <button
+          className="intro-sound text-link"
+          type="button"
+          aria-pressed="false"
+        >
+          Enable sound
+        </button>
       </div>
       <div
         className="reader-stage"

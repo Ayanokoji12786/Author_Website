@@ -353,12 +353,176 @@
   function requestUpdate() {
     if (!frame) frame = window.requestAnimationFrame(update);
   }
+  function sessionStorageSafeMode() {
+    try {
+      return sessionStorage.getItem("ssh-reader-mode");
+    } catch (_) {
+      return "";
+    }
+  }
+  // Original loading-screen sound (ac71f49): the same 58/46 Hz heartbeat
+  // and filtered brown wind. A deliberate gesture creates/resumes Web Audio.
+  function createIntroAudio(button) {
+    var context,
+      master,
+      wind,
+      interval,
+      closed = false,
+      muted = true,
+      epoch = 0;
+    intro.dataset.audioState = "off";
+    function ui(state) {
+      intro.dataset.audioState = state;
+      button.setAttribute("aria-pressed", String(!muted));
+      button.textContent = muted ? "Enable sound" : "Mute sound";
+    }
+    function stopBeats() {
+      clearInterval(interval);
+      interval = null;
+    }
+    function beat() {
+      if (closed || muted || context.state !== "running") return;
+      var t = context.currentTime;
+      [0, 0.16].forEach(function (offset, index) {
+        var oscillator = context.createOscillator(),
+          gain = context.createGain();
+        oscillator.type = "sine";
+        oscillator.frequency.value = index === 0 ? 58 : 46;
+        gain.gain.setValueAtTime(0, t + offset);
+        gain.gain.linearRampToValueAtTime(
+          index === 0 ? 0.09 : 0.05,
+          t + offset + 0.02,
+        );
+        gain.gain.exponentialRampToValueAtTime(0.0001, t + offset + 0.22);
+        oscillator.connect(gain);
+        gain.connect(master);
+        oscillator.onended = function () {
+          oscillator.disconnect();
+          gain.disconnect();
+        };
+        oscillator.start(t + offset);
+        oscillator.stop(t + offset + 0.25);
+      });
+    }
+    function makeAudio() {
+      var Constructor = window.AudioContext || window.webkitAudioContext;
+      if (!Constructor) throw new Error("Web Audio unavailable");
+      context = new Constructor();
+      master = context.createGain();
+      master.gain.value = 0;
+      master.connect(context.destination);
+      var buffer = context.createBuffer(
+        1,
+        context.sampleRate * 2,
+        context.sampleRate,
+      );
+      var samples = buffer.getChannelData(0),
+        last = 0;
+      for (var i = 0; i < samples.length; i++) {
+        last = (last + 0.02 * (Math.random() * 2 - 1)) / 1.02;
+        samples[i] = last * 3.5;
+      }
+      wind = context.createBufferSource();
+      wind.buffer = buffer;
+      wind.loop = true;
+      var filter = context.createBiquadFilter(),
+        gain = context.createGain();
+      filter.type = "lowpass";
+      filter.frequency.value = 300;
+      gain.gain.value = 0.008;
+      wind.connect(filter);
+      filter.connect(gain);
+      gain.connect(master);
+      wind.start();
+    }
+    function volume(value, seconds) {
+      if (!master || context.state === "closed") return;
+      master.gain.cancelScheduledValues(context.currentTime);
+      master.gain.setValueAtTime(master.gain.value, context.currentTime);
+      master.gain.linearRampToValueAtTime(value, context.currentTime + seconds);
+    }
+    function toggle() {
+      if (closed) return;
+      var request = ++epoch;
+      muted = !muted;
+      if (muted) {
+        stopBeats();
+        volume(0, 0.08);
+        ui("muted");
+        return;
+      }
+      try {
+        if (!context) makeAudio();
+        ui("starting");
+        context
+          .resume()
+          .then(function () {
+            if (closed || muted || request !== epoch) return;
+            if (context.state !== "running")
+              throw new Error("Audio requires a gesture");
+            volume(1, 0.2);
+            beat();
+            interval = setInterval(beat, 1400);
+            ui("playing");
+          })
+          .catch(function () {
+            if (closed || request !== epoch) return;
+            muted = true;
+            stopBeats();
+            ui("unavailable");
+            button.textContent = "Try sound again";
+          });
+      } catch (_) {
+        muted = true;
+        ui("unavailable");
+        button.textContent = "Sound unavailable";
+        button.disabled = true;
+        dispose();
+      }
+    }
+    function fade() {
+      stopBeats();
+      volume(0, 0.4);
+    }
+    function dispose() {
+      if (closed) return;
+      closed = true;
+      epoch++;
+      stopBeats();
+      if (wind) {
+        try {
+          wind.stop();
+        } catch (_) {}
+        wind.disconnect();
+      }
+      if (context && context.state !== "closed")
+        context.close().catch(function () {});
+      button.removeEventListener("click", toggle);
+      window.removeEventListener("pagehide", dispose);
+      intro.dataset.audioState = "closed";
+    }
+    button.addEventListener("click", toggle);
+    window.addEventListener("pagehide", dispose);
+    return { dispose: dispose, fade: fade };
+  }
   // A short, skippable introduction. Progress reflects local assets, never a fake timer.
   function setupIntro() {
     var skip = intro.querySelector(".intro-skip");
     var progress = intro.querySelector(".intro-progress");
     var status = intro.querySelector("[data-intro-status]");
     var percent = intro.querySelector("[data-intro-percent]");
+    var bootstrap = window.__sshIntro;
+    if (bootstrap) {
+      clearTimeout(bootstrap.timer);
+      bootstrap.claimed = true;
+      if (bootstrap.dismissed) {
+        introFinished = true;
+        document.documentElement.classList.remove("intro-pending");
+        return;
+      }
+    }
+    var sound = intro.querySelector(".intro-sound");
+    var audio = createIntroAudio(sound);
     var previousFocus = document.activeElement;
     var blocked = Array.from(root.children).filter(function (el) {
       return el !== intro;
@@ -380,9 +544,13 @@
       if (released) return;
       released = true;
       timers.forEach(clearTimeout);
+      audio.dispose();
       var hadFocus = intro.contains(document.activeElement);
       intro.hidden = true;
-      document.documentElement.classList.remove("intro-active");
+      document.documentElement.classList.remove(
+        "intro-active",
+        "intro-pending",
+      );
       blocked.forEach(function (el, i) {
         el.inert = priorInert[i];
       });
@@ -432,6 +600,27 @@
         }
       }),
     ];
+    // The scene promises readiness only after texture decode and shader warmup.
+    // Reading view never downloads the GPU scene. The bounded loader cap still
+    // permits entry when a device or a nonessential asset cannot become ready.
+    if (!reduced.matches && sessionStorageSafeMode() !== "reading") {
+      tasks.push(
+        new Promise(function (resolve) {
+          function ready(event) {
+            if (event) document.removeEventListener("ssh-world-ready", ready);
+            resolve();
+          }
+          if (
+            /^(ready|unavailable|context-lost)$/.test(
+              root.dataset.worldStatus || "",
+            )
+          )
+            ready();
+          else
+            document.addEventListener("ssh-world-ready", ready, { once: true });
+        }),
+      );
+    }
     function finish(immediate) {
       if (introFinished) {
         if (immediate) release();
@@ -444,6 +633,7 @@
       } catch (_) {}
       if (immediate || reduced.matches) release();
       else {
+        audio.fade();
         intro.classList.add("is-leaving");
         timers.push(setTimeout(release, 900));
       }
@@ -451,6 +641,7 @@
     intro.hidden = false;
     intro.classList.remove("is-leaving");
     document.documentElement.classList.add("intro-active");
+    document.documentElement.classList.remove("intro-pending");
     blocked.forEach(function (el) {
       el.inert = true;
     });
@@ -465,7 +656,13 @@
       }
       if (event.key === "Tab") {
         event.preventDefault();
-        skip.focus();
+        var controls = [skip, sound].filter(function (button) {
+          return !button.disabled;
+        });
+        var index = controls.indexOf(document.activeElement);
+        controls[
+          (index + (event.shiftKey ? controls.length - 1 : 1)) % controls.length
+        ].focus();
       }
     });
     tasks.forEach(function (task) {

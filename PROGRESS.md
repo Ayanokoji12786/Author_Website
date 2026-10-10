@@ -10,7 +10,66 @@ from scratch. The original full requirements are preserved in
 and the standalone Netlify page. Remaining limitations are listed below; genuine
 manuscript content and unavailable photography have not been fabricated.
 
-## Current increment: genuine Three.js book world (verified and deployed)
+## Current increment: reliability and cinematic polish (in progress)
+
+The user supplied `docs/REFINEMENT_BRIEF.md`; it refines the deployed experience,
+not a rebuild. Preserve all existing content, hero, genuine cover, mountain and
+retailer URLs. No hourly scheduling API is available in this environment; no
+recurring task exists. Resume from this file and the current Git diff.
+
+- Reproduced blank purchase presentation: CSS3D negative camera depth was not
+  isolated from the sibling WebGL canvas. The real purchase DOM was present but
+  its visible composition was obscured. Explicit renderer stacking contexts and
+  removal of the redundant CSS back face fix the presentation. Also reproduced
+  direct `#buy` arriving at a different chapter after async scene initialization.
+- Loader startup previously ran after first paint. Added a shared head bootstrap
+  with early Skip/Escape and a seven-second fail-open deadline; it preserves the
+  no-JavaScript reading document. Moved the genuine cover to the right while
+  keeping the existing ridge and heartbeat visibly separate. Restored original
+  synthesized 58/46 Hz heartbeat and brown wind from commit `ac71f49`, with an
+  explicit gesture, mute, fade and context/timer cleanup.
+- Scene readiness now awaits original cover decode, GPU texture upload and shader
+  warmup. Navigation is queued during initialization. Resize preserves logical
+  position. Small scroll increments use time-independent bounded interpolation,
+  while final poses remain deterministic and rendering stops when settled.
+- Reduced inactive chapter updates, vector/paper allocations, duplicate layout
+  reads and unchanged canvas buffer reallocations. Balanced pixel ratio budgets,
+  softer cover materials, continuous opposing-stack reveal, endpapers, readable
+  previous-page surfaces and correct curved-paper underside are implemented.
+- Added actual purchase pixel snapshots: the earlier DOM-only checks missed the
+  visible occlusion. Reviewed real desktop/mobile loader, purchase, upright book,
+  tilt, flight and curved-page renders. The hero's generated HTML is unchanged.
+- Full static regression: 71 passed / 3 intentional platform skips / 2 failures.
+  Those failures exposed a genuine race: queued resize preservation could undo
+  a newer scroll command. Fixed the ordering; all four affected desktop/mobile
+  resize checks subsequently passed without weakening assertions.
+- Production build/prerender, standalone generation, typecheck and whitespace
+  checks pass. Dependency audit reports zero advisories. The complete production
+  browser suite passed **73 checks with 3 intentional platform skips**. Added
+  a delayed-cover regression afterwards; its two desktop/mobile checks pass on
+  standalone and production (four additional executions). All 75 current
+  production checks have passing coverage; deployment verification is next.
+- One lost WebGL context now releases resources and restores Reading view; Retry
+  book view recreates one context while preserving original controls/content.
+  Both static desktop/mobile recovery checks pass.
+- Reproducible 100-step cloud SwiftShader comparison: median frame spacing
+  593.5 → 337.0 ms; p95 799.0 → 485.3 ms; Chromium task time 62.41 → 37.65 s.
+  The lower-cost software tier uses 0.8 drawing resolution and 256 shadow maps;
+  text stays at full resolution. GPU raster/commit waits dominate this machine.
+  See `docs/3D_BOOK_JOURNEY.md` and `scripts/measure-book.cjs`. These are single-run
+  cloud software-GPU measurements, not a physical-device 60 FPS guarantee.
+- Original retailer URLs remain unchanged. The browser's actual outbound purchase
+  request is verified; Amazon's independent cloud HEAD response was HTTP 503.
+  Do not substitute an unrelated store or claim retailer service availability.
+- Existing cloud installation/start instructions remain applicable; no environment
+  configuration fields changed during this refinement.
+
+Exact next steps: commit and push this verified refinement, compare served Netlify
+files, then run live browser smoke checks and record the served version.
+The promised reference screenshot has not been supplied; use real browser renders
+until it arrives. Desktop/mobile device hardware FPS is not a measured guarantee.
+
+## Previous increment: genuine Three.js book world (verified and deployed)
 
 The latest user specification supersedes the previous CSS journey. The user
 confirmed: use the connected book site and preserve its content. The hero and

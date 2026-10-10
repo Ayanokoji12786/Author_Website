@@ -3,8 +3,8 @@
 The latest user direction asks for the same physical book to rotate upright to
 flat, become a surface the camera travels along, reclaim its content, return
 upright, and turn a curved page. The user confirmed this applies to the connected
-book website and that its genuine content must be preserved. The unchanged hero
-and original-cover loader lead into seven existing website chapters: The book,
+book website and that its genuine content must be preserved. The preserved hero
+and refined original-cover loader lead into seven existing website chapters: The book,
 Meaning, A glimpse, The journey, The authors, Reader responses, and Your copy.
 No portfolio projects, research, awards, manuscript excerpts or biographies were
 invented. `lib/book-content.ts` remains the content source.
@@ -83,8 +83,31 @@ unchanged; provenance remains in `public/media/README.md`.
 Netlify repository-root deployment. Do not manually edit their minified outputs.
 Run browser checks after generation; do not regenerate chunks during a suite.
 
-The renderer runs on invalidation, rather than a perpetual frame loop. Desktop
-pixel ratio is capped at 1.75, mobile at 1.25; shadow maps are 1024/512. Textures
+The renderer runs on invalidation, rather than a perpetual frame loop. A bounded,
+time-independent presentation filter smooths small wheel/touch steps, settles
+within 450 ms and then stops. Anchor commands and large jumps snap to the intended
+chapter. Settled poses remain exactly reproducible in either direction. Resize
+preserves entrance/travel/exit progress; page disclosure changes do not reset an
+unchanged drawing buffer. Only the current chapter updates its geometry/DOM;
+dormant cards are deactivated once. Camera paths retain velocity across stops.
+
+The genuine cover is decoded before allocating the scene. Texture upload and
+shader warmup complete before `data-world-status="ready"`; loader progress includes
+that readiness where Book view is enabled. An eight-second initialization limit
+preserves the normal document if resources stall. Failures release partially
+constructed renderers as well as complete worlds. A lost context restores Reading
+view immediately; **Retry book view** creates one fresh context and retains the
+original content and control states.
+
+CSS3D camera depth is isolated from its sibling WebGL canvas. This prevents the
+physical panel backing from painting over the selectable DOM content. Pixel
+snapshots supplement DOM visibility checks for the purchase presentation.
+
+ Desktop
+pixel ratio is capped at 1.25, mobile at 1.0; normal shadow maps are 1024/512.
+Identified software graphics uses a 0.8 drawing ratio and a 256 shadow map with
+one-tap sampling. Repeated slow frames on other renderers can reduce the drawing
+ratio to 0.85. HTML typography and links stay at native resolution. Textures
 are local and bounded; only one chapter's scene geometry is visible. Disposal
 releases geometries, materials, textures, reflections, listeners and observers.
 Smooth 60 FPS is a target on capable hardware, not a measured guarantee across
@@ -104,3 +127,22 @@ context loss and the real-cover loader. `tests/experience.spec.ts` validates the
 ordinary document, hero, content, metadata and original interactions. Run both
 against standalone HTTP and Next.js production. `PROGRESS.md` records results and
 any remaining work; do not call tests or deployments verified before they pass.
+
+## Refinement measurements
+
+Run `PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH=/usr/bin/chromium node scripts/measure-book.cjs`
+against the standalone server, or set `E2E_BASE_URL` to a running production server.
+The script uses one browser and reports 100 native scroll/frame steps, drawing
+ratio, peak draw/triangle counts and Chromium task/heap diagnostics. Do not run
+other browser suites concurrently with this comparison.
+
+On the cloud Chromium/SwiftShader renderer at 1440×1000, the deployed baseline
+measured median 593.5 ms / p95 799.0 ms frame spacing. The refined software tier
+measured median 337.0 ms / p95 485.3 ms, with drawing ratio 0.8. Peak work was 28
+calls / 9,968 triangles before and 29 calls / 10,606 triangles after; richer page
+geometry adds a small amount of draw work. Chromium task time fell from 62.41 to
+37.65 seconds. These are single-run comparisons in a constrained software-GPU
+machine, not statistically controlled hardware benchmarks or a 60 FPS result.
+A separate trace found GPU raster/renderer commit waits dominate; scene CPU
+submission during travel was generally around 1–2 ms. Browser trace files and
+screenshots live outside the repository under `/tmp` or workspace validation.

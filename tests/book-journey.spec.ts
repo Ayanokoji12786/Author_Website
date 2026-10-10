@@ -64,20 +64,25 @@ async function travel(
   await expect(page.locator("#" + id)).toHaveClass(/is-current/);
   // The current chapter may already match. Wait for the scroll-triggered render,
   // rather than inspecting the previous camera pose before its animation frame.
-  await page.evaluate(() => new Promise<void>((resolve) =>
-    requestAnimationFrame(() => requestAnimationFrame(() => resolve())),
-  ));
+  await page.evaluate(
+    () =>
+      new Promise<void>((resolve) =>
+        requestAnimationFrame(() => requestAnimationFrame(() => resolve())),
+      ),
+  );
+  await expect(page.locator("#literary-experience")).toHaveAttribute(
+    "data-reader-settled",
+    "true",
+  );
 }
 async function pose(page: Page) {
-  return page
-    .locator("#literary-experience")
-    .evaluate((el) => ({
-      rotation: +(el as HTMLElement).dataset.bookRotation!,
-      flip: +(el as HTMLElement).dataset.pageFlip!,
-      curvature: +(el as HTMLElement).dataset.pageCurvature!,
-      camera: (el as HTMLElement).dataset.cameraPosition!,
-      uuid: (el as HTMLElement).dataset.worldUuid!,
-    }));
+  return page.locator("#literary-experience").evaluate((el) => ({
+    rotation: +(el as HTMLElement).dataset.bookRotation!,
+    flip: +(el as HTMLElement).dataset.pageFlip!,
+    curvature: +(el as HTMLElement).dataset.pageCurvature!,
+    camera: (el as HTMLElement).dataset.cameraPosition!,
+    uuid: (el as HTMLElement).dataset.worldUuid!,
+  }));
 }
 async function station(page: Page, id: string, index: number) {
   await travel(page, id, "read", index);
@@ -194,12 +199,13 @@ test("every chapter and content stop is legible, anchored and uses the same book
       if (!uuid) uuid = p.uuid;
       expect(p.uuid).toBe(uuid);
       expect(p.rotation).toBe(90);
-      const scale = +(await page.locator("#literary-experience")
+      const scale = +(await page
+        .locator("#literary-experience")
         .getAttribute("data-book-scale"))!;
       const camera = p.camera.split(",").map(Number);
       expect(camera[0]).toBeGreaterThan(0);
       expect(camera[0]).toBeLessThan(8 * scale);
-      expect(Math.abs(camera[2])).toBeLessThan((8 * 800 / 529 / 2) * scale);
+      expect(Math.abs(camera[2])).toBeLessThan(((8 * 800) / 529 / 2) * scale);
       expect(camera[1]).toBeGreaterThan(0.33 * scale);
       const box = await card.boundingBox(),
         v = page.viewportSize()!;
@@ -285,26 +291,48 @@ test("scene and page navigation, Reading view and reduced motion preserve positi
   await expect(page.locator("#themes #meaning-heading")).toBeVisible();
 });
 
-test("short landscape screens retain readable controls and resume the same book in portrait", async ({ page }) => {
+test("short landscape screens retain readable controls and resume the same book in portrait", async ({
+  page,
+}) => {
   await enter(page);
   await station(page, "chapters", 1);
   const initial = await pose(page);
   const viewport = page.viewportSize()!;
-  for (const [width, height] of [[844, 390], [568, 320]]) {
+  for (const [width, height] of [
+    [844, 390],
+    [568, 320],
+  ]) {
     await page.setViewportSize({ width, height });
-    await expect(page.locator("#literary-experience")).not.toHaveClass(/is-immersive/);
-    await expect(page.locator("#literary-experience")).toHaveAttribute("data-reader-adaptation", "short-screen");
+    await expect(page.locator("#literary-experience")).not.toHaveClass(
+      /is-immersive/,
+    );
+    await expect(page.locator("#literary-experience")).toHaveAttribute(
+      "data-reader-adaptation",
+      "short-screen",
+    );
     await expect(page.locator("[data-reader-mode]")).toBeDisabled();
     await page.locator("#chapters").scrollIntoViewIfNeeded();
     await page.getByRole("tab").nth(3).click();
-    await expect(page.locator("#chapter-tab-3")).toHaveAttribute("aria-selected", "true");
-    expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+    await expect(page.locator("#chapter-tab-3")).toHaveAttribute(
+      "aria-selected",
+      "true",
+    );
+    expect(
+      await page.evaluate(
+        () => document.documentElement.scrollWidth <= innerWidth,
+      ),
+    ).toBe(true);
   }
   await page.setViewportSize(viewport);
-  await expect(page.locator("#literary-experience")).toHaveClass(/is-immersive/);
+  await expect(page.locator("#literary-experience")).toHaveClass(
+    /is-immersive/,
+  );
   await station(page, "chapters", 1);
   expect((await pose(page)).uuid).toBe(initial.uuid);
-  await expect(page.locator("#chapter-tab-3")).toHaveAttribute("aria-selected", "true");
+  await expect(page.locator("#chapter-tab-3")).toHaveAttribute(
+    "aria-selected",
+    "true",
+  );
 });
 
 test("active 3D content retains automated WCAG AA contrast and semantics", async ({
@@ -372,6 +400,15 @@ test("a lost WebGL context releases the scene and preserves interactive Reading 
   await expect(page.locator("canvas.book-webgl")).toHaveCount(0);
   await expect(page.locator("#pages .reading-preview")).toBeVisible();
   await page.getByRole("button", { name: "Next reflection" }).click();
+  await expect(page.locator("#preview-1")).toBeVisible();
+  await page.getByRole("button", { name: "Retry immersive book view" }).click();
+  await expect(page.locator("#literary-experience")).toHaveAttribute(
+    "data-world-status",
+    "ready",
+    { timeout: 15000 },
+  );
+  await expect(page.locator("canvas.book-webgl")).toHaveCount(1);
+  await station(page, "pages", 1);
   await expect(page.locator("#preview-1")).toBeVisible();
 });
 
