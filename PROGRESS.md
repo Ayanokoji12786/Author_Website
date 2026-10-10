@@ -10,7 +10,7 @@ from scratch. The original full requirements are preserved in
 and the standalone Netlify page. Remaining limitations are listed below; genuine
 manuscript content and unavailable photography have not been fabricated.
 
-## Current increment: reliability and cinematic polish (deployed; final entry/resize corrections in verification)
+## Current increment: reliability and cinematic polish (deployed and verified)
 
 The user supplied `docs/REFINEMENT_BRIEF.md`; it refines the deployed experience,
 not a rebuild. Preserve all existing content, hero, genuine cover, mountain and
@@ -48,7 +48,8 @@ recurring task exists. Resume from this file and the current Git diff.
   browser suite passed **73 checks with 3 intentional platform skips**. Added
   a delayed-cover regression afterwards; its two desktop/mobile checks pass on
   standalone and production (four additional executions). All 75 current
-  production checks have passing coverage; deployment verification is next.
+  production checks in that revision had passing coverage. The final expanded
+  suite and deployment verification below supersede that intermediate run.
 - One lost WebGL context now releases resources and restores Reading view; Retry
   book view recreates one context while preserving original controls/content.
   Both static desktop/mobile recovery checks pass.
@@ -82,7 +83,7 @@ recurring task exists. Resume from this file and the current Git diff.
   shutdown command, rebuilt with port 4175 confirmed empty, and started a fresh
   direct Next process. Its full 80-case run passed 75 / skipped 3 / failed 2
   desktop initial-scroll checks; the fractional regression itself passed. These
-  remaining intermittent cold-entry failures are still under investigation.
+  intermittent cold-entry failures prompted the readiness correction below.
   CPU render submission was being treated as readiness before queued GPU draws
   completed. Added a bounded WebGL2 completion fence before world readiness;
   readiness now awaits that fence. Presentation smoothing also clamps at the
@@ -98,11 +99,29 @@ recurring task exists. Resume from this file and the current Git diff.
   full production run of **82 cases passed 79 checks with 3 intentional platform
   skips and no failures**. Browser failure attachments now include requested
   versus actual native scroll and chapter coordinates for reproducible diagnosis.
+- Correction commit `ce03a204d49fc24ffe694a8ff2ef81914d345b67` was pushed to
+  `origin main`; the remote SHA matches exactly. After deployment propagation,
+  all eight checked Netlify files return HTTP 200 and match the verified build
+  byte-for-byte, including the new renderer chunk and corrected controller.
+  The final live desktop/mobile smoke run **passed all 22 checks with no skips
+  or failures**, using the existing trusted browser context with TLS checks
+  enabled. It covered actual book rotation/return/curved turns, all content stops,
+  first-view loader, purchase pixels and outbound links, direct hashes/history,
+  consent/mute/audio cleanup, delayed cover loading, preserved resize positions,
+  late resize versus new navigation, and fractional entry boundaries.
 
-Exact next steps: push the verified correction, compare Netlify files and rerun
-the complete live smoke subset. Full production evidence is in
-`/tmp/refinement-production-final2.log` and `/tmp/refinement-production-final2`.
-Preserve the current implementation.
+This refinement is implemented, tested and deployed. No failing internal behavior
+remains in the final executed suites. Final evidence: live log
+`/tmp/refinement-live-final2.log` and artifacts `/tmp/refinement-live-final2`;
+production log `/tmp/refinement-production-final2.log` and artifacts
+`/tmp/refinement-production-final2`. These temporary execution artifacts do not
+replace the committed tests and purchase snapshots.
+
+Exact next steps for a future session: read this file and inspect the current
+Git state first. Preserve the implementation; investigate any new reproduction
+against the committed browser regressions before changing it. Optional remaining
+validation is real-device GPU frame-rate profiling and comparison with the user's
+reference image when supplied. Original content/asset limitations below remain.
 The promised reference screenshot has not been supplied; use real browser renders
 until it arrives. Desktop/mobile device hardware FPS is not a measured guarantee.
 
