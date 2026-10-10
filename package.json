@@ -6,7 +6,8 @@
     "dev": "next dev",
     "build": "npm run build:static && next build",
     "start": "next start",
-    "build:static": "node scripts/export-static.cjs",
+    "build:world": "node scripts/build-book-world.cjs",
+    "build:static": "npm run build:world && node scripts/export-static.cjs",
     "typecheck": "tsc --noEmit",
     "test:e2e": "npm run build:static && playwright test"
   },
@@ -17,7 +18,8 @@
     "next": "^16.4.0",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
-    "tailwind-merge": "^3.6.0"
+    "tailwind-merge": "^3.6.0",
+    "three": "0.180.0"
   },
   "devDependencies": {
     "@axe-core/playwright": "^4.13.0",
@@ -26,6 +28,7 @@
     "@types/react": "^18.3.11",
     "@types/react-dom": "^18.3.1",
     "autoprefixer": "^10.4.20",
+    "esbuild": "0.25.10",
     "postcss": "^8.5.29",
     "tailwindcss": "^4.3.3",
     "typescript": "^5.6.3"

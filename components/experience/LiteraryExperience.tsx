@@ -228,38 +228,14 @@ export default function LiteraryExperience({
           Skip introduction <Arrow />
         </button>
       </div>
-      <div className="reader-stage" data-reader-stage aria-hidden="true" hidden>
+      <div
+        className="reader-stage"
+        data-reader-stage
+        role="region"
+        aria-label="Interactive book journey"
+        hidden
+      >
         <div className="reader-atmosphere" />
-        <div className="reader-floor-shadow" />
-        <div className="reader-world">
-          <div className="reader-back" />
-          <div className="reader-spine" />
-          <div className="reader-page-block" />
-          <div className="reader-left-page">
-            <span className="reader-imprint">
-              Still Standing,
-              <br />
-              <em>Still Here.</em>
-            </span>
-          </div>
-          <div className="reader-right-page">
-            <span className="reader-page-mark" data-reader-page-mark>
-              01
-            </span>
-          </div>
-          <div className="reader-turning-page">
-            <span />
-          </div>
-          <div className="reader-front-cover">
-            <img
-              src={`${assetBase}${book.coverAsset}`}
-              width="529"
-              height="800"
-              alt=""
-              decoding="async"
-            />
-          </div>
-        </div>
       </div>
       <nav
         className="reader-interface"
@@ -293,6 +269,25 @@ export default function LiteraryExperience({
             className="icon-button"
             data-reader-next
             aria-label="Next book page"
+          >
+            <Arrow />
+          </button>
+        </div>
+        <div className="reader-stations">
+          <button
+            type="button"
+            className="icon-button"
+            data-reader-scene-prev
+            aria-label="Previous scene"
+          >
+            <Arrow direction="left" />
+          </button>
+          <span data-reader-station>Scene 1 / 1</span>
+          <button
+            type="button"
+            className="icon-button"
+            data-reader-scene-next
+            aria-label="Next scene"
           >
             <Arrow />
           </button>

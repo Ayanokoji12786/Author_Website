@@ -2940,284 +2940,339 @@ html.intro-active {
     radial-gradient(ellipse at 50% 42%, #9c835332, transparent 57%),
     radial-gradient(ellipse at 50% 100%, #43514860, transparent 60%);
 }
-.reader-world {
-  position: absolute;
-  width: var(--reader-width, 350px);
-  aspect-ratio: 529 / 800;
-  top: 50%;
-  left: 50%;
-  transform-style: preserve-3d;
-  transform: translate3d(calc(-50% + var(--reader-shift, 0px)), -50%, 0)
-    rotateX(var(--reader-pitch, 0deg)) rotateY(var(--reader-yaw, -12deg))
-    scale(var(--reader-zoom, 1));
-  opacity: var(--reader-frame-opacity, 1);
+/* Persistent mesh scene. The DOM remains the semantic source and reading fallback. */
+.is-immersive .reader-stage {
+  z-index: 10;
+  perspective: none;
 }
-.reader-back,
-.reader-right-page,
-.reader-front-cover,
-.reader-turning-page,
-.reader-left-page {
+.book-webgl,
+.book-spatial-content {
   position: absolute;
   inset: 0;
-  border-radius: 1px 4px 4px 1px;
 }
-.reader-back {
-  background: #5a4a2b;
-  transform: translateZ(-18px);
-  box-shadow: 1px 1px 0 #917a4a;
+.book-webgl {
+  pointer-events: none;
 }
-.reader-spine {
-  position: absolute;
-  left: 0;
-  top: 0;
-  width: 20px;
-  height: 100%;
-  background: linear-gradient(90deg, #604b24, #c7ad64, #6b572b);
-  transform-origin: left;
-  transform: rotateY(90deg);
-}
-.reader-page-block {
-  position: absolute;
-  right: 0;
-  top: 3px;
-  width: 17px;
-  height: calc(100% - 6px);
-  background: repeating-linear-gradient(90deg, #b4a48a 0 1px, #f0e9d8 1px 3px);
-  transform-origin: right;
-  transform: rotateY(90deg);
-}
-.reader-left-page {
-  background: linear-gradient(90deg, #e3d8be, #f3ecdc 87%, #b7a991);
-  transform: translateX(-100%) translateZ(-2px);
-  opacity: var(--reader-open, 0);
-}
-.reader-imprint {
-  position: absolute;
-  top: 42%;
-  width: 100%;
-  text-align: center;
-  color: #74664c;
-  font-family: var(--serif);
-  font-size: clamp(16px, 2vw, 26px);
-  line-height: 1.2;
-}
-.reader-right-page {
-  inset: 3px;
-  transform: translateZ(-1px);
-  background: linear-gradient(90deg, #c0b197, #f7f2e8 9%, #eee4d1);
-  box-shadow: inset 0 0 0 1px #c9bea6;
-}
-.reader-page-mark {
-  position: absolute;
-  bottom: 8%;
-  left: 0;
-  width: 100%;
-  text-align: center;
-  font-size: 9px;
-  color: #7a705c;
-}
-.reader-front-cover {
-  transform-origin: left;
-  transform-style: preserve-3d;
-  transform: translateZ(2px) rotateY(var(--reader-hinge, 0deg));
-  background: #82702d;
-}
-.reader-front-cover img {
-  width: 100%;
-  height: 100%;
-  object-fit: contain;
-  backface-visibility: hidden;
-}
-.reader-front-cover::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  transform: rotateY(180deg);
-  backface-visibility: hidden;
-  background: linear-gradient(110deg, #665431, #433b29);
-  border: 8px solid #58472b;
-}
-.reader-turning-page {
-  inset: 3px;
-  transform-origin: left;
-  transform: translateZ(1px) rotateY(var(--reader-turn, 0deg));
-  background: linear-gradient(90deg, #c6baa3, #f7f0e2 12%, #ede3ce);
-  opacity: var(--reader-turn-opacity, 0);
-  box-shadow: inset -1px 0 #bdad91;
-}
-.reader-turning-page span {
-  position: absolute;
-  inset: 15%;
-  opacity: 0.3;
-  background: repeating-linear-gradient(
-    transparent 0 14px,
-    #b1a58d 14px 15px,
-    transparent 15px 21px
-  );
-}
-.reader-floor-shadow {
-  position: absolute;
-  width: min(650px, 85vw);
-  height: 80px;
-  left: 50%;
-  top: 80%;
-  transform: translateX(-50%);
-  background: radial-gradient(ellipse, #0008, transparent 65%);
-  opacity: var(--reader-frame-opacity, 1);
+.book-spatial-content {
+  pointer-events: none;
+  overflow: hidden;
 }
 .is-immersive #main {
   position: relative;
   z-index: 1;
 }
 .is-immersive .site-header {
-  /* Switch text and surface together as the camera crosses paper tones. */
   transition: box-shadow 0.4s;
 }
 .is-immersive .reader-scene {
-  position: relative;
-  padding: 0;
-  min-height: var(--reader-length, 455svh);
-  background: transparent;
-  overflow: visible;
-  isolation: auto;
-}
-.is-immersive .reader-viewport {
   display: block;
-  position: sticky;
-  top: 0;
-  height: 100svh;
-  overflow: clip;
-  perspective: 1500px;
+  position: relative;
+  min-height: var(--reader-length, 400svh);
+  padding: 0;
+  background: transparent;
+  isolation: auto;
+  overflow: visible;
+}
+.is-immersive .reader-scene > .reader-viewport {
+  display: none;
+}
+.is-immersive .site-footer {
+  position: relative;
+  z-index: 12;
+}
+.is-immersive .journey-card {
+  padding: 34px 42px;
+  min-height: 0;
+  background: #f7f2e8;
+  color: #252c2a;
+  border: 1px solid #d6c9ae;
+  border-radius: 2px;
+  overflow: visible;
+  box-shadow: 0 12px 30px #211c1728;
+  transform-style: preserve-3d;
   pointer-events: none;
 }
-.is-immersive .reader-paper {
-  display: block;
-  position: absolute;
-  left: 0;
-  right: 0;
-  top: 50%;
-  height: var(--page-height, 100svh);
-  overflow: hidden;
-  transform-style: preserve-3d;
-  transform-origin: 50% 50%;
-  background: var(--ivory);
-  transform: translate3d(var(--page-shift, 0px), -50%, 0)
-    rotateX(var(--page-pitch, 0deg)) rotateY(var(--page-yaw, 0deg))
-    scale(var(--page-scale, 0.2));
-  opacity: var(--page-opacity, 0);
-  box-shadow:
-    inset 18px 0 40px #71634c18,
-    0 30px 100px #0003;
-}
-.is-immersive .reader-content {
-  display: block;
-  position: relative;
-  min-height: 100svh;
-  padding: 130px 0 125px;
-  isolation: isolate;
-  transform: translateY(var(--page-scroll, 0px));
-}
-.is-immersive .reader-scene:not(.is-current) .reader-paper {
-  opacity: 0;
-}
-.is-immersive .reader-scene.is-reading .reader-paper {
+.is-immersive .journey-card.is-readable {
   pointer-events: auto;
 }
-.is-immersive .reader-scene[data-tone="dark"] .reader-paper {
-  background: #171d1c;
-  color: #f7f2e8;
+.is-immersive .journey-card::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: #c9baa0;
+  transform: translateZ(-5px);
+  pointer-events: none;
+  border-radius: 2px;
 }
-.is-immersive .reader-scene [data-reveal] {
+.is-immersive .journey-card-copy {
+  transform-style: preserve-3d;
+  position: relative;
+}
+.is-immersive .journey-card [data-reveal] {
   opacity: 1 !important;
   transform: none !important;
   transition: none;
 }
-.is-immersive .reader-scene h2 {
-  transform: perspective(1200px)
-    translate3d(0, var(--page-rise, 0px), var(--page-elevation, 0px))
-    rotateX(calc(var(--page-pitch, 0deg) * -0.12));
-  transform-origin: 50% 100%;
+.is-immersive .journey-card .container {
+  width: 100%;
+  padding: 0;
+  margin: 0;
 }
-.is-immersive #inside .book-stage {
-  display: none;
+.is-immersive .journey-card h2 {
+  font-size: 56px;
+  line-height: 1;
+  margin-bottom: 20px;
+  transform: translateZ(var(--glyph-depth, 0px));
+  text-shadow:
+    0 1px 0 #d3c3a3,
+    0 2px 2px #53462d12;
 }
-.is-immersive #inside .book-layout {
-  position: relative;
-  top: auto;
+.is-immersive .journey-card h3 {
+  font-size: 34px;
+  line-height: 1.15;
+}
+.is-immersive .journey-card .eyebrow {
+  font-size: 10px;
+}
+.is-immersive .journey-card .section-index {
+  margin-bottom: 22px;
+}
+.is-immersive .journey-card .lead-copy {
+  font-size: 25px;
+  line-height: 1.3;
+}
+.is-immersive .journey-card .body-copy {
+  font-size: 15px;
+  line-height: 1.8;
+}
+.is-immersive .journey-card .book-introduction {
+  max-width: none;
+}
+.is-immersive .journey-card .book-introduction .body-copy {
+  margin: 22px 0;
+}
+.is-immersive .journey-card .purchase-links {
+  margin-top: 25px;
+}
+.is-immersive .journey-card .theme-row {
+  grid-template-columns: 45px 1fr;
+  padding: 0;
+  border: 0;
+  gap: 18px;
+}
+.is-immersive .journey-card .theme-copy {
+  grid-column: 2;
+}
+.is-immersive .journey-card .theme-number {
+  font-size: 38px;
+}
+.is-immersive .journey-card .meaning-heading {
   display: block;
+  text-align: left;
+}
+.is-immersive .journey-card .meaning-heading .body-copy {
+  margin-top: 20px;
+}
+.is-immersive .journey-card .meaning-footnote {
+  margin: 0;
+}
+.is-immersive .journey-card .pages-intro {
+  max-width: none;
+}
+.is-immersive .journey-card .reading-preview {
+  padding: 28px;
   min-height: 0;
-  max-width: 900px;
-  padding-block: 0;
+  box-shadow: none;
 }
-.is-immersive #inside .book-introduction {
-  max-width: 780px;
-  margin-inline: auto;
+.is-immersive .journey-card .preview-page blockquote {
+  font-size: 32px;
 }
-.is-immersive #themes .meaning-footnote {
-  margin-top: 40px;
+.is-immersive .journey-card .chapter-header {
+  display: block;
+  margin-bottom: 0;
 }
-.is-immersive #buy .reader-content {
+.is-immersive .journey-card .chapter-header .body-copy {
+  margin-top: 20px;
+}
+.is-immersive .journey-card .chapter-tabs {
+  margin: 0 0 24px;
+}
+.is-immersive .journey-card .chapter-panel {
+  padding: 0;
+  grid-template-columns: 100px 1fr;
+  min-height: 0;
+}
+.is-immersive .journey-card .chapter-numeral {
+  font-size: 100px;
+}
+.is-immersive .journey-card .chapter-footer {
+  margin-top: 25px;
+}
+.is-immersive .journey-card .author-monogram {
+  min-height: 0;
+  padding: 24px;
+  width: 100%;
+}
+.is-immersive .journey-card .author-monogram > span {
+  font-size: 90px;
+}
+.is-immersive .journey-card .authors-copy {
+  max-width: none;
+}
+.is-immersive .journey-card .author-reflection {
+  margin-top: 25px;
+}
+.is-immersive .journey-card .reader-review {
+  padding: 0;
+}
+.is-immersive .journey-card .reader-review blockquote {
+  font-size: 20px;
+}
+.is-immersive .journey-card .reader-review figcaption {
+  margin-top: 25px;
+}
+.is-immersive .journey-card .reviews-header {
+  margin: 0;
+}
+.is-immersive .journey-card.final-section {
+  display: block;
+}
+.is-immersive .journey-card .final-content {
+  padding: 0;
+  min-height: 0;
+}
+.is-immersive .journey-card .final-content h2 {
+  font-size: 66px;
+}
+.is-immersive .journey-card .final-reflection {
+  margin: 24px 0;
+}
+.is-immersive .journey-card .final-copy {
+  margin: 24px 0;
+}
+.is-immersive .journey-card .final-isbn {
+  margin-top: 22px;
+}
+.is-immersive .journey-card .button-dark {
+  color: #f7f2e8;
+  background: #17191a;
+}
+.is-immersive .journey-card .button-light {
+  color: #17191a;
+  background: #f7f2e8;
+}
+.is-immersive .journey-card[data-chapter="themes"],
+.is-immersive .journey-card[data-chapter="chapters"],
+.is-immersive .journey-card[data-chapter="buy"] {
+  background: #171d1c;
+  border-color: #a48a5244;
+  color: #f7f2e8;
+}
+.is-immersive .journey-card[data-chapter="themes"] .body-copy,
+.is-immersive .journey-card[data-chapter="chapters"] .body-copy {
+  color: #c7c6ba;
+}
+.reader-stations {
   display: flex;
-  flex-direction: column;
-  justify-content: center;
-}
-.is-immersive #buy .final-content {
-  padding-block: 0;
-  position: relative;
-}
-.is-immersive .site-footer {
-  position: relative;
-  z-index: 2;
+  gap: 10px;
+  align-items: center;
+  font-size: 10px;
 }
 @media (max-width: 760px) {
   .reader-interface {
     bottom: 10px;
-    padding: 7px 9px;
-    gap: 9px;
     width: calc(100% - 20px);
+    padding: 8px 10px;
+    gap: 8px;
+    flex-wrap: wrap;
   }
   .reader-page-navigation {
-    gap: 9px;
+    gap: 8px;
   }
   .reader-page-navigation > div {
-    min-width: 110px;
+    min-width: 104px;
   }
   .reader-position {
     font-size: 15px;
   }
-  .reader-instruction {
-    font-size: 8px;
-  }
-  .reader-interface .reader-mode {
-    font-size: 9px;
-  }
   .reader-interface .icon-button {
-    width: 34px;
-    min-width: 34px;
-    height: 38px;
+    width: 36px;
+    min-width: 36px;
+    height: 40px;
   }
-  .is-immersive .reader-content {
-    padding: 110px 0 115px;
+  .reader-stations {
+    order: 3;
+    width: 100%;
+    justify-content: center;
   }
-  .is-immersive #inside .book-introduction {
-    max-width: 480px;
+  .reader-stations:has(button[hidden]) {
+    display: none;
+  }
+  .is-immersive .journey-card {
+    padding: 22px;
+  }
+  .is-immersive .journey-card h2 {
+    font-size: 38px;
+  }
+  .is-immersive .journey-card h3 {
+    font-size: 27px;
+  }
+  .is-immersive .journey-card .lead-copy {
+    font-size: 22px;
+  }
+  .is-immersive .journey-card .body-copy {
+    font-size: 14px;
+  }
+  .is-immersive .journey-card .button {
+    min-height: 44px;
+    padding: 14px 18px;
+  }
+  .is-immersive .journey-card .purchase-links {
+    flex-direction: column;
+    gap: 10px;
+  }
+  .is-immersive .journey-card .theme-row {
+    grid-template-columns: 30px 1fr;
+    gap: 12px;
+  }
+  .is-immersive .journey-card .theme-copy {
+    font-size: 14px;
+  }
+  .is-immersive .journey-card .preview-page blockquote {
+    font-size: 25px;
+  }
+  .is-immersive .journey-card .reading-preview {
+    padding: 10px;
+  }
+  .is-immersive .journey-card .chapter-panel {
+    grid-template-columns: 52px 1fr;
+    gap: 14px;
+  }
+  .is-immersive .journey-card .chapter-numeral {
+    font-size: 60px;
+  }
+  .is-immersive .journey-card .chapter-detail h3 {
+    font-size: 25px;
+  }
+  .is-immersive .journey-card .chapter-detail p {
+    font-size: 14px;
+  }
+  .is-immersive .journey-card .chapter-tab {
+    min-width: 100px;
+  }
+  .is-immersive .journey-card .reader-review blockquote {
+    font-size: 17px;
+  }
+  .is-immersive .journey-card .reader-review figcaption {
+    flex-direction: column;
+    gap: 8px;
+  }
+  .is-immersive .journey-card .final-content h2 {
+    font-size: 42px;
   }
 }
 @media (prefers-reduced-motion: reduce) {
   .reader-stage {
     display: none;
   }
-}
-
-.is-immersive .reader-content .author-monogram,
-.is-immersive .reader-content .chapter-numeral,
-.is-immersive .reader-content .theme-number {
-  transform: perspective(1200px) translateZ(var(--page-elevation, 0px))
-    rotateY(calc(var(--page-yaw, 0deg) * -0.25));
-}
-.is-immersive .reader-scene {
-  display: block;
-}
-.is-immersive .reader-viewport {
-  width: 100%;
 }

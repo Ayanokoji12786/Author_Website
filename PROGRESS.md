@@ -10,7 +10,66 @@ from scratch. The original full requirements are preserved in
 and the standalone Netlify page. Remaining limitations are listed below; genuine
 manuscript content and unavailable photography have not been fabricated.
 
-## Current increment: original-cover loader and continuous book journey
+## Current increment: genuine Three.js book world (implementation verified)
+
+The latest user specification supersedes the previous CSS journey. The user
+confirmed: use the connected book site and preserve its content. The hero and
+actual-cover loader are preserved. Do not restart this implementation.
+
+- Implemented a persistent genuine Three.js book with rounded physical covers,
+  spine, page stack, original cover texture and paper surfaces. The main group
+  rotates from XY to XZ, while an independent camera descends and travels along
+  the same book. Chapter-specific anchors keep content connected to the paper.
+- Seven real website chapters contain 17 readable spatial stops. The original
+  DOM nodes, links, previews, tabs and reviews retain their events. Solid backing
+  meshes, extruded numerals, directional shadows, reflections and distinct page
+  motifs accompany content emergence and retraction.
+- A pure reversible scroll timeline retracts content, pulls the camera away,
+  rotates the book upright, then turns a curved/deformed 48-subdivision sheet.
+  The underside and underlying surface reveal the next page. No scene replacement
+  or camera teleport is used. Reduced motion, Reading view and failed/lost WebGL
+  preserve the original full document.
+- New maintainable modules live in `lib/book-world/`; esbuild generates tracked
+  static assets for both Netlify and Next.js. Details: `docs/3D_BOOK_JOURNEY.md`.
+- Initial browser checks found final-stop interaction was disabled by fractional
+  scroll rounding; fixed the timeline margin. Geometry checks also found a test
+  sampled before the requested render, and an endpoint rounded just short of
+  upright; checks now await animation frames and sample inside the upright hold.
+- Current full dependency audit: zero advisories. Static build, production
+  build/prerender and typecheck pass. The full static
+  suite passed 56 checks with 3 intentional platform skips; one long resize/reversal
+  check exhausted its original 30-second cloud software-rendering test limit. Its
+  complete desktop/mobile rerun passed (25.0/34.8 seconds) after increasing only
+  that multi-step test budget to 60 seconds. All static features have passing
+  coverage. The full final production suite passed **57 checks with 3 intentional platform
+  skips**. Commit/push and live verification remain pending. Do not report these as completed yet.
+- Fixed a real final-chapter bug: max scroll ended before the return/turn.
+  A trailing viewport now allows the full final cycle before the footer. Camera
+  movement preserves a clear view of the first 45-degree rotation. The same book
+  then grows continuously into a platform; content scale compensation keeps text
+  readable, and tests verify the camera is above the real paper bounds.
+- Final short-screen inspection found chapter/review panels overlap navigation
+  at 568×320. Added an automatic Reading view for landscape screens 480 px tall
+  or less; portrait/taller screens restore the same book, section and tab state.
+  Added a browser check for both 844×390 and 568×320 and return to Book view.
+  All 10 affected final static checks pass, including all 17 content stops, modes,
+  short-screen restoration and failed/lost WebGL. All **10 matching production
+  checks also pass**. This final adaptation has complete affected-feature coverage.
+- Visual review confirms physical thickness, curved sheet, readable desktop/mobile
+  stops and a visible paper platform. The hero and loader markup are byte-for-byte
+  identical to the prior verified implementation.
+- A frozen reinstall (`npm ci --cache /workspace/.npm --no-audit --no-fund`)
+  succeeded (60 packages). The final production build/prerender and typecheck
+  passed again. All six generated artifacts matched the prior recorded SHA-256
+  hashes exactly after rebuilding, including HTML and split browser chunks.
+- Cloud setup instructions were updated and saved for this real geometry workflow,
+  preserving install script, repositories, network and all unrelated settings.
+  The tool confirmed `status: saved` and `requires_publish: true`; future setup
+  activation requires Review, Save and Publish in environment settings.
+- No official scheduling mechanism is exposed; no hourly/background task exists.
+  Progress is preserved here; credit limits must not be bypassed.
+
+## Previous increment: original-cover loader and CSS book journey
 
 The user asked to smooth the loader and show only their actual book. They then
 specified a continuous experience after the hero: the book opens, tilts flat,
@@ -288,16 +347,16 @@ the actual served version before claiming a change is live.
 
 ## Exact next steps for resumption
 
-1. Read this file and `docs/REDESIGN_BRIEF.md`; inspect `git status` and `git log -1`.
-2. The latest book-journey implementation, validation and push are complete. Compare local
-   HEAD with remote main and inspect any divergence before new edits. Continue a
-   new user request or the genuinely blocked content items below; do not redo or
-   replace verified features. Commands are in `docs/DEVELOPMENT.md`.
-3. The publisher cover is verified and bundled locally; preserve it. The existing
-   Netlify site serves this implementation and passed 10 live smoke checks. Check
-   served assets after future pushes rather than assuming a Git push deployed them.
-4. Complete the content replacements above when real materials become available;
-   run `npm run build:static`, `npm run build`, `npm run typecheck`, then affected
-   Playwright checks against static and production entry points.
-5. If no new content/access or supported scheduler is available, report these exact
-   blockers. Do not invent work, fictional quotations, or an hourly task.
+1. Read this file, `docs/3D_BOOK_JOURNEY.md`, `docs/DEVELOPMENT.md` and the original
+   brief. Inspect Git state; continue the genuine Three.js modules without redoing
+   the preserved hero or introducing fictional content.
+2. Implementation and responsive feature coverage pass in static and production.
+   Production build, typecheck, frozen install, audit and generated artifact
+   repeatability pass; do not repeat verified work without a new reason.
+3. Record actual results, verify static generation is repeatable, commit and use
+   an ordinary `HEAD:main` push only after inspecting current remote state.
+4. Verify served Netlify assets and browser behavior; document the result and
+   remaining genuine-content limitations. Preserve HTTPS certificate validation.
+5. No recurring task exists. Future resumption must inspect this file and remote
+   state. Configure scheduler concurrency only if an official scheduler becomes
+   available; do not create misleading local timers or bypass usage limits.

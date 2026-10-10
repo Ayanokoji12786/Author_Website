@@ -16,8 +16,8 @@ npm run dev
 The Next.js app and the standalone `index.html` share the same content, React
 markup, CSS, and interaction script. The standalone version remains suitable for
 the existing Netlify static-site deployment, including deployments that simply
-publish the repository root. No server, external fonts, WebGL, API key, or backend
-is needed for the static site.
+publish the repository root. No server, external fonts, API key, or backend is
+needed. Book view uses WebGL 2; unavailable WebGL falls back to Reading view.
 
 ```sh
 npm run build:static   # Regenerate index.html after changing shared markup/content
@@ -42,13 +42,17 @@ the same time. Stop the development server before building and starting producti
   website reflections, and existing reader reviews.
 - `public/experience.css`: shared palette, locally hosted typography, responsive
   layouts, perspective hardcover, lighting and reduced-motion behavior.
-- `public/book-journey.js`: the seven-page book camera, entry/exit/turn timeline,
-  height-aware reading, page navigation and Reading view.
+- `lib/book-world/`: persistent Three.js geometry, curved paper, camera, scroll
+  controller and data-driven spatial chapters. See `3D_BOOK_JOURNEY.md`.
+- `scripts/build-book-world.cjs`: bundles those browser modules with esbuild.
+  `public/book-journey.js` and `public/book-world/` are generated outputs; edit
+  their source modules and run `npm run build:static` instead.
 - `public/experience.js`: progressive enhancement, loader readiness and controls,
   book hinge/cursor/scroll response,
   preview paging, keyboard chapter tabs, tone-aware navigation, and reveal observers.
 - `public/media/`: optimized, generated mountain scene at desktop/mobile resolutions.
-- `public/fonts/`: Latin variable WOFF2 fonts and their redistribution licenses.
+- `public/fonts/`: Latin variable WOFF2 fonts and redistribution licenses,
+  plus the bundled Three.js Optimer geometry typeface license.
 - `scripts/export-static.cjs`: renders the shared React markup into `index.html` using
   the existing TypeScript dependency. Do not edit the generated HTML directly.
 
@@ -73,18 +77,24 @@ the loader is hidden. A missing cover never gets an invented loading-screen book
 The hero retains its photographic mountain, depth planes, mist and pointer camera.
 After the hero, **Book view is the default on desktop and mobile**. The seven
 remaining website sections are pages in a continuous book journey: the actual
-cover opens, the book tilts nearly flat, the view flies into the page, content
-rises toward the viewer, and scrolling explores the section. More scrolling pulls
-back, tilts the book again, turns a leaf and enters the next section. Scrolling
-backward reverses the choreography. Paper height and inner reading distance adapt
-to actual section content, fonts and expanded reviews. This is a presentation of
-website sections, not a claim that they are manuscript pages.
+cover opens, genuine book meshes rotate from XY into XZ, and the independent
+camera descends and flies along the same physical paper. Original content rises
+into spatial panels with solid backings and shadows; extruded numerals and
+chapter-specific sculptures emerge alongside them. At the end, content retracts,
+the camera pulls away, the book rotates upright, and a continuously deformed
+paper mesh turns before the next journey. Scroll reversal samples the same pure
+timeline. Camera framing adapts to the measured text, fonts and expanded reviews.
+This presents website sections, not claimed manuscript pages.
 
-The page controls can navigate forward/backward. Reading view switches back to
+Scene controls navigate the reading stops within a page; page controls navigate
+the seven chapters. Reading view switches back to
 the ordinary document at the current section and remembers that preference for
 the session; Book view resumes at the same section. Reduced motion automatically
-uses the ordinary layout. No-JavaScript markup uses display-contents wrappers to
-preserve that layout too. In Reading view, the original desktop perspective book
+uses the ordinary layout. Short landscape screens (480 px tall or less) use
+Reading view to keep content and controls readable; rotating or resizing back
+automatically resumes the same book and current chapter. No preference is lost.
+No-JavaScript markup uses display-contents wrappers to preserve that layout too.
+In Reading view, the original desktop perspective book
 and manual touch/keyboard opening are retained. No wheel or touch gestures are
 intercepted; the camera follows ordinary browser scroll events.
 
@@ -97,8 +107,10 @@ fallbacks are included. Ordinary document scrolling is never intercepted.
 Scroll updates are passive and coalesced into animation frames only when needed.
 Offscreen mist pauses. All content is server-rendered; the loader is immediately
 skippable and there is no indefinitely running JavaScript canvas loop. Fonts and
-mountain assets are local. The depth effect reuses the same cached responsive image
-for its planes and adds no WebGL library or new dependency.
+mountain assets are local. The hero still reuses its cached responsive images.
+Three.js is lazy-loaded for Book view, and esbuild is only a build dependency.
+Pixel ratio and shadow resolution are capped on mobile. WebGL loss restores the
+original interactive document, and page exit releases geometries and textures.
 
 ## Content and remaining assets
 
@@ -147,8 +159,10 @@ runtime exceptions, loader readiness/timeout/focus/storage failure, reversible
 cover and leaf choreography, full spread/attribution bounds on phones and tablets,
 and automated WCAG 2.1 AA checks on the introduction and content. The local-cover failure tests deliberately abort its request; other checks load
 the real bundled image and verify its dimensions and source. The immersive suite
-checks camera phases, reverse scrolling, all seven pages and their controls, view
-switching, bounds, runtime errors, actual heading depth and accessibility. Retailer service availability
+checks genuine canvas initialization, actual geometry rotation and paper
+curvature, camera descent/travel/retreat, reverse scrolling, all 17 reading stops
+and their controls, view switching, idle rendering, bounds, context loss and
+accessibility. Retailer service availability
 is not verified by these local checks.
 
 Run the same suite against a running Next.js production server:
