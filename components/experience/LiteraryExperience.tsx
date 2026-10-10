@@ -67,23 +67,36 @@ function Landscape({
       className={`landscape ${final ? "landscape-dawn" : "landscape-night"}`}
       aria-hidden="true"
     >
-      <img
-        className="mountain-photo"
-        src={`${assetBase}/media/mountain-dawn.webp`}
-        srcSet={`${assetBase}/media/mountain-dawn-mobile.webp 900w, ${assetBase}/media/mountain-dawn.webp 1536w`}
-        sizes="100vw"
-        width="1536"
-        height="1024"
-        alt=""
-        loading={final ? "lazy" : "eager"}
-        {...{ fetchpriority: final ? "low" : "high" }}
-        decoding="async"
-      />
+      <div className="landscape-camera">
+        <img
+          className="mountain-photo"
+          src={`${assetBase}/media/mountain-dawn.webp`}
+          srcSet={`${assetBase}/media/mountain-dawn-mobile.webp 900w, ${assetBase}/media/mountain-dawn.webp 1536w`}
+          sizes="100vw"
+          width="1536"
+          height="1024"
+          alt=""
+          loading={final ? "lazy" : "eager"}
+          {...{ fetchpriority: final ? "low" : "high" }}
+          decoding="async"
+        />
+        <div className="sunlight" />
+        <div className="mountain-foreground">
+          <img
+            src={`${assetBase}/media/mountain-dawn.webp`}
+            srcSet={`${assetBase}/media/mountain-dawn-mobile.webp 900w, ${assetBase}/media/mountain-dawn.webp 1536w`}
+            sizes="100vw"
+            width="1536"
+            height="1024"
+            alt=""
+            loading={final ? "lazy" : "eager"}
+            decoding="async"
+          />
+        </div>
+        <div className="mist mist-one" />
+        <div className="mist mist-two" />
+      </div>
       <div className="landscape-shade" />
-      <div className="sunlight" />
-      <div className="mountain-foreground" />
-      <div className="mist mist-one" />
-      <div className="mist mist-two" />
       <div className="landscape-grain" />
     </div>
   );
@@ -121,6 +134,65 @@ export default function LiteraryExperience({
 }) {
   return (
     <div id="literary-experience">
+      <div
+        className="cinematic-intro"
+        id="cinematic-intro"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="intro-title"
+        aria-describedby="intro-caption"
+        hidden
+      >
+        <div className="intro-atmosphere" aria-hidden="true" />
+        <span className="intro-kicker eyebrow">
+          A moment before the journey
+        </span>
+        <div className="intro-visual" aria-hidden="true">
+          <svg className="intro-pulse" viewBox="0 0 600 100" fill="none">
+            <path d="M0 50H180L202 50L215 35L229 78L245 10L265 65L280 50H600" />
+          </svg>
+          <svg className="intro-ridge" viewBox="0 0 600 150" fill="none">
+            <path d="M0 145L75 100L120 120L200 45L255 98L330 12L395 86L440 61L510 112L600 145" />
+            <path d="M300 48L330 12L353 40L336 33L323 47L315 39L300 48" />
+          </svg>
+          <div className="intro-book">
+            <span>
+              Still Standing,
+              <br />
+              <em>Still Here.</em>
+            </span>
+          </div>
+        </div>
+        <div className="intro-copy">
+          <p id="intro-caption">Every story begins with surviving.</p>
+          <p id="intro-title">
+            Still Standing,
+            <br />
+            <em>Still Here.</em>
+          </p>
+        </div>
+        <div className="intro-readiness">
+          <div
+            className="intro-progress"
+            role="progressbar"
+            aria-label="Preparing the experience"
+            aria-valuemin={0}
+            aria-valuemax={100}
+            aria-valuenow={0}
+          >
+            <span />
+          </div>
+          <p>
+            <span data-intro-status>Preparing the landscape</span>
+            <span data-intro-percent aria-hidden="true">
+              0%
+            </span>
+          </p>
+        </div>
+        <button className="intro-skip text-link" type="button">
+          Skip introduction <Arrow />
+        </button>
+      </div>
       <a className="skip-link" href="#main">
         Skip to content
       </a>
@@ -233,6 +305,9 @@ export default function LiteraryExperience({
                       From the original website
                     </span>
                   </div>
+                  <div className="book-leaf book-leaf-one" />
+                  <div className="book-leaf book-leaf-two" />
+                  <div className="book-leaf book-leaf-three" />
                   <div className="book-cover">
                     <div className="cover-fallback">
                       <MountainMark />
@@ -276,6 +351,16 @@ export default function LiteraryExperience({
               <p className="book-stage-note">
                 Hardcover <span aria-hidden="true">·</span> ISBN {book.isbn}
               </p>
+              <div className="book-journey" aria-hidden="true">
+                <span data-book-phase="discover" className="is-current">
+                  01 Discover
+                </span>
+                <span data-book-phase="open">02 Open</span>
+                <span data-book-phase="read">03 Reflect</span>
+                <div className="book-journey-track">
+                  <span />
+                </div>
+              </div>
             </div>
             <div className="book-introduction" data-reveal>
               <p className="eyebrow section-index">

@@ -22,7 +22,8 @@
   var frame = 0;
   var menuOpen = false;
   var manualBookChoice = false;
-  var autoOpened = false;
+  var intro = root.querySelector("#cinematic-intro");
+  var introFinished = false;
   var activeScenes = new Set(scenes);
 
   function setMenu(open, restoreFocus) {
@@ -64,6 +65,7 @@
   openButton.hidden = false;
   openButton.addEventListener("click", function () {
     manualBookChoice = true;
+    bookModel.classList.add("is-manual");
     setBookOpen(!bookModel.classList.contains("is-open"));
   });
   bookStage.addEventListener("pointermove", function (event) {
@@ -248,42 +250,234 @@
         break;
       }
     }
-    if (!reduced.matches && !narrow.matches) {
+    if (!reduced.matches) {
       activeScenes.forEach(function (scene) {
         var bounds = scene.getBoundingClientRect();
+        var travel = Math.max(-1, Math.min(1, -bounds.top / height));
+        var strength = narrow.matches ? 0.4 : 1;
         scene.style.setProperty(
           "--landscape-y",
-          Math.max(-50, Math.min(50, -bounds.top * 0.07)).toFixed(1) + "px",
+          (travel * 65 * strength).toFixed(1) + "px",
+        );
+        scene.style.setProperty(
+          "--camera-y",
+          (travel * 45 * strength).toFixed(1) + "px",
+        );
+        scene.style.setProperty(
+          "--camera-z",
+          (Math.abs(travel) * 90 * strength).toFixed(1) + "px",
+        );
+        scene.style.setProperty(
+          "--camera-pitch",
+          (travel * -3 * strength).toFixed(2) + "deg",
+        );
+        scene.style.setProperty(
+          "--near-y",
+          (travel * -45 * strength).toFixed(1) + "px",
+        );
+        scene.style.setProperty(
+          "--hero-lift",
+          (travel * -55 * strength).toFixed(1) + "px",
         );
       });
       var bookBounds = bookSection.getBoundingClientRect();
-      if (bookBounds.top < height && bookBounds.bottom > 0) {
+      if (!narrow.matches && bookBounds.top < height && bookBounds.bottom > 0) {
         var progress = Math.max(
           0,
-          Math.min(1, (height - bookBounds.top) / (height + bookBounds.height)),
+          Math.min(
+            1,
+            -bookBounds.top / Math.max(1, bookBounds.height - height),
+          ),
         );
+        var opening = Math.max(0, Math.min(1, (progress - 0.28) / 0.52));
+        opening = opening * opening * (3 - 2 * opening);
         bookModel.style.setProperty(
           "--book-rotation",
-          (-30 + progress * 26).toFixed(1) + "deg",
+          (-36 + progress * 30).toFixed(1) + "deg",
+        );
+        bookModel.style.setProperty(
+          "--book-pitch",
+          (9 - progress * 7).toFixed(1) + "deg",
+        );
+        bookModel.style.setProperty(
+          "--book-roll",
+          (-4 + progress * 4).toFixed(1) + "deg",
         );
         bookModel.style.setProperty(
           "--book-scale",
-          (0.86 + progress * 0.2).toFixed(3),
+          (0.9 + Math.sin(progress * Math.PI) * 0.07).toFixed(3),
         );
-        if (
-          !manualBookChoice &&
-          !autoOpened &&
-          bookBounds.top < -height * 0.2
-        ) {
-          autoOpened = true;
-          setBookOpen(true);
-        }
+        bookModel.style.setProperty(
+          "--book-lift",
+          (-Math.sin(progress * Math.PI) * 18).toFixed(1) + "px",
+        );
+        bookModel.style.setProperty(
+          "--book-shift",
+          (opening * 18).toFixed(1) + "%",
+        );
+        bookModel.style.setProperty(
+          "--hinge-angle",
+          (-118 * opening).toFixed(1) + "deg",
+        );
+        ["one", "two", "three"].forEach(function (leaf, i) {
+          var turn = Math.max(
+            0,
+            Math.min(1, (progress - 0.44 - i * 0.055) / 0.3),
+          );
+          turn = turn * turn * (3 - 2 * turn);
+          bookModel.style.setProperty(
+            "--leaf-" + leaf,
+            (-turn * (104 + i * 5.5)).toFixed(1) + "deg",
+          );
+        });
+        if (!manualBookChoice) setBookOpen(opening > 0.55);
+        bookStage.style.setProperty("--book-progress", progress.toFixed(3));
+        var phase =
+          progress < 0.3 ? "discover" : progress < 0.78 ? "open" : "read";
+        root.querySelectorAll("[data-book-phase]").forEach(function (label) {
+          label.classList.toggle(
+            "is-current",
+            label.dataset.bookPhase === phase,
+          );
+        });
       }
     }
   }
   function requestUpdate() {
     if (!frame) frame = window.requestAnimationFrame(update);
   }
+  // A short, skippable introduction. Progress reflects local assets, never a fake timer.
+  function setupIntro() {
+    var skip = intro.querySelector(".intro-skip");
+    var progress = intro.querySelector(".intro-progress");
+    var status = intro.querySelector("[data-intro-status]");
+    var percent = intro.querySelector("[data-intro-percent]");
+    var previousFocus = document.activeElement;
+    var blocked = Array.from(root.children).filter(function (el) {
+      return el !== intro;
+    });
+    var priorInert = blocked.map(function (el) {
+      return el.inert;
+    });
+    var returning = false;
+    try {
+      returning = sessionStorage.getItem("ssh-intro-seen") === "true";
+    } catch (_) {}
+    var minimum = reduced.matches ? 0 : returning ? 1400 : 2600;
+    var started = performance.now();
+    var timers = [];
+    var completed = 0;
+    var tasks = [
+      document.fonts ? document.fonts.ready : Promise.resolve(),
+      new Promise(function (resolve) {
+        var image = root.querySelector(".hero .mountain-photo");
+        if (image.complete) resolve();
+        else {
+          image.addEventListener("load", resolve, { once: true });
+          image.addEventListener("error", resolve, { once: true });
+        }
+      }),
+    ];
+    function finish(immediate) {
+      if (introFinished) return;
+      introFinished = true;
+      timers.forEach(clearTimeout);
+      try {
+        sessionStorage.setItem("ssh-intro-seen", "true");
+      } catch (_) {}
+      function release() {
+        intro.hidden = true;
+        document.documentElement.classList.remove("intro-active");
+        blocked.forEach(function (el, i) {
+          el.inert = priorInert[i];
+        });
+        if (intro.contains(document.activeElement)) {
+          var target =
+            previousFocus && previousFocus !== document.body
+              ? previousFocus
+              : root.querySelector(".brand");
+          target.focus({ preventScroll: true });
+        }
+        requestUpdate();
+      }
+      if (immediate || reduced.matches) release();
+      else {
+        intro.classList.add("is-leaving");
+        timers.push(setTimeout(release, 650));
+      }
+    }
+    intro.hidden = false;
+    intro.classList.remove("is-leaving");
+    document.documentElement.classList.add("intro-active");
+    blocked.forEach(function (el) {
+      el.inert = true;
+    });
+    skip.focus({ preventScroll: true });
+    skip.addEventListener("click", function () {
+      finish(true);
+    });
+    intro.addEventListener("keydown", function (event) {
+      if (event.key === "Escape") {
+        event.preventDefault();
+        finish(true);
+      }
+      if (event.key === "Tab") {
+        event.preventDefault();
+        skip.focus();
+      }
+    });
+    tasks.forEach(function (task) {
+      task.then(
+        function () {
+          if (introFinished) return;
+          completed++;
+          var value = Math.round((completed / tasks.length) * 100);
+          progress.setAttribute("aria-valuenow", String(value));
+          progress.style.setProperty("--intro-progress", String(value / 100));
+          percent.textContent = value + "%";
+          if (completed === tasks.length) {
+            status.textContent = "The journey is ready";
+            timers.push(
+              setTimeout(
+                function () {
+                  finish(false);
+                },
+                Math.max(0, minimum - (performance.now() - started)),
+              ),
+            );
+          }
+        },
+        function () {
+          finish(true);
+        },
+      );
+    });
+    // Network failures and blocked fonts can never leave a visitor trapped.
+    timers.push(
+      setTimeout(
+        function () {
+          finish(false);
+        },
+        reduced.matches ? 1200 : 4500,
+      ),
+    );
+    reduced.addEventListener("change", function () {
+      if (reduced.matches) finish(true);
+    });
+  }
+  scenes.forEach(function (scene) {
+    scene.addEventListener("pointermove", function (event) {
+      if (reduced.matches || narrow.matches || !pointer.matches) return;
+      var bounds = scene.getBoundingClientRect();
+      var x = (event.clientX - bounds.left) / bounds.width - 0.5;
+      scene.style.setProperty("--camera-x", (x * -16).toFixed(1) + "px");
+      scene.style.setProperty("--camera-yaw", (x * 2.5).toFixed(2) + "deg");
+    });
+    scene.addEventListener("pointerleave", function () {
+      scene.style.setProperty("--camera-x", "0px");
+      scene.style.setProperty("--camera-yaw", "0deg");
+    });
+  });
   root.classList.add("is-enhanced");
   window.addEventListener("scroll", requestUpdate, { passive: true });
   window.addEventListener("resize", requestUpdate, { passive: true });
@@ -291,4 +485,5 @@
   if ("ResizeObserver" in window)
     new ResizeObserver(requestUpdate).observe(root);
   update();
+  setupIntro();
 })();

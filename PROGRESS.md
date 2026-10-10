@@ -13,12 +13,15 @@ manuscript content and unavailable photography have not been fabricated.
 ## Completed work
 
 - Dark mountain opening, dawn exposure, drifting mist, elegant title reveal,
-  gentle desktop parallax, exploration prompt, illuminated final summit.
+  perspective mountain camera with layered near/far photography, exploration
+  prompt, illuminated final summit.
 - Eight connected sections: hero, book, meaning, reading preview, chapter journey,
   authors, reader responses, and final purchase scene.
 - CSS perspective hardcover with spine, page edges, studio shadows, desktop
-  pointer response, scroll-linked scale/rotation, hinged opening, and manual
-  keyboard/touch controls. Mobile uses a simpler, smaller open spread.
+  pointer response, reversible scroll-linked camera/scale/rotation, a continuous
+  cover hinge, three independently turning leaves, visible three-phase track,
+  and manual keyboard/touch controls that override scrolling. Mobile uses a
+  shallower landscape and manually opened, smaller dimensional book spread.
 - Three original website themes, three clearly attributed website reflections,
   all six available chapter-guide entries, both original full reader reviews,
   authors, ISBN, and exact Amazon/Flipkart URLs preserved in `lib/book-content.ts`.
@@ -26,7 +29,8 @@ manuscript content and unavailable photography have not been fabricated.
   native expandable reviews, responsive menu, Escape/focus handling, light/dark
   navigation, skip link, semantic sections, visible focus and reduced motion.
 - Server-rendered/no-JavaScript fallbacks, local fonts with licenses, optimized
-  responsive mountain WebP assets, lazy noncritical images, no mandatory loader,
+  responsive mountain WebP assets, lazy noncritical images, a skippable
+  enhanced heartbeat/mountain/book loading sequence with real asset readiness,
   no scroll hijacking and no perpetual JavaScript animation loop.
 - Consistent shared implementation in `components/experience/`,
   `public/experience.css`, and `public/experience.js`; `scripts/export-static.cjs`
@@ -38,7 +42,53 @@ manuscript content and unavailable photography have not been fabricated.
   with Autoprefixer; old Tailwind/animation files are retained as inactive references.
 - Repeatable npm scripts, `.node-version`, README and Playwright/axe test suite.
 
-## Validation evidence
+## 3-D enhancement requested in the latest session
+
+The user explicitly asked for stronger 3-D scroll animation and retention/enhancement
+of the loading screen. This increment is implemented in the shared markup/CSS/JS,
+so both standalone Netlify and Next.js receive the same experience. The original
+heartbeat and mountain motif is active again, with a miniature 3-D book, title
+reveal, real local-image/font progress, immediate Skip/Escape, focus containment,
+background inertness and restoration, bounded timeout, reduced-motion handling,
+and safe operation when browser storage is unavailable. No audio auto-plays.
+
+The mountain camera now uses perspective/preserve-3d with a separately masked
+near photograph, a distant photograph and atmospheric depth; duplicate planes
+reuse the same cached responsive asset. Desktop scrolling continuously rotates,
+lifts and opens the physical book, then turns its three individual leaves.
+Backward scrolling reverses it; manual choices persist. Reflections and chapters
+have dimensional entrance/page motion. Phone motion is shallower and the book
+remains manually controlled. No new runtime library or dependency was introduced.
+
+Validation so far: final Next.js build/prerender and `npm run typecheck` passed;
+full standalone and production suites each **33 passed, 3 intentional platform
+skips** (desktop skips the mobile menu; mobile skips two desktop scroll behaviors).
+A final short-screen loader layout adjustment was then validated with **8 affected
+standalone checks passed and 8 affected production checks passed**. The final
+production build and typecheck passed again after that scoped adjustment. The
+38-case suite now includes the two new platform instances of the landscape test. Loader and content automated WCAG 2.1 AA checks passed,
+including focus/inertness, real readiness, automatic exit, blocked image timeout,
+storage denial and reduced motion. No JavaScript keeps the loader hidden.
+
+Visual inspection identified and fixed a tablet spread extending past the left
+edge and cramped attribution on smaller book pages. Explicit browser assertions
+now verify all five physical book planes and the reflection attribution stay in
+bounds at 320, 390, 768 and 1024 pixels. The introduction also now fits sideways
+phones at 844×390 and 568×320, with explicit progress/Skip bounds and click tests. Preview measurements wait for the entrance
+transition to finish before checking stable height. All six affected checks passed.
+
+Fetched and fast-forwarded the user's latest remote commit `89715d7` (README access
+link). Preserved that concise README and its exact site link; moved the detailed
+updated development/animation/testing guide to `docs/DEVELOPMENT.md`, linked from
+README. No source implementation changed during integration.
+
+Implementation and validation for the 3-D increment are complete. Static export
+was regenerated with the same SHA-256 before and after the final checks, confirming
+repeatability. No runtime/hydration exceptions or missing local assets were found.
+The verified changes are ready for the authorized ordinary push to `main`; the
+Git handoff below will be updated after remote verification.
+
+## Validation evidence (original redesign baseline)
 
 - Frozen `npm ci --cache /workspace/.npm --no-audit --no-fund`: passed after all
   dependency changes (57 packages installed).
@@ -144,9 +194,11 @@ may run as a normal consequence of the authorized push.
 ## Exact next steps for resumption
 
 1. Read this file and `docs/REDESIGN_BRIEF.md`; inspect `git status` and `git log -1`.
-2. Production browser validation and the implementation push are complete. Compare
-   local HEAD with remote main before making new changes; inspect any divergence.
-   Use the commands in README. Do not redo or replace already verified features.
+2. The latest 3-D implementation and validation are complete. If its Git handoff
+   still says the push is pending, compare HEAD with remote main, inspect any
+   divergence and push verified changes with `git push origin HEAD:main`. Otherwise
+   continue only a new user request or the genuinely blocked content items below;
+   do not redo or replace verified features. Commands are in `docs/DEVELOPMENT.md`.
 3. Retry live website/cover access only after a meaningful network configuration
    change, or use genuinely supplied local source assets and manuscript text.
 4. Complete the content replacements above when real materials become available;
