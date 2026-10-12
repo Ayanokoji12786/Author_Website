@@ -41,7 +41,15 @@ Preserve the existing credits; no alias or author reconciliation is authorized.
   platform skips and no failures**. Hero markup remains byte-identical and the
   original content source is untouched.
 
-Exact next steps: push verified changes and verify the live Netlify files/pages.
+- Implementation commit `4d5d1ad93af11434bd1b2e2ea573f24c785ea964` was pushed
+  to `origin main`; the remote SHA matches. Final visual review found the new
+  SVG in the facts footer inherited a global block display. Corrected it to
+  inline display, rebuilt with the server stopped, and started a focused
+  production rerun of all ten discovery checks before publishing that CSS fix.
+  All ten passed again; the full production build and type checks also pass.
+
+Exact next steps: publish the verified CSS/progress correction and verify the
+live Netlify files/pages, then run the live discovery/loader/purchase subset.
 Production evidence is in `/tmp/geo-production-tests.log` and
 `/tmp/geo-production-tests`. The known prior production process was stopped
 and port 4175 confirmed empty before rebuilding; a fresh Next server now runs.
