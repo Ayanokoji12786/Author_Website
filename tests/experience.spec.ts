@@ -43,10 +43,18 @@ test("renders all eight sections, local assets, real links and metadata", async 
     (await page.locator('script[type="application/ld+json"]').textContent()) ||
       "{}",
   );
-  expect(schema.isbn).toBe(book.isbn);
-  expect(schema.author.map((author: { name: string }) => author.name)).toEqual(
-    book.authors,
+  const entity = schema["@graph"].find(
+    (node: { "@type": string }) => node["@type"] === "Book",
   );
+  expect(entity.isbn).toBe(book.isbn);
+  expect(
+    entity.author.map(
+      (author: { "@id": string }) =>
+        schema["@graph"].find(
+          (node: { "@id": string }) => node["@id"] === author["@id"],
+        ).name,
+    ),
+  ).toEqual(book.authors);
   expect(
     await page
       .locator(".mountain-photo")

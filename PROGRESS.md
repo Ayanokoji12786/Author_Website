@@ -1,6 +1,6 @@
 # Still Standing, Still Here — persistent progress
 
-Last updated: 10 October 2026 (UTC).
+Last updated: 12 October 2026 (Asia/Kolkata).
 
 ## Current state
 
@@ -10,7 +10,46 @@ from scratch. The original full requirements are preserved in
 and the standalone Netlify page. Remaining limitations are listed below; genuine
 manuscript content and unavailable photography have not been fabricated.
 
-## Current increment: reliability and cinematic polish (deployed and verified)
+## Current increment: search and generative-search discovery (implementation in verification)
+
+The user requested research and implementation of official-site identity,
+schema markup, answer capsules and external citations. Official Google/OpenAI
+guidance and Schema.org vocabulary were researched before implementation; see
+`docs/SEARCH_DISCOVERY.md` for sources, conclusions and account-side next steps.
+The user explicitly requested leaving the author-credit/catalogue issue alone.
+Preserve the existing credits; no alias or author reconciliation is authorized.
+
+- Added a shared SEO source, connected WebSite/WebPage/Book/Person JSON-LD,
+  explicit official-site metadata, a visible homepage identity and footer link.
+- Added `/book-facts/` in both Next.js and static Netlify forms, with six visible
+  answer capsules, genuine cover, ISBN and catalogue/retailer reference links.
+  The BlueRoseONE page was verified HTTP 200 for the same title and exact ISBN;
+  the citation is limited to book identification. Existing author credits and
+  retailer destinations are unchanged. No identities or endorsements were invented.
+- Both builds now expose shared robots rules and a two-page canonical sitemap.
+  Search-bot access is allowed; existing training-bot access is preserved.
+  The loader is gated to the homepage so the facts page has no loading barrier.
+  The original hero's generated markup was verified byte-identical.
+- Added discovery regressions and updated the existing Book schema assertion
+  to resolve the unchanged authors through their entity IDs. Static generation
+  and typecheck pass. The first targeted test launch found an old HTTP server
+  accepting connections without responding; restarted only the known prior
+  test servers. All ten targeted static desktop/mobile discovery checks passed.
+  Reviewed both full-page facts screenshots and replaced an unsupported arrow
+  glyph with SVG. The final production build/prerender and whitespace checks
+  pass. The full 92-case production run **passed 89 checks with three intentional
+  platform skips and no failures**. Hero markup remains byte-identical and the
+  original content source is untouched.
+
+Exact next steps: push verified changes and verify the live Netlify files/pages.
+Production evidence is in `/tmp/geo-production-tests.log` and
+`/tmp/geo-production-tests`. The known prior production process was stopped
+and port 4175 confirmed empty before rebuilding; a fresh Next server now runs.
+Do not claim indexing or AI citations. Search Console verification/submission and
+external inbound links require the owning accounts; no authenticated submissions
+or third-party outreach have been performed.
+
+## Previous increment: reliability and cinematic polish (deployed and verified)
 
 The user supplied `docs/REFINEMENT_BRIEF.md`; it refines the deployed experience,
 not a rebuild. Preserve all existing content, hero, genuine cover, mountain and

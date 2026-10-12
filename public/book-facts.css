@@ -1,0 +1,188 @@
+/* A readable companion to the cinematic homepage; no scene or loader required. */
+.book-facts {
+  background: var(--ivory);
+  color: var(--charcoal);
+  min-height: 100svh;
+}
+.book-facts a {
+  text-decoration: underline;
+  text-underline-offset: 5px;
+}
+.book-facts a:hover {
+  color: #8b4930;
+}
+.facts-header,
+.facts-footer {
+  padding: 26px var(--gutter);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 24px;
+}
+.facts-header {
+  border-bottom: 1px solid #17191a26;
+}
+.facts-header > a:first-child {
+  font-family: var(--serif);
+  font-size: 25px;
+  text-decoration: none;
+}
+.facts-header > a:last-child {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 44px;
+  font-size: 12px;
+  white-space: nowrap;
+}
+.facts-arrow {
+  flex-shrink: 0;
+  vertical-align: middle;
+}
+.book-facts main {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 80px var(--gutter);
+}
+.facts-introduction {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(150px, 230px);
+  align-items: start;
+  gap: 60px;
+}
+.book-facts .eyebrow {
+  color: #74695f;
+}
+.book-facts h1 {
+  font-family: var(--serif);
+  font-size: clamp(44px, 5.4vw, 72px);
+  font-weight: 400;
+  line-height: 1.05;
+  letter-spacing: -0.025em;
+  margin: 18px 0 28px;
+}
+.book-facts h1 em {
+  color: #8b4930;
+}
+.facts-lead {
+  font-size: 17px;
+  line-height: 1.75;
+  max-width: 45ch;
+}
+.facts-introduction > img {
+  width: 100%;
+  height: auto;
+  box-shadow: 10px 16px 35px #17191a26;
+}
+.facts-identity {
+  margin: 32px 0 0;
+  font-size: 13px;
+}
+.facts-identity > div {
+  display: grid;
+  grid-template-columns: 120px minmax(0, 1fr);
+  gap: 16px;
+  padding: 12px 0;
+  border-top: 1px solid #17191a26;
+}
+.facts-identity dt {
+  color: #74695f;
+}
+.facts-identity dd {
+  margin: 0;
+  line-height: 1.6;
+  overflow-wrap: anywhere;
+}
+.facts-answers,
+.facts-source {
+  margin-top: 80px;
+}
+.book-facts h2 {
+  font-family: var(--serif);
+  font-size: clamp(36px, 4vw, 48px);
+  font-weight: 400;
+  line-height: 1.1;
+  margin: 12px 0 32px;
+}
+.answer-capsule {
+  border-top: 1px solid #17191a26;
+  padding: 30px 0;
+  scroll-margin-top: 24px;
+}
+.answer-capsule h3 {
+  font-family: var(--serif);
+  font-size: 28px;
+  font-weight: 500;
+  line-height: 1.2;
+  margin: 0 0 14px;
+}
+.answer-capsule p,
+.facts-source p:not(.eyebrow) {
+  font-size: 15px;
+  line-height: 1.8;
+  max-width: 70ch;
+  overflow-wrap: anywhere;
+}
+.answer-capsule ul {
+  list-style: none;
+  padding: 0;
+  margin: 12px 0 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 24px;
+}
+.answer-capsule a {
+  font-size: 12px;
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  gap: 8px;
+}
+.facts-source {
+  border: 1px solid #17191a26;
+  padding: 30px;
+}
+.facts-source h2 {
+  margin-bottom: 20px;
+}
+.facts-source p + p {
+  margin-top: 16px;
+}
+.facts-footer {
+  border-top: 1px solid #17191a26;
+  font-size: 12px;
+  line-height: 1.75;
+  flex-wrap: wrap;
+}
+@media (max-width: 650px) {
+  .facts-header {
+    align-items: start;
+    gap: 20px;
+  }
+  .facts-header > a:first-child {
+    font-size: 21px;
+    max-width: 65%;
+  }
+  .book-facts main {
+    padding-top: 48px;
+    padding-bottom: 48px;
+  }
+  .facts-introduction {
+    grid-template-columns: 1fr;
+    gap: 32px;
+  }
+  .facts-introduction > img {
+    width: 140px;
+  }
+  .facts-identity > div {
+    grid-template-columns: 90px minmax(0, 1fr);
+    gap: 10px;
+  }
+  .facts-answers,
+  .facts-source {
+    margin-top: 48px;
+  }
+  .facts-source {
+    padding: 24px;
+  }
+}

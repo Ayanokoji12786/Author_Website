@@ -1,6 +1,7 @@
 // Runs in the head, before first paint, on both deployment paths. The timeout
 // and early Skip/Escape keep the semantic site usable if enhancement never loads.
 export const introBootstrap = `(function(){
+if(location.pathname!=='/'&&location.pathname!=='/index.html')return;
 var h=document.documentElement,s=window.__sshIntro={dismissed:false,claimed:false};
 h.classList.add('intro-pending');
 function release(){if(s.claimed)return;s.dismissed=true;h.classList.remove('intro-pending');clearTimeout(s.timer);}

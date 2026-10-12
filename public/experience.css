@@ -1424,6 +1424,7 @@ h2 em {
 }
 .footer-top nav {
   display: flex;
+  flex-wrap: wrap;
   gap: 30px;
   font-size: 10px;
   color: #b3aa9b;
@@ -1449,6 +1450,12 @@ h2 em {
   font-size: 8px;
   color: #b3aa9b;
   line-height: 1.8;
+}
+.footer-identity {
+  margin-top: 20px;
+  font-size: 11px;
+  line-height: 1.6;
+  color: #b3aa9b;
 }
 .footer-bottom::before {
   content: "";

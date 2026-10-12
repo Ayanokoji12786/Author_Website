@@ -1,4 +1,8 @@
+# Generated from lib/site-seo.ts by npm run build:static.
 User-agent: *
+Allow: /
+
+User-agent: OAI-SearchBot
 Allow: /
 
 Sitemap: https://still-standing-still-here.netlify.app/sitemap.xml

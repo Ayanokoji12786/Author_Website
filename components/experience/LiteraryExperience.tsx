@@ -822,11 +822,15 @@ export default function LiteraryExperience({
             <a href="#inside">The book</a>
             <a href="#chapters">Chapters</a>
             <a href="#voices">Reader voices</a>
+            <a href="/book-facts/">Official book facts</a>
             <a href="#hero">
               Back to the summit <Arrow direction="down" />
             </a>
           </nav>
         </div>
+        <p className="container footer-identity">
+          The official website for <cite>Still Standing, Still Here.</cite>
+        </p>
         <div className="container footer-bottom">
           <p>© 2026 Dhruva Nerella &amp; Tattva Nerella</p>
           <p>Still standing is still extraordinary.</p>
