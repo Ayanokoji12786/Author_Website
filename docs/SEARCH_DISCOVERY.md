@@ -77,6 +77,31 @@ social profiles or publication metadata to make the graph appear richer.
 
 ## Account and external actions still needed
 
+### Current publication blocker
+
+The implementation is committed and pushed to the connected repository. Static
+discovery checks passed 10/10; the complete production suite passed 89 checks with
+three intentional platform skips. A focused production rerun after the final SVG
+display fix passed all ten discovery checks again.
+
+Both new Netlify deployments failed; the public deployment API still reports
+`ef9ae25` as the published release. The new `/book-facts/` is not public yet. Build
+details require owner authentication (HTTP 401); no Netlify credential or CLI auth
+was available. The owner was asked to supply the actual build error. Its cause
+has not been invented or inferred from the successful local build.
+
+A standalone deployment archive is available at
+`/workspace/still-standing-search-ready.zip`. Its extracted contents passed all
+ten discovery tests. It contains the generated homepage, facts page, robots,
+sitemap and public assets. If using manual deployment, extract the archive and
+upload that output folder to the **existing** Netlify site through the owning
+account. This does not require a Next server, but it still requires a successful
+authorized hosting deployment. The source remains in the connected repository.
+
+Fix publication first, then verify the actual live HTML and run live regressions.
+Index submission is useful once the new canonical pages return HTTP 200. No live
+test of the undeployed facts page or actual Google/AI visibility is claimed.
+
 Website changes cannot themselves verify ownership or compel indexing. No
 Search Console property verification, authenticated sitemap submission, inbound
 link placement or actual search ranking/citation was performed in this task.

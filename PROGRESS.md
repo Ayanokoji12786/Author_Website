@@ -10,7 +10,7 @@ from scratch. The original full requirements are preserved in
 and the standalone Netlify page. Remaining limitations are listed below; genuine
 manuscript content and unavailable photography have not been fabricated.
 
-## Current increment: search and generative-search discovery (implementation in verification)
+## Current increment: search and generative-search discovery (verified; Netlify publication blocked)
 
 The user requested research and implementation of official-site identity,
 schema markup, answer capsules and external citations. Official Google/OpenAI
@@ -48,8 +48,37 @@ Preserve the existing credits; no alias or author reconciliation is authorized.
   production rerun of all ten discovery checks before publishing that CSS fix.
   All ten passed again; the full production build and type checks also pass.
 
-Exact next steps: publish the verified CSS/progress correction and verify the
-live Netlify files/pages, then run the live discovery/loader/purchase subset.
+- CSS correction commit `e19f55540acbd56b9941230dc1dd00fa9eb57d45` was pushed
+  to `origin main`; the remote SHA matches exactly. Both this and `4d5d1ad` were
+  picked up by Netlify, but both deployments entered **error**, confirmed through
+  the public Netlify API. This is not merely propagation delay.
+- Netlify still publishes the previously verified `ef9ae25` release. The new
+  `/book-facts/` and its stylesheet return HTTP 404; homepage, robots and sitemap
+  remain the old versions. **Do not claim the SEO changes are live or indexed.**
+  Deployment IDs: `6acca6f04effdf50be0bc1ef` and `6acca83ded94cb2fa164f1b1`;
+  site ID: `a5b2d89c-e1ff-42b8-bc60-95d8c59b8ca6`.
+- Public deployment metadata gives no error detail. Netlify's build and build-list
+  APIs return HTTP 401. No Netlify environment credentials, CLI installation or
+  standard CLI/project auth configuration is present. Existing Git access works
+  but does not grant Netlify account access. Asked the user for the latest build
+  error; that information remains pending. No speculative hosting configuration
+  change or blind repeated deployment was used as a substitute for the missing log.
+- Prepared `/workspace/still-standing-search-ready.zip`: 23 public deployment
+  files, 702,175 bytes, SHA-256
+  `bd13ff3a3d7d3bac8a301908f09ee0907166c619e779c8d8e5072de59004f5d6`.
+  Extracted and served the exact archive; **all ten desktop/mobile discovery
+  checks passed again**, including real purchase navigation. This provides a
+  tested standalone artifact for the owning account's manual deployment if useful;
+  the archive does not publish itself. It contains no repository, credentials,
+  development dependencies or Next server artifacts.
+
+Exact next steps: read the owner's build error at
+`https://app.netlify.com/projects/still-standing-still-here/deploys/6acca83ded94cb2fa164f1b1`,
+fix the confirmed hosting/build cause, push any verified correction, then compare
+live files using `/tmp/verify-search-deployment.py` and run the live discovery/
+loader/purchase subset. A manual upload of the extracted tested static folder to
+the existing site is another account-side publishing option. Live browser checks
+for the new pages have **not** run because those pages are not deployed.
 Production evidence is in `/tmp/geo-production-tests.log` and
 `/tmp/geo-production-tests`. The known prior production process was stopped
 and port 4175 confirmed empty before rebuilding; a fresh Next server now runs.
