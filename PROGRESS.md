@@ -1,6 +1,6 @@
 # Still Standing, Still Here — persistent progress
 
-Last updated: 12 October 2026 (Asia/Kolkata).
+Last updated: 12 October 2026 (UTC).
 
 ## Current state
 
@@ -9,6 +9,70 @@ from scratch. The original full requirements are preserved in
 `docs/REDESIGN_BRIEF.md`. Shared content and components drive both the Next.js app
 and the standalone Netlify page. Remaining limitations are listed below; genuine
 manuscript content and unavailable photography have not been fabricated.
+
+## Current increment: smoother white-page journey (verified; publication blocked)
+
+Continue the existing seven chapters; do not rebuild from scratch. The user's
+latest direction requires white empty distant pages, content fading/emerging only
+on entry, forward passage through content, complete retraction before retreat,
+and a reversible realistic turn. Preserve the hero, real cover, sound, authors,
+retailers and the search-discovery increment below.
+
+- Removed chapter/endpaper canvases and all page texture swaps/uploads. Stationary
+  pages and both turning-sheet faces are white. Distant card backings, supports,
+  numbers, landmarks and HTML are hidden, rather than merely flattened.
+- Added deterministic opacity tied to descent, emergence and retraction, with
+  near-plane passage fading to prevent oversized/mirrored CSS content.
+- Expanded multi-stop travel across the real right-hand page. A fixed maximum
+  fitted distance per chapter prevents different card heights changing dolly
+  direction. Cached vectors and batched measurements reduce frame allocations.
+- Replaced the forced 450 ms scroll catch-up with elapsed-time exponential
+  damping and subpixel settling. Kept explicit navigation instantaneous and
+  one RAF owner. Mobile height-only changes retain scroll spans while renderer
+  dimensions still update.
+- Refined the page's integrated curvature, corner lift, gutter seating and
+  normal-directed underside thickness. Reused normals instead of computing
+  them twice; disable frustum culling only on the two deformed leaf meshes.
+- Opened and scrolled Apple AirPods Pro and the Codrops 3D carousel in Chromium;
+  reviewed their rendered frames. No reference assets or code were copied.
+- Added desktop/mobile regressions for empty pages, partial/full fade/reversal,
+  monotonic camera travel crossing a real content anchor, and viewport resizing.
+  The initial test caught an entry shot too far back; corrected the first anchor.
+  A new desktop resize assertion initially ran before the asynchronous resize;
+  it now waits for the actual canvas dimensions before checking chapter spans.
+- Found and fixed a first-entry camera jump: CSS3DRenderer skips invisible
+  groups, leaving dormant chapters unmeasured until ResizeObserver fires after
+  their first appearance. All chapters now attach and measure beneath a hidden
+  stage before becoming visible; added a 17-stop measurement/camera-stability test.
+- Final Next.js production build/prerender and TypeScript compilation pass.
+  The final **100-case production run passed 97 checks, with three intentional
+  platform skips and no failures**. This includes genuine purchase pixels/links,
+  loader timing/failures, original heartbeat/wind consent and cleanup, resize and
+  reverse scrolling, all 17 content stops, accessibility and the SEO increment.
+  Full result: `/tmp/book-refine-final-production.log`.
+- Visually reviewed upright white pages, entry fade, reading, passage, retreat
+  and the curved flip. Refreshed `/workspace/still-standing-search-ready.zip`
+  from the final generated files: 23 public files, 700,887 bytes, SHA-256
+  `a950b08d64bddbdf0b16d055574e7b37200ecb119530fe62552b8b1aa3e0926d`.
+  Extracted to `/tmp/author-book-refined-release`, served and tested the exact
+  archive: **16 desktop/mobile discovery, purchase, white-page, passage and
+  first-entry checks passed**, no failures. Log: `/tmp/book-refined-archive-tests.log`.
+- Continuous-scroll measurement passed independently with no browser suite
+  concurrency: 100 native scroll/frame samples, **zero backward progress samples
+  and zero camera-retreat samples**. SwiftShader drawing ratio 0.8; median frame
+  spacing 254.6 ms, p95 420 ms, peak 25 calls / 9,408 triangles, task time 27.64 s.
+  Log: `/tmp/book-refine-final-measurement.json`. These constrained software-GPU
+  numbers do not establish physical-device 60 FPS. Netlify quota prevents live
+  validation. Whitespace checks pass; generated assets match the final sources.
+
+Verified source and generated assets are ready for the existing `main`; use the
+Git history/remote revision to identify this increment, rather than restarting.
+The remaining publication step requires usable Netlify deployment credits. Once
+credits renew or the owner chooses an upgrade, trigger the latest main deployment
+from the existing site's Deploys page and compare live bytes, then run live
+animation/purchase/discovery smoke tests. No further build log is needed for the
+credit pause. No billing change or quota workaround was made. No official recurring
+scheduler is exposed here; automatic hourly execution is not configured.
 
 ## Current increment: search and generative-search discovery (verified; Netlify publication blocked)
 
@@ -61,8 +125,8 @@ Preserve the existing credits; no alias or author reconciliation is authorized.
   APIs return HTTP 401. No Netlify environment credentials, CLI installation or
   standard CLI/project auth configuration is present. Existing Git access works
   but does not grant Netlify account access. Asked the user for the latest build
-  error; that information remains pending. No speculative hosting configuration
-  change or blind repeated deployment was used as a substitute for the missing log.
+  error. The later owner screenshot resolved this as a deployment-credit pause,
+  documented below. No speculative hosting configuration change was made.
 - Prepared `/workspace/still-standing-search-ready.zip`: 23 public deployment
   files, 702,175 bytes, SHA-256
   `bd13ff3a3d7d3bac8a301908f09ee0907166c619e779c8d8e5072de59004f5d6`.
@@ -72,19 +136,20 @@ Preserve the existing credits; no alias or author reconciliation is authorized.
   the archive does not publish itself. It contains no repository, credentials,
   development dependencies or Next server artifacts.
 
-Exact next steps: read the owner's build error at
-`https://app.netlify.com/projects/still-standing-still-here/deploys/6acca83ded94cb2fa164f1b1`,
-fix the confirmed hosting/build cause, push any verified correction, then compare
-live files using `/tmp/verify-search-deployment.py` and run the live discovery/
-loader/purchase subset. A manual upload of the extracted tested static folder to
-the existing site is another account-side publishing option. Live browser checks
-for the new pages have **not** run because those pages are not deployed.
-Production evidence is in `/tmp/geo-production-tests.log` and
-`/tmp/geo-production-tests`. The known prior production process was stopped
-and port 4175 confirmed empty before rebuilding; a fresh Next server now runs.
-Do not claim indexing or AI citations. Search Console verification/submission and
-external inbound links require the owning accounts; no authenticated submissions
-or third-party outreach have been performed.
+The user supplied a Netlify dashboard screenshot confirming the actual blocker:
+production deployments are paused because the team's usable deployment credits
+are exhausted; operational credits only keep published sites online. The selected
+e19f555 deploy was also superseded by a newer scheduled commit. The public API's
+`error` state did not establish a compiler/build defect. No further log is needed
+to identify this account-level pause. Do not change build settings speculatively,
+upgrade the plan, or try to circumvent hosting usage limits.
+
+Exact next steps: finish the newly requested scroll choreography changes below,
+verify and preserve them with the SEO work in Git and an updated static artifact.
+Publication can resume when the owner restores deploy credits or the billing cycle
+renews. Then compare live files and run the live discovery/animation subset.
+Search Console verification/submission and real inbound references remain
+account-side tasks; no indexing or AI citations are claimed.
 
 ## Previous increment: reliability and cinematic polish (deployed and verified)
 

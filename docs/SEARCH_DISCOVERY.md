@@ -84,11 +84,15 @@ discovery checks passed 10/10; the complete production suite passed 89 checks wi
 three intentional platform skips. A focused production rerun after the final SVG
 display fix passed all ten discovery checks again.
 
-Both new Netlify deployments failed; the public deployment API still reports
-`ef9ae25` as the published release. The new `/book-facts/` is not public yet. Build
-details require owner authentication (HTTP 401); no Netlify credential or CLI auth
-was available. The owner was asked to supply the actual build error. Its cause
-has not been invented or inferred from the successful local build.
+The user's Netlify dashboard screenshot confirmed the publishing blocker:
+production deployments and Agent Runners are paused because deployment credits
+are exhausted. Operational credits keep the published site online but cannot
+fund new production deployments. The selected deploy was also superseded by a
+newer one. This does not establish a source/build failure. The public deployment
+API previously reported `ef9ae25` as the published release, so `/book-facts/`
+and the newest scrolling changes must not be described as live. Resume publishing
+when credits renew, or if the owner chooses to upgrade their plan. No billing
+change, quota bypass or further build-log request is needed.
 
 A standalone deployment archive is available at
 `/workspace/still-standing-search-ready.zip`. Its extracted contents passed all
@@ -96,7 +100,7 @@ ten discovery tests. It contains the generated homepage, facts page, robots,
 sitemap and public assets. If using manual deployment, extract the archive and
 upload that output folder to the **existing** Netlify site through the owning
 account. This does not require a Next server, but it still requires a successful
-authorized hosting deployment. The source remains in the connected repository.
+authorized hosting deployment with available production credits. The source remains in the connected repository.
 
 Fix publication first, then verify the actual live HTML and run live regressions.
 Index submission is useful once the new canonical pages return HTTP 200. No live

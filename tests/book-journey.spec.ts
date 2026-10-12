@@ -516,3 +516,86 @@ test("a missing original cover never substitutes an invented loading-screen book
   await expect(page.locator("#cinematic-intro")).toBeHidden({ timeout: 6500 });
   await expect(page.locator(".intro-book span")).toHaveCount(0);
 });
+
+test("blank white pages reveal content only during entry and clear before retreat", async ({ page }) => {
+  await enter(page);
+  const root = page.locator("#literary-experience");
+  const card = page.locator('.journey-card[data-chapter="inside"][data-station="0"]');
+  for (const phase of ["flat", "upright", "turn", "retreat"] as const) {
+    await travel(page, "inside", phase);
+    await expect(root).toHaveAttribute("data-blank-pages", "true");
+    await expect(root).toHaveAttribute("data-visible-content-meshes", "0");
+    await expect(card).toBeHidden();
+    await expect(card).toHaveAttribute("data-opacity", "0.00000");
+  }
+  await page.locator("#inside").evaluate((el) => {
+    scrollTo({ top: el.getBoundingClientRect().top + scrollY + +(el as HTMLElement).dataset.readerEntrance! * 0.94, behavior: "instant" });
+  });
+  await page.waitForFunction(() => document.querySelector<HTMLElement>("#literary-experience")!.dataset.readerSettled === "true" && +document.querySelector<HTMLElement>('.journey-card[data-chapter="inside"]')!.dataset.opacity! > 0);
+  const opacity = +(await card.getAttribute("data-opacity"))!;
+  expect(opacity).toBeGreaterThan(0);
+  expect(opacity).toBeLessThan(1);
+  await station(page, "inside", 0);
+  await expect(card).toHaveAttribute("data-opacity", "1.00000");
+  await travel(page, "inside", "retreat");
+  await expect(root).toHaveAttribute("data-visible-content-meshes", "0");
+  await station(page, "inside", 0);
+  await expect(card).toHaveAttribute("data-opacity", "1.00000");
+});
+
+test("travel moves forward continuously and passes the first physical content anchor", async ({ page }) => {
+  await enter(page);
+  const positions: number[] = [];
+  let firstAnchor = 0;
+  for (let i = 0; i <= 10; i++) {
+    await page.locator("#inside").evaluate((el, progress) => {
+      const node = el as HTMLElement;
+      scrollTo({ top: el.getBoundingClientRect().top + scrollY + +node.dataset.readerEntrance! + +node.dataset.readerHold! * progress + 1, behavior: "instant" });
+    }, i / 10);
+    await page.evaluate(() => new Promise<void>((r) => requestAnimationFrame(() => requestAnimationFrame(() => r()))));
+    await expect(page.locator("#literary-experience")).toHaveAttribute("data-reader-settled", "true");
+    positions.push(+(await pose(page)).camera.split(",")[2]);
+    if (i === 0) firstAnchor = await page.locator('.journey-card[data-chapter="inside"][data-station="0"]').evaluate((el) => {
+      const css = (el as HTMLElement).style.transform;
+      return new DOMMatrix(css.slice(css.indexOf("matrix3d"))).m43;
+    });
+  }
+  for (let i = 1; i < positions.length; i++) expect(positions[i]).toBeLessThan(positions[i - 1]);
+  // Read the actual CSS3D object matrix, which shares the physical book transform.
+  expect(positions.at(-1)!).toBeLessThan(firstAnchor);
+});
+
+test("height-only viewport changes preserve mobile scroll spans and logical reading position", async ({ page }) => {
+  await enter(page);
+  await station(page, "inside", 1);
+  const before = await page.locator("#inside").getAttribute("data-reader-hold");
+  const viewport = page.viewportSize()!;
+  await page.setViewportSize({ width: viewport.width, height: viewport.height - 60 });
+  await expect.poll(async () => page.locator("canvas.book-webgl").evaluate((el) => el.getBoundingClientRect().height)).toBe(viewport.height - 60);
+  await expect(page.locator("#literary-experience")).toHaveAttribute("data-reader-settled", "true");
+  await expect(page.locator('#inside')).toHaveClass(/is-current/);
+  await expect.poll(async () => +(await page.locator("#literary-experience").getAttribute("data-reader-progress"))!).toBeCloseTo(0.5, 2);
+  const after = await page.locator("#inside").getAttribute("data-reader-hold");
+  if (viewport.width <= 760) expect(after).toBe(before);
+  else expect(after).not.toBe(before);
+  await expect(page.locator('.journey-card[data-chapter="inside"][data-station="1"]')).toHaveClass(/is-readable/);
+});
+
+
+test("all dormant chapters are measured before their first visible camera shot", async ({ page }) => {
+  await enter(page);
+  const measurements = await page.locator(".journey-card").evaluateAll((cards) =>
+    cards.map((card) => +(card as HTMLElement).dataset.measuredHeight!),
+  );
+  expect(measurements).toHaveLength(17);
+  measurements.forEach((height) => { expect(Number.isFinite(height)).toBe(true); expect(height).toBeGreaterThan(0); });
+  // Visit a chapter that has never appeared, then check its settled shot does
+  // not get replaced by a late observer measurement.
+  if (await page.locator(".menu-toggle").isVisible()) await page.locator(".menu-toggle").click();
+  await page.locator(".nav-purchase").click();
+  await expect(page.locator("#buy")).toHaveClass(/is-current/);
+  await expect(page.locator("#literary-experience")).toHaveAttribute("data-reader-settled", "true");
+  const camera = (await pose(page)).camera;
+  await page.waitForTimeout(400);
+  expect((await pose(page)).camera).toBe(camera);
+});

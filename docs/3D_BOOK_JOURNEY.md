@@ -54,21 +54,20 @@ opening (first chapter only), whole-book rotation, camera descent and content
 emergence. Travel: measured content stations, lateral sway, camera dolly, panel
 rise and spatial landmarks. Exit: content retracts first; the camera retreats
 while the book remains flat; the book rotates upright; only then does paper turn.
-The underside and paper beneath reveal the next chapter. All stages derive from
+Both page faces remain plain white; the next chapter emerges only during its descent. All stages derive from
 current scroll distance, including reverse scrolling and discontinuous jumps.
 The final chapter includes a viewport of trailing scroll room so the browser's
 maximum scroll cannot cut its return sequence short before the footer.
 
-The turning sheet has 48 horizontal subdivisions. Integrating a varying tangent
-across its width creates a bent surface, with corner twist, normals, a separately
-textured underside and a small thickness offset. It is not a rigid rotating card.
+The turning sheet has 64 horizontal subdivisions. Integrating a varying tangent
+across its width creates a bent surface, with corner twist, normals and a white underside extruded along the deformed normals. Bounds cannot cull the moving leaf. It is not a rigid rotating card.
 The canonical scene exposes diagnostic attributes for the actual group rotation,
 sheet curvature, camera coordinates, persistent object UUID and rendering work.
 
 ## Content and interaction
 
 The seven chapters contain 17 stops. Existing long blocks are grouped for legible
-presentations. Camera distance fits both measured width and height; text expansion
+presentations. A single fitted camera distance covers the maximum measured card width and height in each chapter; text expansion
 and font changes remeasure through ResizeObserver. Six original chapter tabs,
 three attributed website reflections, two full original reviews, both authors,
 ISBN and original retailer links remain functional. Scene and page navigation
@@ -79,6 +78,30 @@ objects, rings, sculptural quotation marks, and a concluding summit. Chapter and
 station numerals use extruded Optimer geometry. The genuine yellow cover JPEG is
 unchanged; provenance remains in `public/media/README.md`.
 
+## Plain pages and surface passage
+
+Both stationary page materials and both turning-sheet faces are untextured white.
+No chapter title, author name, border or content box is printed onto distant pages.
+Card backings, supports, numerals, landmarks and DOM content disappear completely
+before camera retreat. A scroll-derived opacity envelope reveals them near the
+end of descent and retracts/fades them before exit. Earlier panels fade before
+crossing the camera near plane, avoiding giant CSS text or mirrored panels behind
+it. Reverse scrolling restores the identical reveal.
+
+Multi-stop chapters use the expanded page's right-hand side, with anchors around
+X=20 and a forward path ending at local Y=18. The camera crosses earlier content
+anchors instead of following a short path that stays in front of every panel.
+Maximum chapter fitting distance prevents changes in card height from reversing
+the dolly path. Cached view vectors avoid two allocations per rendered frame.
+
+Reference review: Apple's AirPods Pro product presentation and the public
+[Codrops on-scroll 3D carousel](https://tympanus.net/Development/3DCarousel/)
+were opened and scrolled in Chromium. Their restraint, clear depth and continuous
+composition informed this refinement. These references are not evidence of
+this site's device frame rate. Lenis's public page loaded, but its initial
+scroll was blocked by its intro in that review; no completed Lenis scroll
+comparison is claimed. No reference code or images were copied.
+
 ## Build, performance and fallback
 
 `npm run build:world` produces the browser entry and split chunks with esbuild.
@@ -88,12 +111,16 @@ Netlify repository-root deployment. Do not manually edit their minified outputs.
 Run browser checks after generation; do not regenerate chunks during a suite.
 
 The renderer runs on invalidation, rather than a perpetual frame loop. A bounded,
-time-independent presentation filter smooths small wheel/touch steps, settles
-within 450 ms and then stops. Anchor commands and large jumps snap to the intended
+time-independent exponential presentation filter smooths wheel/touch steps and
+stops once within a tenth of a pixel of native scroll. Elapsed frame time is
+used directly; there is no forced catch-up deadline during continued input. Anchor commands and large jumps snap to the intended
 chapter. Settled poses remain exactly reproducible in either direction. Resize
 preserves entrance/travel/exit progress unless newer navigation has superseded
 the previous presentation; page disclosure changes do not reset an
-unchanged drawing buffer. Only the current chapter updates its geometry/DOM;
+unchanged drawing buffer. All original chapter nodes are first attached under
+a hidden stage and measured together. Invisible CSS3D groups otherwise skip
+attachment and cause a late camera fit on their first appearance. Only the current
+chapter updates its geometry/DOM;
 dormant cards are deactivated once. Camera paths retain velocity across stops.
 
 The genuine cover is decoded before allocating the scene. Texture upload and
@@ -121,7 +148,8 @@ Smooth 60 FPS is a target on capable hardware, not a measured guarantee across
 devices. Automated checks bound geometry and draw work and verify idle frames stop.
 
 Mobile retains the actual XY-to-XZ transformation, with shorter travel, adapted
-camera framing and smaller textures. Landscape screens 480 px tall or less
+camera framing and capped drawing resolution. Height-only mobile toolbar changes
+resize the renderer without changing the scroll intervals. Landscape screens 480 px tall or less
 automatically use Reading view: fitting tall content beside fixed controls would
 make text too small. Restoring screen height resumes the same book and chapter.
 Reading view, reduced motion, no JavaScript,
@@ -153,3 +181,10 @@ machine, not statistically controlled hardware benchmarks or a 60 FPS result.
 A separate trace found GPU raster/renderer commit waits dominate; scene CPU
 submission during travel was generally around 1–2 ms. Browser trace files and
 screenshots live outside the repository under `/tmp` or workspace validation.
+
+The white-page refinement's final isolated 100-step measurement returned zero
+backward progress samples and zero camera-retreat samples during forward native
+scrolling. SwiftShader median spacing was 254.6 ms, p95 420 ms, peak 25 calls /
+9,408 triangles, ratio 0.8 and task time 27.64 seconds. This is a single constrained
+software-renderer observation, not a hardware FPS claim or a controlled benchmark.
+The measurement script now fails if forward input reverses sampled travel.

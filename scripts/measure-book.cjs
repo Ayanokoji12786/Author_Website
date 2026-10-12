@@ -31,7 +31,11 @@ const { chromium } = require("playwright");
       last = performance.now(),
       first = +root.dataset.worldFrames,
       maxCalls = 0,
-      maxTriangles = 0;
+      maxTriangles = 0,
+      previousProgress = -Infinity,
+      previousCameraZ = Infinity,
+      backwardSamples = 0,
+      cameraRetreatSamples = 0;
     for (let i = 0; i < 100; i++) {
       await new Promise(requestAnimationFrame);
       let now = performance.now();
@@ -41,12 +45,24 @@ const { chromium } = require("playwright");
         top: top + e * 0.2 + ((e * 0.8 + h) * i) / 99,
         behavior: "instant",
       });
+      const progress = +root.dataset.readerProgress;
+      const cameraZ = +root.dataset.cameraPosition.split(",")[2];
+      if (!Number.isFinite(progress) || !Number.isFinite(cameraZ))
+        throw new Error("Non-finite scroll/camera sample");
+      if (progress < previousProgress - 0.000001) backwardSamples++;
+      if (cameraZ > previousCameraZ + 0.01) cameraRetreatSamples++;
+      previousProgress = progress;
+      previousCameraZ = cameraZ;
       maxCalls = Math.max(maxCalls, +root.dataset.drawCalls);
       maxTriangles = Math.max(maxTriangles, +root.dataset.worldTriangles);
     }
     await new Promise((r) => setTimeout(r, 600));
+    if (backwardSamples || cameraRetreatSamples)
+      throw new Error("Forward scrolling reversed the reading progress or camera dolly");
     intervals.sort((a, b) => a - b);
     return {
+      backwardSamples,
+      cameraRetreatSamples,
       medianMs: intervals[50],
       p95Ms: intervals[95],
       frames: +root.dataset.worldFrames - first,
