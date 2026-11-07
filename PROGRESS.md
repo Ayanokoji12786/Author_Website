@@ -645,3 +645,34 @@ the actual served version before claiming a change is live.
 6. No recurring task exists. Resume manually from this state until an official
    scheduler is available. Configure concurrency one/a durable shared lock if
    scheduling becomes supported; never bypass credits or create misleading timers.
+
+## 7 November 2026 — requested redesign/performance continuation
+
+Implemented directly in the existing working tree. No push or deployment was
+performed in this session. The live Netlify page was inspected read-only.
+
+The opening now presents the genuine cover as a CSS hardcover with explicit
+explore/purchase actions, responsive composition, depth, page edges, spine and
+hover/focus response. Existing chapters, authors, reviews, official artwork,
+retailer URLs, metadata, loader/audio and immersive journey remain intact.
+
+Software-GPU shadow/environment sampling was the measured dominant cost. That
+tier now retains directional lighting/contact shadows at a 0.65 pixel-ratio cap;
+hardware keeps reflections and soft shadows. Both animation controllers pause
+when hidden. Reading-view pointer updates, preview measurements and scroll
+layout reads are batched. Failed scene startup now logs the fallback reason.
+
+Serial, isolated SwiftShader comparison against untouched HEAD: desktop median
+502.0 → 86.7 ms (p95 818.2 → 112.6 ms); phone-sized viewport median 113.1 → 18.2 ms
+(p95 167.2 → 48.4 ms). Both comparisons retain monotonic progress/camera travel.
+These are software-renderer comparisons, not physical-device or field-CWV claims.
+
+Static regression verification covers 101 applicable checks with three expected
+device-specific skips. One added lifecycle test race was corrected and all four
+lifecycle cases then passed. Type checking, syntax checks and production build
+pass. See `docs/REDESIGN_VALIDATION_2026_11.md` for the audit, measurement method,
+full numbers and final production verification. `scripts/measure-book.cjs` now
+supports viewport dimensions and always closes its browser on failure.
+
+Final Next.js production smoke run: 10/10 desktop/mobile checks passed. The
+production preview remains running on port 3000; no deployment was performed.

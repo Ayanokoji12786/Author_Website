@@ -25,6 +25,22 @@
   var intro = root.querySelector("#cinematic-intro");
   var introFinished = false;
   var activeScenes = new Set(scenes);
+  var pointerFrame = 0;
+  var bookPointer = null;
+
+  function updateBookPointer() {
+    pointerFrame = 0;
+    if (!bookPointer || document.hidden) return;
+    var bounds = bookStage.getBoundingClientRect();
+    bookTilt.style.setProperty(
+      "--pointer-x",
+      ((0.5 - (bookPointer.y - bounds.top) / bounds.height) * 6).toFixed(2) + "deg",
+    );
+    bookTilt.style.setProperty(
+      "--pointer-y",
+      (((bookPointer.x - bounds.left) / bounds.width - 0.5) * 9).toFixed(2) + "deg",
+    );
+  }
 
   function setMenu(open, restoreFocus) {
     menuOpen = open;
@@ -70,19 +86,14 @@
   });
   bookStage.addEventListener("pointermove", function (event) {
     if (reduced.matches || !pointer.matches || narrow.matches) return;
-    var bounds = bookStage.getBoundingClientRect();
-    bookTilt.style.setProperty(
-      "--pointer-x",
-      ((0.5 - (event.clientY - bounds.top) / bounds.height) * 6).toFixed(2) +
-        "deg",
-    );
-    bookTilt.style.setProperty(
-      "--pointer-y",
-      (((event.clientX - bounds.left) / bounds.width - 0.5) * 9).toFixed(2) +
-        "deg",
-    );
+    bookPointer = { x: event.clientX, y: event.clientY };
+    if (!document.hidden && !pointerFrame)
+      pointerFrame = requestAnimationFrame(updateBookPointer);
   });
   bookStage.addEventListener("pointerleave", function () {
+    cancelAnimationFrame(pointerFrame);
+    pointerFrame = 0;
+    bookPointer = null;
     bookTilt.style.setProperty("--pointer-x", "0deg");
     bookTilt.style.setProperty("--pointer-y", "0deg");
   });
@@ -108,11 +119,18 @@
   function measurePreview() {
     var maxHeight = 0;
     previewPages.style.minHeight = "0";
+    var hiddenStates = previews.map(function (page) {
+      return page.hidden;
+    });
+    // Batch writes, then reads: one layout rather than one per reflection.
     previews.forEach(function (page) {
-      var hidden = page.hidden;
       page.hidden = false;
+    });
+    previews.forEach(function (page) {
       maxHeight = Math.max(maxHeight, page.offsetHeight);
-      page.hidden = hidden;
+    });
+    previews.forEach(function (page, i) {
+      page.hidden = hiddenStates[i];
     });
     previewPages.style.minHeight = maxHeight + "px";
   }
@@ -234,27 +252,44 @@
 
   function update() {
     frame = 0;
+    if (document.hidden) return;
     var y = window.scrollY;
     var height = window.innerHeight;
     var maxScroll = document.documentElement.scrollHeight - height;
+    var line = header.offsetHeight + 8;
+    var sectionBounds = sections.map(function (section) {
+      return section.getBoundingClientRect();
+    });
+    var sceneBounds = [];
+    var immersive = root.classList.contains("is-immersive");
+    var bookBounds = null;
+    if (!reduced.matches) {
+      activeScenes.forEach(function (scene) {
+        sceneBounds.push({ scene: scene, bounds: scene.getBoundingClientRect() });
+      });
+      if (!immersive && !narrow.matches)
+        bookBounds = bookSection.getBoundingClientRect();
+    }
+    // All geometry reads precede style writes, avoiding forced layouts between
+    // the header, mountain depth planes and the ordinary hardcover.
     header.classList.toggle("is-scrolled", y > 25);
     header.style.setProperty(
       "--reading-progress",
       String(maxScroll > 0 ? Math.min(1, y / maxScroll) : 0),
     );
-    var line = header.offsetHeight + 8;
     for (var i = sections.length - 1; i >= 0; i--) {
-      var bounds = sections[i].getBoundingClientRect();
+      var bounds = sectionBounds[i];
       if (bounds.top <= line && bounds.bottom > line) {
         header.dataset.tone = sections[i].dataset.tone;
         break;
       }
     }
-    if (root.classList.contains("is-immersive"))
+    if (immersive)
       header.dataset.tone = root.dataset.readerTone || "dark";
     if (!reduced.matches) {
-      activeScenes.forEach(function (scene) {
-        var bounds = scene.getBoundingClientRect();
+      sceneBounds.forEach(function (entry) {
+        var scene = entry.scene;
+        var bounds = entry.bounds;
         var travel = Math.max(-1, Math.min(1, -bounds.top / height));
         var strength = narrow.matches ? 0.4 : 1;
         scene.style.setProperty(
@@ -282,10 +317,8 @@
           (travel * -55 * strength).toFixed(1) + "px",
         );
       });
-      var bookBounds = bookSection.getBoundingClientRect();
       if (
-        !root.classList.contains("is-immersive") &&
-        !narrow.matches &&
+        bookBounds &&
         bookBounds.top < height &&
         bookBounds.bottom > 0
       ) {
@@ -351,8 +384,17 @@
     }
   }
   function requestUpdate() {
-    if (!frame) frame = window.requestAnimationFrame(update);
+    if (!document.hidden && !frame) frame = window.requestAnimationFrame(update);
   }
+  document.addEventListener("visibilitychange", function () {
+    root.classList.toggle("is-backgrounded", document.hidden);
+    if (document.hidden) {
+      cancelAnimationFrame(frame);
+      cancelAnimationFrame(pointerFrame);
+      pointerFrame = 0;
+      frame = 0;
+    } else requestUpdate();
+  });
   function sessionStorageSafeMode() {
     try {
       return sessionStorage.getItem("ssh-reader-mode");

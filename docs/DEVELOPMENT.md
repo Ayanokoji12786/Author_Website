@@ -122,6 +122,12 @@ mountain assets are local. The hero still reuses its cached responsive images.
 Three.js is lazy-loaded for Book view, and esbuild is only a build dependency.
 Pixel ratio and shadow resolution are capped on mobile. WebGL loss restores the
 original interactive document, and page exit releases geometries and textures.
+Software rasterizers use a 0.65 pixel-ratio cap, directional lighting and existing
+contact-shadow textures instead of environment reflections and shadow-map passes.
+Hardware retains the original lighting tier. Hidden tabs explicitly suspend both
+animation controllers and CSS animation; returning samples native scroll position.
+The hero's physical cover uses CSS depth, the genuine cached JPEG and a hover/focus
+transition, without a second WebGL context or continuous rendering.
 
 ## Content and remaining assets
 
@@ -198,3 +204,10 @@ initialization, logical resize preservation, fractional entry boundaries and rea
 checks verify the browser opens the original Amazon destination; availability of
 an external retailer is controlled by that service (the cloud HEAD probe returned
 HTTP 503). No unrelated purchase destination was substituted.
+
+The animation lifecycle suite checks hidden-tab suspension/resumption and hero
+cover/action bounds from 320 to 1440 pixels. The November audit and isolated
+software-renderer comparison are in `REDESIGN_VALIDATION_2026_11.md`.
+Use `MEASURE_WIDTH=390 MEASURE_HEIGHT=844 node scripts/measure-book.cjs` for a
+phone-sized viewport; this remains a software-GPU comparison, not a device FPS
+claim. The measurement harness closes Chromium even when a check fails.

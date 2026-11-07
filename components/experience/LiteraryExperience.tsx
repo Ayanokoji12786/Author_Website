@@ -366,6 +366,37 @@ export default function LiteraryExperience({
               Not every battle leaves
               <br className="mobile-break" /> scars you can see.
             </p>
+            <div className="hero-actions">
+              <a className="button button-primary explore-link" href="#inside">
+                Explore the book <Arrow direction="down" />
+              </a>
+              <a className="hero-buy text-link" href="#buy">
+                Get your copy <Arrow />
+              </a>
+            </div>
+            <a
+              className="hero-book-showcase"
+              href="#inside"
+              aria-label="Explore Still Standing, Still Here"
+            >
+              <span className="hero-hardcover" aria-hidden="true">
+                <span className="hero-book-back" />
+                <span className="hero-book-paper" />
+                <span className="hero-book-spine">Still Standing, Still Here</span>
+                <span className="hero-book-front">
+                  <img
+                    src={`${assetBase}/media/still-standing-still-here-cover.jpg`}
+                    width="529"
+                    height="800"
+                    alt=""
+                    decoding="async"
+                  />
+                </span>
+              </span>
+              <span className="hero-book-caption">
+                A literary companion for the climb <Arrow />
+              </span>
+            </a>
           </div>
           <div className="hero-bottom container">
             <p className="hero-authors">
