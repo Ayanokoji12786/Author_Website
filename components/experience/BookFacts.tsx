@@ -109,16 +109,16 @@ export default function BookFacts({ assetBase = "" }: { assetBase?: string }) {
             its official website and the catalogue.
           </p>
           <p>
-            Book introductions, theme descriptions and reader responses on this
-            website remain attributed to their existing sources. Retailer prices
-            and availability are maintained by the retailers.
+            This English-language hardbound book has 229 pages. Blue Rose Publishers
+            is listed as the publisher, with publication in May 2026. Retailers
+            maintain current prices and availability.
           </p>
         </section>
       </main>
       <footer className="facts-footer">
         <p>Official website of {book.title}</p>
         <a href="/">
-          Return to the cinematic book journey <ReferenceArrow />
+          Return to the book <ReferenceArrow />
         </a>
       </footer>
     </div>

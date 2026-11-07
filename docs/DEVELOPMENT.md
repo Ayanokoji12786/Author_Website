@@ -85,49 +85,36 @@ loader fades the ambience, clears the beat interval, stops the wind and closes
 the context. The original sound was generated audio, not a missing MP3 asset,
 and ended when the introduction finished. The same scope is preserved.
 
-The hero retains its photographic mountain, depth planes, mist and pointer camera.
-After the hero, **Book view is the default on desktop and mobile**. The seven
-remaining website sections are pages in a continuous book journey: the actual
-cover opens, genuine book meshes rotate from XY into XZ, and the independent
-camera descends and flies along the same physical paper. Original content rises
-into spatial panels with solid backings and shadows; extruded numerals and
-chapter-specific sculptures emerge alongside them. At the end, content retracts,
-the camera pulls away, the book rotates upright, and a continuously deformed
-paper mesh turns before the next journey. Scroll reversal samples the same pure
-timeline. Camera framing adapts to the measured text, fonts and expanded reviews.
-This presents website sections, not claimed manuscript pages.
+The hero retains its photographic mountain, depth planes, mist, yellow cover and
+pointer camera. **Ordinary scrolling and Reading view are the default**, including
+return visits. The inline “Explore the immersive journey” button is the only
+entry into Book view. It loads Three.js on demand while all reading/purchase
+content stays in the document. Entry jumps to the first readable stop instead
+of requiring readers to scroll through a near-empty cover/camera transition.
 
-Scene controls navigate the reading stops within a page; page controls navigate
-the seven chapters. Reading view switches back to
-the ordinary document at the current section and remembers that preference for
-the session; Book view resumes at the same section. Reduced motion automatically
-uses the ordinary layout. Short landscape screens (480 px tall or less) use
-Reading view to keep content and controls readable; rotating or resizing back
-automatically resumes the same book and current chapter. No preference is lost.
-No-JavaScript markup uses display-contents wrappers to preserve that layout too.
-In Reading view, the original desktop perspective book
-and manual touch/keyboard opening are retained. No wheel or touch gestures are
-intercepted; the camera follows ordinary browser scroll events.
+Inside the optional journey, one previous/next pair walks through all stops and
+section boundaries. A labelled section select navigates directly, and Exit or
+Escape returns to the current reading section with keyboard focus on its heading.
+The toolbar is hidden completely in Reading view, beyond the book and at the
+footer. A footer exit remains available. Camera fitting reserves header/control
+space. Reduced motion and short landscape windows retain the ordinary document.
+No wheel or touch gesture is intercepted.
 
-Reading controls retain a consistent height. Chapter tabs support Left/Right,
-Home/End, focus management, and a scrollable mobile strip. The mobile navigation
-supports Escape and closes on link selection. Semantic sections, skip navigation,
-visible focus, native expandable reviews, reduced motion, and readable no-JavaScript
-fallbacks are included. Ordinary document scrolling is never intercepted.
+The introduction is skippable immediately. A seen flag in local/session storage
+prevents replay, and reduced motion skips it. Storage failure and blocked assets
+still fail open. The intro's optional sound remains gesture-controlled and is
+cleaned up when it ends.
 
-Scroll updates are passive and coalesced into animation frames only when needed.
-Offscreen mist pauses. All content is server-rendered; the loader is immediately
-skippable and there is no indefinitely running JavaScript canvas loop. Fonts and
-mountain assets are local. The hero still reuses its cached responsive images.
-Three.js is lazy-loaded for Book view, and esbuild is only a build dependency.
-Pixel ratio and shadow resolution are capped on mobile. WebGL loss restores the
-original interactive document, and page exit releases geometries and textures.
-Software rasterizers use a 0.65 pixel-ratio cap, directional lighting and existing
-contact-shadow textures instead of environment reflections and shadow-map passes.
-Hardware retains the original lighting tier. Hidden tabs explicitly suspend both
-animation controllers and CSS animation; returning samples native scroll position.
-The hero's physical cover uses CSS depth, the genuine cached JPEG and a hover/focus
-transition, without a second WebGL context or continuous rendering.
+Semantic content is server-rendered. The reading preview is explicitly **Themes
+and reflections**, not a manuscript sample. Verified English, 229-page hardbound
+format, publisher/publication and ISBN details appear beside the purchase links.
+“Amazon India” and Flipkart destinations remain unchanged and show a new-tab note.
+See `READING_FIRST.md` for source evidence and owner content dependencies.
+
+The animation architecture still batches DOM layout reads and pointer updates,
+pauses hidden-tab animations, limits WebGL quality on software graphics and
+releases resources on page exit. Scene startup/context failures restore the full
+reading document. No scene module is downloaded on an ordinary reading visit.
 
 ## Content and remaining assets
 
@@ -149,8 +136,9 @@ the same-origin copy displayed by the loader, cinematic book and ordinary book.
 `public/media/README.md` records provenance and the exact SHA-256. Failed artwork
 is hidden in the loader, and the ordinary book retains its typographic fallback.
 
-No author portraits or approved biographies were available; the authors receive
-an editorial monogram treatment with the existing factual book introduction.
+No author portraits or approved individual biographies were available; the authors
+receive an editorial monogram, individual co-author credits and a link to their
+verified shared retailer profile. No portrait substitutes or biographies are invented.
 The mountain scenery is generated atmospheric artwork, not a claimed reproduction
 of the cover or a photograph of a documented place. The old screenshot's Git LFS
 object is missing from its server and is not used.
@@ -177,7 +165,7 @@ cover and leaf choreography, full spread/attribution bounds on phones and tablet
 and automated WCAG 2.1 AA checks on the introduction and content. The local-cover failure tests deliberately abort its request; other checks load
 the real bundled image and verify its dimensions and source. The immersive suite
 checks genuine canvas initialization, actual geometry rotation and paper
-curvature, camera descent/travel/retreat, reverse scrolling, all 17 reading stops
+curvature, camera descent/travel/retreat, reverse scrolling, all 18 reading stops
 and their controls, view switching, idle rendering, bounds, context loss and
 accessibility. Retailer service availability
 is not verified by these local checks.

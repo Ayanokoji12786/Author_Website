@@ -27,9 +27,10 @@ test('hero cover and both actions remain visible and fit the first composition',
 
 test('backgrounding suspends book rendering and resumes at the native scroll position', async ({ page }) => {
   await page.goto('/');
+  await page.keyboard.press('Escape');
+  await page.locator('[data-journey-start]').click();
   const root = page.locator('#literary-experience');
   await expect(root).toHaveAttribute('data-world-status', 'ready', { timeout: 15000 });
-  await page.keyboard.press('Escape');
   await page.locator('#inside').evaluate((el) => {
     const node = el as HTMLElement;
     scrollTo({ top: el.getBoundingClientRect().top + scrollY + Number(node.dataset.readerEntrance) + 1, behavior: 'instant' });

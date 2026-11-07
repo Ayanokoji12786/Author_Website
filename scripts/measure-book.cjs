@@ -14,12 +14,13 @@ const { chromium } = require("playwright");
       },
     });
     await page.goto(process.env.E2E_BASE_URL || "http://127.0.0.1:4173");
+    await page.keyboard.press("Escape");
+    await page.locator("[data-journey-start]").click();
     await page.waitForFunction(
       () =>
         document.querySelector("#literary-experience").dataset.worldStatus ===
         "ready",
     );
-    await page.keyboard.press("Escape");
     const cdp = await page.context().newCDPSession(page);
     await cdp.send("Performance.enable");
     const before = await cdp.send("Performance.getMetrics");

@@ -202,11 +202,12 @@ test("purchase navigation from book facts returns to the working cinematic purch
   await expect(page).toHaveURL(/\/#buy$/);
   await expect(page.locator("#literary-experience")).toHaveAttribute(
     "data-world-status",
-    "ready",
+    "idle",
     { timeout: 15000 },
   );
   await page.keyboard.press("Escape");
   await expect(page.locator("#cinematic-intro")).toBeHidden();
-  await expect(page.locator("#buy")).toHaveClass(/is-reading/);
-  await expect(page.getByRole("link", { name: "Buy on Amazon" })).toBeVisible();
+  await expect(page.locator("[data-reader-interface]")).toBeHidden();
+  await expect(page.locator("#buy h2")).toBeInViewport();
+  await expect(page.locator("#buy").getByRole("link", { name: "Amazon India" })).toBeVisible();
 });

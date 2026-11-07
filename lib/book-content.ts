@@ -5,6 +5,14 @@ export const book = {
   title: "Still Standing, Still Here",
   authors: ["Dhruva Nerella", "Tattva Nerella"],
   isbn: "9789378253126",
+  language: "English",
+  pages: 229,
+  format: "Hardbound",
+  publisher: "Blue Rose Publishers",
+  publication: "May 2026",
+  form: "Poetic reflections and thoughtful passages",
+  synopsis: "A collection of poetic reflections and thoughtful passages about emotions, healing and self-discovery. Written for readers navigating change or seeking space to reflect, the book explores the experiences people often carry quietly.",
+  catalogue: "https://blueroseone.com/store/product/still-standing-still-here",
   cover:
     "https://blueroseone.com/store/public/uploads/all/I0V9EtdysEBI4tlk8hO7vaEWix1hKaS46HsqSpW2.jpg",
   coverAsset: "/media/still-standing-still-here-cover.jpg",
@@ -17,19 +25,19 @@ export const themes = [
   {
     name: "Resilience",
     title: "Resilience is not romantic.",
-    text: "The book strips away the gloss. Resilience is not a motivational poster — it is blood, sweat, and the stubborn decision to take one more step when the ground gives way beneath you.",
+    text: "Continuing through difficult experiences, one step at a time.",
     line: "Survival is not beautiful. It is necessary.",
   },
   {
     name: "Identity",
     title: "Identity beyond wounds.",
-    text: "You are more than what happened to you. These pages insist on your wholeness — not by erasing the scars, but by reading them as proof that you are still here, still becoming.",
+    text: "How experiences shape a sense of self, and how that sense can change.",
     line: "Your story is not your sentence.",
   },
   {
     name: "Hope",
     title: "Hope without naiveté.",
-    text: "This is not the hope of greeting cards. It is the hope of someone who has seen the dark and chooses, with full knowledge of the cost, to believe the morning is worth reaching for.",
+    text: "Finding perspective while acknowledging uncertainty and loss.",
     line: "Hope earned is the only hope that holds.",
   },
 ];
@@ -38,17 +46,17 @@ export const previews = [
   {
     label: "A reckoning",
     text: "Between these pages lives a reckoning — with pain, with perseverance, with the quiet ferocity of choosing to remain when everything whispering inside you says leave.",
-    note: "From the original website introduction",
+    note: "Website reflection · not a book extract",
   },
   {
     label: "A companion",
     text: "Still Standing, Still Here is a literary companion for anyone who has ever been broken and refused to stay broken. It does not offer platitudes. It offers truth — raw, unvarnished, and ultimately redemptive.",
-    note: "From the original website introduction",
+    note: "Website reflection · not a book extract",
   },
   {
     label: "Still here",
     text: "You do not have to be unbroken to be worthy. You only have to be still standing, still here.",
-    note: "A reflection shared on the original website",
+    note: "Website reflection · not a book extract",
   },
 ];
 

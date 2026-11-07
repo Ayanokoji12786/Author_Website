@@ -60,7 +60,10 @@
     });
   });
   root.addEventListener("keydown", function (event) {
-    if (event.key === "Escape" && menuOpen) setMenu(false, true);
+    if (event.key === "Escape" && menuOpen) {
+      event.preventDefault();
+      setMenu(false, true);
+    }
   });
   document.addEventListener("click", function (event) {
     if (menuOpen && !header.contains(event.target)) setMenu(false);
@@ -395,13 +398,6 @@
       frame = 0;
     } else requestUpdate();
   });
-  function sessionStorageSafeMode() {
-    try {
-      return sessionStorage.getItem("ssh-reader-mode");
-    } catch (_) {
-      return "";
-    }
-  }
   // Original loading-screen sound (ac71f49): the same 58/46 Hz heartbeat
   // and filtered brown wind. A deliberate gesture creates/resumes Web Audio.
   function createIntroAudio(button) {
@@ -576,7 +572,13 @@
     try {
       returning = sessionStorage.getItem("ssh-intro-seen") === "true";
     } catch (_) {}
-    var minimum = reduced.matches ? 0 : returning ? 1800 : 2200;
+    if (returning || reduced.matches) {
+      introFinished = true;
+      document.documentElement.classList.remove("intro-pending");
+      audio.dispose();
+      return;
+    }
+    var minimum = 1400;
     var started = performance.now();
     var timers = [];
     var completed = 0;
@@ -642,27 +644,6 @@
         }
       }),
     ];
-    // The scene promises readiness only after texture decode and shader warmup.
-    // Reading view never downloads the GPU scene. The bounded loader cap still
-    // permits entry when a device or a nonessential asset cannot become ready.
-    if (!reduced.matches && sessionStorageSafeMode() !== "reading") {
-      tasks.push(
-        new Promise(function (resolve) {
-          function ready(event) {
-            if (event) document.removeEventListener("ssh-world-ready", ready);
-            resolve();
-          }
-          if (
-            /^(ready|unavailable|context-lost)$/.test(
-              root.dataset.worldStatus || "",
-            )
-          )
-            ready();
-          else
-            document.addEventListener("ssh-world-ready", ready, { once: true });
-        }),
-      );
-    }
     function finish(immediate) {
       if (introFinished) {
         if (immediate) release();
@@ -672,6 +653,7 @@
       timers.forEach(clearTimeout);
       try {
         sessionStorage.setItem("ssh-intro-seen", "true");
+        localStorage.setItem("ssh-intro-seen", "true");
       } catch (_) {}
       if (immediate || reduced.matches) release();
       else {

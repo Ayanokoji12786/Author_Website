@@ -13,6 +13,8 @@ const ids = [
 ];
 async function enter(page: Page) {
   await page.goto("/");
+  await page.keyboard.press("Escape");
+  await page.locator("[data-journey-start]").click();
   await expect(page.locator("#literary-experience")).toHaveAttribute(
     "data-world-status",
     "ready",
@@ -21,7 +23,6 @@ async function enter(page: Page) {
   await expect(page.locator("#literary-experience")).toHaveClass(
     /is-immersive/,
   );
-  await page.keyboard.press("Escape");
   await expect(page.locator("#cinematic-intro")).toBeHidden();
 }
 async function travel(
@@ -243,7 +244,7 @@ test("every chapter and content stop is legible, anchored and uses the same book
       );
     }
     await expect(page.locator("[data-reader-position]")).toHaveText(
-      `Page ${String(i + 1).padStart(2, "0")} / 07`,
+      `Stop ${count} of ${count}`,
     );
     await travel(page, id, "turn");
     expect((await pose(page)).rotation).toBe(0);
@@ -276,42 +277,29 @@ test("reflection, chapter tabs, reviews and retailer links work inside their 3D 
   ).toHaveAttribute("open", "");
   await station(page, "buy", 0);
   await expect(
-    page.getByRole("link", { name: "Buy on Amazon", exact: false }),
+    page.getByRole("link", { name: "Amazon India", exact: false }),
   ).toHaveAttribute("href", book.amazon);
 });
 
-test("scene and page navigation, Reading view and reduced motion preserve position and content", async ({
-  page,
-}) => {
+test("unified stop controls and section select preserve mode transitions", async ({ page }) => {
   await enter(page);
   await station(page, "inside", 0);
-  await page.getByRole("button", { name: "Next scene", exact: true }).click();
-  await expect(page.locator("[data-reader-station]")).toHaveText("Scene 2 / 3");
-  await page.getByRole("button", { name: "Next book page" }).click();
+  await page.getByRole("button", { name: "Next reading stop", exact: true }).click();
+  await expect(page.locator("[data-reader-position]")).toHaveText("Stop 2 of 3");
+  await page.locator("[data-reader-chapter]").selectOption("2");
   await expect(page.locator("#themes")).toHaveClass(/is-reading/);
   const uuid = (await pose(page)).uuid;
-  await page
-    .getByRole("button", { name: "Switch to reading view without book motion" })
-    .click();
-  await expect(page.locator("#literary-experience")).not.toHaveClass(
-    /is-immersive/,
-  );
+  await page.locator("button[data-reader-mode]").click();
   await expect(page.locator("[data-reader-stage]")).toBeHidden();
+  await expect(page.locator("[data-reader-interface]")).toBeHidden();
   await expect(page.locator("#themes #meaning-heading")).toBeVisible();
-  await expect(page.locator("#inside #book-heading")).toHaveCount(1);
-  expect(
-    await page.evaluate(() => sessionStorage.getItem("ssh-reader-mode")),
-  ).toBe("reading");
-  await page
-    .getByRole("button", { name: "Switch to immersive book view" })
-    .click();
-  await expect(page.locator("#themes")).toHaveClass(/is-reading/);
+  // Starting from the synopsis is deliberate; the ordinary document stays usable.
+  await page.locator("[data-journey-start]").click();
+  await expect(page.locator("#inside")).toHaveClass(/is-reading/);
   expect((await pose(page)).uuid).toBe(uuid);
   await page.emulateMedia({ reducedMotion: "reduce" });
-  await expect(page.locator("#literary-experience")).not.toHaveClass(
-    /is-immersive/,
-  );
-  await expect(page.locator("#themes #meaning-heading")).toBeVisible();
+  await expect(page.locator("#literary-experience")).not.toHaveClass(/is-immersive/);
+  await expect(page.locator("#inside #book-heading")).toBeVisible();
 });
 
 test("short landscape screens retain readable controls and resume the same book in portrait", async ({
@@ -333,7 +321,7 @@ test("short landscape screens retain readable controls and resume the same book 
       "data-reader-adaptation",
       "short-screen",
     );
-    await expect(page.locator("[data-reader-mode]")).toBeDisabled();
+    await expect(page.locator("[data-journey-start]")).toBeDisabled();
     await page.locator("#chapters").scrollIntoViewIfNeeded();
     await page.getByRole("tab").nth(3).click();
     await expect(page.locator("#chapter-tab-3")).toHaveAttribute(
@@ -392,6 +380,8 @@ test("WebGL initialization failure preserves the complete reading document", asy
     } as typeof original;
   });
   await page.goto("/");
+  await page.keyboard.press("Escape");
+  await page.locator("[data-journey-start]").click();
   await expect(page.locator("#literary-experience")).toHaveAttribute(
     "data-world-status",
     "unavailable",
@@ -424,7 +414,7 @@ test("a lost WebGL context releases the scene and preserves interactive Reading 
   await expect(page.locator("#pages .reading-preview")).toBeVisible();
   await page.getByRole("button", { name: "Next reflection" }).click();
   await expect(page.locator("#preview-1")).toBeVisible();
-  await page.getByRole("button", { name: "Retry immersive book view" }).click();
+  await page.locator("[data-journey-start]").click();
   await expect(page.locator("#literary-experience")).toHaveAttribute(
     "data-world-status",
     "ready",
@@ -587,7 +577,7 @@ test("all dormant chapters are measured before their first visible camera shot",
   const measurements = await page.locator(".journey-card").evaluateAll((cards) =>
     cards.map((card) => +(card as HTMLElement).dataset.measuredHeight!),
   );
-  expect(measurements).toHaveLength(17);
+  expect(measurements).toHaveLength(18);
   measurements.forEach((height) => { expect(Number.isFinite(height)).toBe(true); expect(height).toBeGreaterThan(0); });
   // Visit a chapter that has never appeared, then check its settled shot does
   // not get replaced by a late observer measurement.

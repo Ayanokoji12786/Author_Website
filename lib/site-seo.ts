@@ -69,7 +69,7 @@ export const bookAnswers = [
     id: "reflections",
     question: "Are the website’s reflections verified book excerpts?",
     answer:
-      "The three reflections on this website are attributed to the original website copy. They are not presented as verified manuscript excerpts.",
+      "The three website reflections explore the book’s themes. They are not extracts from the published book.",
     links: [{ label: "Read the website reflections", href: "/#pages" }],
   },
 ];
@@ -154,6 +154,11 @@ export function structuredData(page: SitePage) {
         author: people.map((person) => ({ "@id": person["@id"] })),
         image: site.image,
         bookFormat: "https://schema.org/Hardcover",
+        inLanguage: "en",
+        numberOfPages: book.pages,
+        publisher: { "@type": "Organization", name: book.publisher },
+        datePublished: "2026-05",
+        description: book.synopsis,
         sameAs: [site.catalogue],
       },
       ...people,

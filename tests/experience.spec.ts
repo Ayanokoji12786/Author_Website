@@ -23,10 +23,10 @@ test("renders all eight sections, local assets, real links and metadata", async 
   await expect(page.locator("main > section")).toHaveCount(8);
   await expect(page.locator("h1")).toHaveText("Still Standing,Still Here.");
   await expect(
-    page.locator("#inside a").filter({ hasText: "Buy on Amazon" }),
+    page.locator("#inside a").filter({ hasText: "Amazon India" }),
   ).toHaveAttribute("href", book.amazon);
   await expect(
-    page.locator("#buy a").filter({ hasText: "Buy on Flipkart" }),
+    page.locator("#buy .purchase-links a").filter({ hasText: "Flipkart" }),
   ).toHaveAttribute("href", book.flipkart);
   const anchors = await page
     .locator('a[href^="#"]')
@@ -349,7 +349,7 @@ test("desktop book perspective responds to scroll and pointer, and respects redu
 test("cinematic loader preserves the heartbeat, real progress, focus and immediate Escape", async ({
   page,
 }) => {
-  await page.evaluate(() => sessionStorage.removeItem("ssh-intro-seen"));
+  await page.evaluate(() => { sessionStorage.removeItem("ssh-intro-seen"); localStorage.removeItem("ssh-intro-seen"); });
   await page.reload({ waitUntil: "domcontentloaded" });
   const intro = page.getByRole("dialog");
   await expect(intro).toBeVisible();
@@ -384,7 +384,7 @@ test("cinematic loader preserves the heartbeat, real progress, focus and immedia
 test("cinematic loader automatically finishes and records session readiness", async ({
   page,
 }) => {
-  await page.evaluate(() => sessionStorage.removeItem("ssh-intro-seen"));
+  await page.evaluate(() => { sessionStorage.removeItem("ssh-intro-seen"); localStorage.removeItem("ssh-intro-seen"); });
   await page.reload({ waitUntil: "domcontentloaded" });
   await expect(page.locator("#cinematic-intro")).toBeVisible();
   await expect(page.getByRole("progressbar")).toHaveAttribute(
@@ -401,7 +401,7 @@ test("cinematic loader automatically finishes and records session readiness", as
 test("loader has a bounded exit when a local image never responds", async ({
   page,
 }) => {
-  await page.evaluate(() => sessionStorage.removeItem("ssh-intro-seen"));
+  await page.evaluate(() => { sessionStorage.removeItem("ssh-intro-seen"); localStorage.removeItem("ssh-intro-seen"); });
   const pending: import("@playwright/test").Route[] = [];
   await page.route("**/media/mountain-dawn*.webp", (route) => {
     pending.push(route);
@@ -573,7 +573,7 @@ test("loader progress and Skip remain separate and usable in phone landscape", a
     [568, 320],
   ]) {
     await page.setViewportSize({ width, height });
-    await page.evaluate(() => sessionStorage.removeItem("ssh-intro-seen"));
+    await page.evaluate(() => { sessionStorage.removeItem("ssh-intro-seen"); localStorage.removeItem("ssh-intro-seen"); });
     await page.reload({ waitUntil: "domcontentloaded" });
     await expect(page.getByRole("dialog")).toBeVisible();
     const readiness = (await page.locator(".intro-readiness").boundingBox())!;

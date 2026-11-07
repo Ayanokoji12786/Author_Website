@@ -8,17 +8,21 @@ async function purchase(page: Page) {
   await page.locator(".nav-purchase").click();
 }
 async function ready(page: Page) {
-  await expect(root(page)).toHaveAttribute("data-world-status", "ready", {
-    timeout: 15000,
-  });
+  if (await page.locator("#cinematic-intro").isVisible()) await page.keyboard.press("Escape");
+  const hash = new URL(page.url()).hash;
+  if (await root(page).getAttribute("data-world-status") !== "loading" &&
+      !await root(page).evaluate(el => el.classList.contains("is-immersive"))) {
+    await page.locator("[data-journey-start]").click();
+  }
+  await expect(root(page)).toHaveAttribute("data-world-status", "ready", { timeout: 15000 });
   await expect(root(page)).toHaveClass(/is-immersive/);
-  await page.keyboard.press("Escape");
+  if (hash === "#buy") await page.locator("[data-reader-chapter]").selectOption("6");
 }
 async function buyVisible(page: Page) {
   await expect(page.locator("#buy")).toHaveClass(/is-reading/);
-  const card = page.locator('.journey-card[data-chapter="buy"]');
+  const card = page.locator('.journey-card[data-chapter="buy"][data-station="0"]');
   await expect(card).toHaveClass(/is-readable/);
-  await expect(page.getByRole("link", { name: "Buy on Amazon" })).toBeVisible();
+  await expect(page.getByRole("link", { name: "Amazon India" })).toBeVisible();
   return card;
 }
 
@@ -52,7 +56,7 @@ test("failed enhancement never traps the visitor behind the initial loader", asy
   await expect(page.locator("#cinematic-intro")).toBeHidden({ timeout: 8500 });
   await expect(page.locator(".hero")).toHaveCSS("visibility", "visible");
   await expect(
-    page.locator("#buy").getByRole("link", { name: "Buy on Amazon" }),
+    page.locator("#buy").getByRole("link", { name: "Amazon India" }),
   ).toHaveAttribute("href", book.amazon);
 });
 
@@ -69,7 +73,7 @@ test("Get the book shows real purchase pixels and opens the preserved retailer d
     maxDiffPixelRatio: 0.02,
     animations: "disabled",
   });
-  const link = page.getByRole("link", { name: "Buy on Amazon" });
+  const link = page.getByRole("link", { name: "Amazon India" });
   await expect(link).toHaveAttribute("href", book.amazon);
   const popup = page.waitForEvent("popup");
   const outbound = page.context().waitForEvent("request", {
@@ -111,14 +115,15 @@ test("purchase navigation during delayed scene startup resumes at the requested 
     pending.push(route);
   });
   await page.goto("/", { waitUntil: "domcontentloaded" });
-  await expect(root(page)).toHaveAttribute("data-world-status", "loading");
   await page.keyboard.press("Escape");
+  await page.locator("[data-journey-start]").click();
+  await expect(root(page)).toHaveAttribute("data-world-status", "loading");
   await purchase(page);
   await Promise.all(pending.map((route) => route.continue()));
   await ready(page);
   await buyVisible(page);
   await expect(page.locator("[data-reader-position]")).toHaveText(
-    "Page 07 / 07",
+    "Stop 1 of 2",
   );
 });
 
@@ -141,7 +146,7 @@ test("resizing preserves the chapter, camera progress and functioning purchase c
     expect(
       +(await root(page).getAttribute("data-reader-progress"))!,
     ).toBeCloseTo(progress, 2);
-    const link = page.getByRole("link", { name: "Buy on Amazon" });
+    const link = page.getByRole("link", { name: "Amazon India" });
     const box = (await link.boundingBox())!;
     expect(box.x).toBeGreaterThan(0);
     expect(box.x + box.width).toBeLessThan(viewport.width);
@@ -241,9 +246,10 @@ test("a delayed original cover cannot create a blank ready book or lose purchase
   // Deliberately hold the critical image while the rest of the scene module
   // loads: readiness must not race its texture decode/upload.
   await page.waitForTimeout(700);
+  await page.keyboard.press("Escape");
+  await page.locator("[data-journey-start]").click();
   await expect(root(page)).toHaveAttribute("data-world-status", "loading");
   await expect(page.locator("canvas.book-webgl")).toHaveCount(0);
-  await page.keyboard.press("Escape");
   await purchase(page);
   await Promise.all(pending.map((route) => route.continue()));
   await ready(page);

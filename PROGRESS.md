@@ -676,3 +676,30 @@ supports viewport dimensions and always closes its browser on failure.
 
 Final Next.js production smoke run: 10/10 desktop/mobile checks passed. The
 production preview remains running on port 3000; no deployment was performed.
+
+## 7 November 2026 — reading-first clarity and purchase redesign
+
+Implemented the requested conventional reading default and optional immersive
+journey. Reproduced the reported near-empty/dark hero transition as the old
+cover/camera introduction hiding the normal document. Ordinary reading now never
+loads the scene, keeps all content visible, and has no floating journey toolbar.
+Explicit entry starts at a readable stop; one stop pair, a section select and
+Exit/Escape replace the competing page/scene controls. Keyboard focus, cancelled
+loading, context loss, short screens, footer exit and mobile re-entry are tested.
+
+Reordered sections as requested; added a factual catalogue-based synopsis and
+verified English, 229-page hardbound format, Blue Rose Publishers, May 2026 and
+ISBN details beside retailer links. Amazon is labelled Amazon India, new tabs
+are visibly identified, and the destinations are unchanged. Website reflections
+are explicitly not book extracts. Removed public migration-history copy,
+repeated promotional lines and the duplicate author quotation. Kept author
+credits, authentic reviews and explicit uncle disclosure; linked the verified
+shared Flipkart author profile. Missing individual biographies, co-writing
+account, authorized extract/download, review permalinks and optional approved
+portraits are listed only in `docs/READING_FIRST.md`, not as public placeholders.
+
+Verification: cumulative 113 applicable static checks verified, three expected
+platform skips, with corrected cases rerun after fixes; all 14 production smoke
+checks pass. Type/syntax/whitespace checks and Next production build pass. See
+`docs/READING_FIRST.md` for source evidence, decisions and precise test history.
+The current user explicitly requested pushing these finished changes to GitHub.

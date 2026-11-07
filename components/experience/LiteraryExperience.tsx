@@ -111,8 +111,8 @@ function PurchaseLinks({ dark = false }: { dark?: boolean }) {
         target="_blank"
         rel="noopener noreferrer"
       >
-        Buy on Amazon <Arrow />
-        <span className="sr-only"> (opens in a new tab)</span>
+        Amazon India <Arrow />
+        <span className="new-tab-note"> (opens in a new tab)</span>
       </a>
       <a
         className="button button-outline"
@@ -120,11 +120,23 @@ function PurchaseLinks({ dark = false }: { dark?: boolean }) {
         target="_blank"
         rel="noopener noreferrer"
       >
-        Buy on Flipkart <Arrow />
-        <span className="sr-only"> (opens in a new tab)</span>
+        Flipkart <Arrow />
+        <span className="new-tab-note"> (opens in a new tab)</span>
       </a>
     </div>
   );
+}
+
+function BookDetails({ dark = false }: { dark?: boolean }) {
+  return <div className={`book-details ${dark ? "on-dark" : ""}`}>
+    <dl>
+      {[
+        ["Form", book.form], ["Language", book.language], ["Length", `${book.pages} pages`],
+        ["Format", book.format], ["Publisher", book.publisher], ["Publication", book.publication], ["ISBN-13", book.isbn],
+      ].map(([label, value]) => <div key={label}><dt>{label}</dt><dd>{value}</dd></div>)}
+    </dl>
+    <p className="book-detail-sources">Book details: <a href={book.catalogue} target="_blank" rel="noopener noreferrer">publisher catalogue<span className="new-tab-note"> (new tab)</span></a> and <a href={book.flipkart} target="_blank" rel="noopener noreferrer">Flipkart<span className="new-tab-note"> (new tab)</span></a>. Listed by Flipkart under Self-Help.</p>
+  </div>;
 }
 
 function JourneyPage({
@@ -250,62 +262,21 @@ export default function LiteraryExperience({
         data-reader-interface
         hidden
       >
-        <div className="reader-page-navigation">
-          <button
-            type="button"
-            className="icon-button"
-            data-reader-prev
-            aria-label="Previous book page"
-          >
-            <Arrow direction="left" />
-          </button>
-          <div>
-            <span
-              className="reader-position"
-              data-reader-position
-              aria-live="polite"
-            >
-              Page 01 / 07
-            </span>
-            <span className="reader-instruction" data-reader-instruction>
-              Scroll to open the book
-            </span>
-          </div>
-          <button
-            type="button"
-            className="icon-button"
-            data-reader-next
-            aria-label="Next book page"
-          >
-            <Arrow />
-          </button>
+        <button type="button" className="icon-button" data-reader-scene-prev aria-label="Previous reading stop"><Arrow direction="left" /></button>
+        <div className="reader-location">
+          <label className="sr-only" htmlFor="journey-section">Journey section</label>
+          <select id="journey-section" data-reader-chapter defaultValue="0">
+            {[
+              ["inside", "The book"], ["pages", "Themes and reflections"],
+              ["themes", "Themes"], ["chapters", "Chapters"],
+              ["authors", "Authors"], ["voices", "Reader reviews"], ["buy", "Purchase details"],
+            ].map(([id, label], i) => <option value={i} key={id}>{label}</option>)}
+          </select>
+          <span className="reader-position" data-reader-position aria-live="polite">Stop 1</span>
+          <span className="sr-only" data-reader-instruction>Scroll to explore</span>
         </div>
-        <div className="reader-stations">
-          <button
-            type="button"
-            className="icon-button"
-            data-reader-scene-prev
-            aria-label="Previous scene"
-          >
-            <Arrow direction="left" />
-          </button>
-          <span data-reader-station>Scene 1 / 1</span>
-          <button
-            type="button"
-            className="icon-button"
-            data-reader-scene-next
-            aria-label="Next scene"
-          >
-            <Arrow />
-          </button>
-        </div>
-        <button
-          type="button"
-          className="reader-mode text-link"
-          data-reader-mode
-        >
-          Reading view
-        </button>
+        <button type="button" className="icon-button" data-reader-scene-next aria-label="Next reading stop"><Arrow /></button>
+        <button type="button" className="reader-mode text-link" data-reader-mode>Exit journey</button>
       </nav>
       <a className="skip-link" href="#main">
         Skip to content
@@ -337,7 +308,7 @@ export default function LiteraryExperience({
           aria-label="Main navigation"
         >
           <a href="#inside">The book</a>
-          <a href="#pages">Inside the pages</a>
+          <a href="#pages">Themes and reflections</a>
           <a href="#authors">The authors</a>
           <a className="nav-purchase" href="#buy">
             Get the book <Arrow />
@@ -356,7 +327,7 @@ export default function LiteraryExperience({
           <Landscape assetBase={assetBase} />
           <div className="hero-content container">
             <p className="eyebrow hero-eyebrow">
-              A literary companion for the climb
+              Poetic reflections on emotional growth
             </p>
             <h1 id="hero-title">
               <span>Still Standing,</span>
@@ -447,7 +418,7 @@ export default function LiteraryExperience({
                       You only have to be still standing, still here.
                     </p>
                     <span className="mini-source">
-                      From the original website
+                      Website reflection · not a book extract
                     </span>
                   </div>
                   <div className="book-leaf book-leaf-one" />
@@ -494,7 +465,7 @@ export default function LiteraryExperience({
                 </span>
               </button>
               <p className="book-stage-note">
-                Hardcover <span aria-hidden="true">·</span> ISBN {book.isbn}
+                {book.format} <span aria-hidden="true">·</span> {book.language} <span aria-hidden="true">·</span> {book.pages} pages
               </p>
               <div className="book-journey" aria-hidden="true">
                 <span data-book-phase="discover" className="is-current">
@@ -508,69 +479,24 @@ export default function LiteraryExperience({
               </div>
             </div>
             <div className="book-introduction" data-reveal>
-              <p className="eyebrow section-index">
-                01 <span /> The book
-              </p>
-              <h2 id="book-heading">
-                Some books inform.
-                <br />
-                This one <em>transforms.</em>
-              </h2>
-              <p className="lead-copy">
-                A literary companion for anyone who has ever been broken and
-                refused to stay broken.
-              </p>
-              <p className="body-copy">
-                Between these pages lives a reckoning — with pain, with
-                perseverance, with the quiet ferocity of choosing to remain.
-              </p>
-              <PurchaseLinks />
-              <a href="#pages" className="text-link preview-link">
-                A glimpse inside <Arrow direction="down" />
-              </a>
+              <div className="synopsis-copy">
+                <p className="eyebrow section-index">01 <span /> The book, in brief</p>
+                <h2 id="book-heading">A little space<br />to <em>understand yourself.</em></h2>
+                <p className="lead-copy">{book.synopsis}</p>
+              </div>
+              <div className="synopsis-purchase">
+                <p className="purchase-edition">{book.format} · {book.language} · {book.pages} pages<br />ISBN {book.isbn}</p>
+                <PurchaseLinks />
+                <a href="#pages" className="text-link preview-link">Read the reflections <Arrow direction="down" /></a>
+              </div>
+              <div className="synopsis-facts"><BookDetails /></div>
+              <div className="journey-invitation">
+                <p>Prefer to explore in 3D? Try the optional immersive book journey.</p>
+                <button type="button" className="text-link" data-journey-start hidden>Explore the immersive journey <Arrow /></button>
+                <p className="journey-feedback" data-journey-feedback role="status" />
+              </div>
             </div>
           </div>
-        </JourneyPage>
-
-        <JourneyPage
-          className="meaning-section"
-          id="themes"
-          tone="dark"
-          labelledBy="meaning-heading"
-        >
-          <div className="container meaning-heading" data-reveal>
-            <p className="eyebrow section-index">
-              02 <span /> The meaning
-            </p>
-            <h2 id="meaning-heading">
-              Not lessons to memorize.
-              <br />
-              <em>Truths to recognize.</em>
-            </h2>
-            <p className="body-copy">
-              Three threads from the book’s themes.
-              <br />
-              One continuous journey back to yourself.
-            </p>
-          </div>
-          <div className="theme-list container">
-            {themes.map((theme, i) => (
-              <article className="theme-row" key={theme.name} data-reveal>
-                <span className="theme-number">0{i + 1}</span>
-                <div>
-                  <p className="eyebrow">{theme.name}</p>
-                  <h3>{theme.title}</h3>
-                </div>
-                <div className="theme-copy">
-                  <p>{theme.text}</p>
-                  <p className="theme-line">{theme.line}</p>
-                </div>
-              </article>
-            ))}
-          </div>
-          <p className="meaning-footnote container">
-            Theme descriptions preserved from the original website.
-          </p>
         </JourneyPage>
 
         <JourneyPage
@@ -582,17 +508,14 @@ export default function LiteraryExperience({
           <div className="container pages-layout">
             <div className="pages-intro" data-reveal>
               <p className="eyebrow section-index">
-                03 <span /> Inside the pages
+                02 <span /> Themes and reflections
               </p>
               <h2 id="pages-heading">
-                A moment.
-                <br />A pause.
-                <br />
-                <em>A beginning.</em>
+                Themes and<br /><em>reflections.</em>
               </h2>
               <p className="body-copy">
-                Meet the spirit of the book through reflections from its
-                original website.
+                Three reflections on the book’s themes, written for this website.
+                These are not extracts from the published book.
               </p>
               <a
                 className="text-link"
@@ -600,8 +523,8 @@ export default function LiteraryExperience({
                 target="_blank"
                 rel="noopener noreferrer"
               >
-                Explore the book on Amazon <Arrow />
-                <span className="sr-only"> (opens in a new tab)</span>
+                Explore on Amazon India <Arrow />
+                <span className="new-tab-note"> (opens in a new tab)</span>
               </a>
             </div>
             <div className="reading-preview" data-preview data-reveal>
@@ -651,6 +574,43 @@ export default function LiteraryExperience({
         </JourneyPage>
 
         <JourneyPage
+          className="meaning-section"
+          id="themes"
+          tone="dark"
+          labelledBy="meaning-heading"
+        >
+          <div className="container meaning-heading" data-reveal>
+            <p className="eyebrow section-index">
+              03 <span /> Themes
+            </p>
+            <h2 id="meaning-heading">
+              Not lessons to memorize.
+              <br />
+              <em>Truths to recognize.</em>
+            </h2>
+            <p className="body-copy">
+              Resilience, identity and hope: three ways into the book.
+            </p>
+          </div>
+          <div className="theme-list container">
+            {themes.map((theme, i) => (
+              <article className="theme-row" key={theme.name} data-reveal>
+                <span className="theme-number">0{i + 1}</span>
+                <div>
+                  <p className="eyebrow">{theme.name}</p>
+                  <h3>{theme.title}</h3>
+                </div>
+                <div className="theme-copy">
+                  <p>{theme.text}</p>
+
+                </div>
+              </article>
+            ))}
+          </div>
+
+        </JourneyPage>
+
+        <JourneyPage
           className="chapter-section"
           id="chapters"
           tone="dark"
@@ -671,7 +631,7 @@ export default function LiteraryExperience({
               <p className="body-copy">
                 Not spoilers. Signposts.
                 <br />
-                Six chapters from the existing guide.
+                Explore six chapter titles.
               </p>
             </div>
             <div
@@ -713,15 +673,15 @@ export default function LiteraryExperience({
               ))}
             </div>
             <div className="chapter-footer">
-              <p>Chapter descriptions from the original website’s guide.</p>
+              <p>Select a chapter to read its introduction.</p>
               <a
                 className="text-link"
                 href={book.amazon}
                 target="_blank"
                 rel="noopener noreferrer"
               >
-                Continue the journey <Arrow />
-                <span className="sr-only"> (opens in a new tab)</span>
+                Find the book on Amazon India <Arrow />
+                <span className="new-tab-note"> (opens in a new tab)</span>
               </a>
             </div>
           </div>
@@ -749,18 +709,11 @@ export default function LiteraryExperience({
                 <br />
                 <em>&amp; Tattva Nerella.</em>
               </h2>
-              <p className="lead-copy">
-                The voices behind <cite>Still Standing, Still Here.</cite>
-              </p>
-              <p className="body-copy">
-                A book co-authored by Dhruva Nerella and Tattva Nerella,
-                exploring resilience, self-discovery, emotional growth, and
-                perseverance.
-              </p>
-              <blockquote className="author-reflection">
-                “You do not have to be unbroken to be worthy.”
-                <cite>A reflection from the original website</cite>
-              </blockquote>
+              <p className="body-copy">The co-authors explore emotions, relationships and personal transformation through reflective writing.</p>
+              <div className="author-identities">
+                {book.authors.map(name => <article key={name}><h3>{name}</h3><p>Co-author of <cite>Still Standing, Still Here.</cite></p></article>)}
+              </div>
+              <a className="text-link" href={book.flipkart} target="_blank" rel="noopener noreferrer">Read the co-authors’ profile on Flipkart <Arrow /><span className="new-tab-note"> (opens in a new tab)</span></a>
             </div>
           </div>
         </JourneyPage>
@@ -782,7 +735,7 @@ export default function LiteraryExperience({
                 <em>with you.</em>
               </h2>
               <p className="body-copy">
-                Reader voices shared on the original website.
+                Reader responses shared with this website. A family relationship is disclosed below.
               </p>
             </div>
             <div className="reviews-layout">
@@ -802,9 +755,9 @@ export default function LiteraryExperience({
                     </details>
                   </blockquote>
                   <figcaption>
-                    <span>{review.name}</span>
+                    <span>{review.name}{review.name === "Raamki Bommisetty" && <small className="review-disclosure">Family disclosure: the authors’ uncle.</small>}</span>
                     <span>
-                      Reviewed in India <span aria-hidden="true">·</span>{" "}
+
                       <time dateTime={review.iso}>{review.date}</time>
                     </span>
                   </figcaption>
@@ -822,6 +775,7 @@ export default function LiteraryExperience({
         >
           <Landscape assetBase={assetBase} final />
           <div className="final-content container" data-reveal>
+            <div className="final-purchase">
             <p className="eyebrow">07 / Into the light</p>
             <p className="final-reflection">
               The next chapter is yours to write.
@@ -832,19 +786,19 @@ export default function LiteraryExperience({
               <em>Still Here.</em>
             </h2>
             <p className="final-copy">
-              Let these pages remind you of something
-              <br />
-              you may have forgotten — you are still standing, still here.
+              Choose your retailer. Check the retailer for current price,
+              availability and delivery to your region.
             </p>
             <PurchaseLinks dark />
-            <p className="final-isbn">
-              Hardcover <span aria-hidden="true">·</span> ISBN {book.isbn}
-            </p>
+            <p className="purchase-edition">{book.format} · {book.language} · {book.pages} pages<br />ISBN {book.isbn}</p>
+            </div>
+            <div className="final-book-details"><BookDetails dark /></div>
           </div>
         </JourneyPage>
       </main>
       <footer className="site-footer" data-tone="dark">
         <div className="container footer-top">
+          <button type="button" className="text-link reader-exit-footer" data-journey-exit hidden>Exit immersive journey</button>
           <a className="footer-brand" href="#hero">
             <MountainMark />
             <span>Still Standing, Still Here</span>
